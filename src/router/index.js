@@ -15,6 +15,11 @@ const routes=[
         path:'/goLogin',//路径
         name:'goLogin',//名字
         component:()=>import('../views/goLogin.vue')
+    },
+    {
+        path:'/setting',//路径
+        name:'setting',//名字
+        component:()=>import('../components/settings/setting.vue')
     }
 ]
 
