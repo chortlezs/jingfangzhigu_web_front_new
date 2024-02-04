@@ -4,7 +4,7 @@ import{createRouter,createWebHashHistory} from "vue-router";
 const routes=[
     {
         path:"/",
-        redirect:"/welcome"
+        redirect:"/login"
     },
     {
         path:'/login',//路径
@@ -30,6 +30,11 @@ const routes=[
         path:'/check',//路径
         name:'check',//名字
         component:()=>import('../views/check.vue')
+    },
+    {
+        path:'/setting',//路径
+        name:'setting',//名字
+        component:()=>import('../components/settings/setting.vue')
     }
 ]
 
