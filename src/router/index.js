@@ -17,6 +17,21 @@ const routes=[
         component:()=>import('../views/goLogin.vue')
     },
     {
+        path:'/goRegister',//路径
+        name:'goRegister',//名字
+        component:()=>import('../views/goRegister.vue')
+    },
+    {
+        path:'/welcome',//路径
+        name:'welcome',//名字
+        component:()=>import('../views/welcome.vue')
+    },
+    {
+        path:'/check',//路径
+        name:'check',//名字
+        component:()=>import('../views/check.vue')
+    },
+    {
         path:'/setting',//路径
         name:'setting',//名字
         component:()=>import('../components/settings/setting.vue')
