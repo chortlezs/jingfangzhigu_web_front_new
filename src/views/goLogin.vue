@@ -2,10 +2,10 @@
 import { useRouter } from 'vue-router';
 const router = useRouter();
 function goChat(){
-    router.push({path:'chat'})
+    router.push({path:'/chat'})
 }
-function goRegister(){
-    router.push({path:'goRegister'})
+function goCheck(){
+    router.push({path:'/Check'})
 }
 </script>
 
@@ -20,7 +20,7 @@ function goRegister(){
         <input type="password" placeholder="请输入您的密码...">
         <br>
         <button @click="goChat">登录</button>
-        <p><a @click="goRegister">忘记密码？</a></p >
+        <p><a @click="goCheck">忘记密码？</a></p >
          </div>
     </div>
 </div>
