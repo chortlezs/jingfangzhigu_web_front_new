@@ -32,10 +32,32 @@ const routes=[
         component:()=>import('../views/check.vue')
     },
     {
-        path:'/setting',//路径
-        name:'setting',//名字
-        component:()=>import('../components/settings/setting.vue')
-    }
+        path: '/setting',
+        name: 'setting',
+        component: () => import('../components/settings/setting.vue'),
+        children: [
+          {
+            path: '/user',
+            name: 'user',
+            component: () => import('../components/settings/UserSetting.vue'),
+          },
+          {
+            path: '/customization',
+            name: 'customization',
+            component: () => import('../components/settings/Customization.vue'),
+          },
+          {
+            path: '/notification',
+            name: 'notification',
+            component: () => import('../components/settings/Notification.vue'),
+          },
+          {
+            path: '/data',
+            name: 'data',
+            component: () => import('../components/settings/Data.vue'),
+          },
+        ],
+      },
 ]
 
 const router = createRouter({
