@@ -59,8 +59,8 @@ const routes=[
         ],
     },
     {
-      path:'/',//路径
-      name:'Home',//名字
+      path:'/index',//路径
+      name:'index',//名字
       component:()=>import('@/components/index/index.vue')
       }
 ]
