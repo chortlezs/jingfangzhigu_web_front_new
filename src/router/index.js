@@ -4,7 +4,7 @@ const routes=[
     {
         path:'/',//路径
         name:'Home',//名字
-        component:()=>import('')
+        component:()=>import('@/components/index/index.vue')
     }
 ]
 

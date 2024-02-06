@@ -1,0 +1,80 @@
+.background{
+    height: 100vh;
+    background-image: url('@/assets/chat_pictures/chat_background.png');
+    background-size: cover;
+  }
+  .el-header{
+    padding: 20px; 
+    height: 90px;      
+    display: flex;
+    width: 100%;
+    align-items: center;
+  }
+
+  .logoimg {
+      width: auto;
+      height: 90%;
+      margin: auto 10px;
+  }
+  .search{
+      margin:auto 0px;
+      flex: 1; /* 设置矩形的宽度，根据需要调整 */
+      height: 100%;/* 设置矩形的高度，根据需要调整 */
+      border-radius: 100px;    
+      padding-left:20px ;
+      background-color: rgb(255, 255, 255,0.5);
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      font-size: 16px;
+      line-height: 80%;
+  }
+  .avator{
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: auto 10px auto 0px;
+    cursor: pointer;
+  }
+  .avator:focus{
+    outline: none;
+  }
+  .search-choice {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin: 0;
+      padding: 0px;
+      cursor: pointer;
+      background-color:rgb(255, 255, 255,0); 
+      border-color:rgb(255, 255, 255,0); 
+  }
+  .search-choice h4{
+    color:#7499F4; 
+    margin: auto 5px auto 0;
+  }
+  .search-choice img{
+    width: 24px; 
+    height:24px; 
+    margin: auto 20px auto 0;
+  }
+  .leftandright{
+    padding: 0px 20px 20px 20px;
+  }
+  .aside {
+    background-color:rgba(255,255,255,0.2);
+    border-radius: 10px;
+    margin: 0 20px 0 0;
+    padding: 10px;
+    width: 25%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .main {
+    background-color:rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+  }
