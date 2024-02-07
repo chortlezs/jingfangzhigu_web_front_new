@@ -1,9 +1,23 @@
-<script setup>
+<script>
+import $ from 'jquery'
 import { useRouter } from 'vue-router';
 const router = useRouter();
 function goCheck(){
     router.push({path:'/Check'})
 }
+$(document).ready(function(){
+   $("#loginbtn").click(function(){
+      var username = $("#username").val();
+      var password = $("#password").val();
+      
+      // 假设登录成功后，跳转到主页
+      if(username === "admin" && password === "123456"){
+         window.location.href = "/index";
+      } else {
+         alert("用户名或密码错误，请重新输入");
+      }
+   });
+});
 </script>
 
 <template>
@@ -24,24 +38,6 @@ function goCheck(){
 </div>
 </template>
 
-<script>
-$(document).ready(function(){
-   $("#loginbtn").submit(function(event){
-      event.preventDefault(); // 阻止表单的默认提交行为
-   
-      var username = $("#username").val();
-      var password = $("#password").val();
-      
-      // 假设登录成功后，跳转到主页
-      if(username === "admin" && password === "123456"){
-         window.location.href = "/index";
-      } else {
-         alert("用户名或密码错误，请重新输入");
-      }
-   });
-});
-
-</script>
 
 <style scoped>
   .container {
@@ -67,6 +63,7 @@ $(document).ready(function(){
   }
   h1{
   margin-left: 20px;
+  font-weight:bold;
   }
   input[type="text"], input[type="password"] {
     padding: 10px;
