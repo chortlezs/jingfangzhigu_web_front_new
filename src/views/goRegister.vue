@@ -5,6 +5,7 @@ function goLogin(){
     router.push({path:'/goLogin'})
 }
 
+
 </script>
 
 <template>

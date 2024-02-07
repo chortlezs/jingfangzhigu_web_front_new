@@ -4,7 +4,7 @@ import{createRouter,createWebHashHistory} from "vue-router";
 const routes=[
     {
         path:"/",
-        redirect:"/login"
+        redirect:"/welcome"
     },
     {
         path:'/login',//路径

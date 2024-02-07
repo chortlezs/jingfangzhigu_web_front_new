@@ -1,9 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router';
 const router = useRouter();
-function goChat(){
-    router.push({path:'/chat'})
-}
 function goCheck(){
     router.push({path:'/Check'})
 }
@@ -15,16 +12,36 @@ function goCheck(){
         <div class="content">
         <h1>欢迎回来！</h1>
         <p>登录您的账户</p >
-        <input type="text" placeholder="请输入您的账号...">
+        <input type="text" id="username" placeholder="请输入您的账号...">
         <br>
-        <input type="password" placeholder="请输入您的密码...">
+        <input type="password" id="password" placeholder="请输入您的密码...">
         <br>
-        <button @click="goChat">登录</button>
+        <button id="loginbtn">登录</button>
         <p><a @click="goCheck">忘记密码？</a></p >
          </div>
+         <div id="result"></div>
     </div>
 </div>
 </template>
+
+<script>
+$(document).ready(function(){
+   $("#loginbtn").submit(function(event){
+      event.preventDefault(); // 阻止表单的默认提交行为
+   
+      var username = $("#username").val();
+      var password = $("#password").val();
+      
+      // 假设登录成功后，跳转到主页
+      if(username === "admin" && password === "123456"){
+         window.location.href = "/index";
+      } else {
+         alert("用户名或密码错误，请重新输入");
+      }
+   });
+});
+
+</script>
 
 <style scoped>
   .container {
