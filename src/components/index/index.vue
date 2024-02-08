@@ -1,4 +1,4 @@
-<script setup>
+<script lang="ts" setup>
 import {ref} from 'vue'
 import Aside from './components/Aside.vue'
 import Main from './components/Main.vue'

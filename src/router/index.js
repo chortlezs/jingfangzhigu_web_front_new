@@ -59,8 +59,13 @@ const routes=[
         ],
     },
     {
+<<<<<<< HEAD
       path:'/chat',//路径
       name:'chat',//名字
+=======
+      path:'/index',//路径
+      name:'index',//名字
+>>>>>>> 760966989792dcb3b4d2eec9e92fe7976f125241
       component:()=>import('@/components/index/index.vue')
       }
 ]
