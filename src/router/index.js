@@ -62,6 +62,11 @@ const routes=[
       path:'/index',//路径
       name:'index',//名字
       component:()=>import('@/components/index/index.vue')
+      },
+      {
+        path: '/personal',
+        name: '/personal',
+        component:() => import('../components/settings/personal.vue')
       }
 ]
 
