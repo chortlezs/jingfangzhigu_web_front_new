@@ -384,7 +384,7 @@ dom-scroll-into-view@^2.0.0:
 
 element-plus@^2.5.5:
   version "2.5.5"
-  resolved "https://registry.npmjs.org/element-plus/-/element-plus-2.5.5.tgz"
+  resolved "https://registry.npmmirror.com/element-plus/-/element-plus-2.5.5.tgz"
   integrity sha512-yGU/MruLOWI0ImQPFCyFM4cXtHtILJNAi0hhLImcxjRukjgQLYNkvcvbwqNgBUt808KSeKF9MyxENFyBQLTg+Q==
   dependencies:
     "@ctrl/tinycolor" "^3.4.1"
