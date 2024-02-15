@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
-import Aside from '../Aside.vue'
-import Main from '../Main.vue'
+import Aside from './index/Aside.vue'
+import Main from './index/Main.vue'
 let title = ref('首页111')
 </script>
 
