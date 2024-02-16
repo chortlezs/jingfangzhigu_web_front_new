@@ -2,9 +2,6 @@
 import $ from 'jquery'
 import { useRouter } from 'vue-router';
 const router = useRouter();
-function goCheck(){
-    router.push({path:'/Check'})
-}
 $(document).ready(function(){
    $("#loginbtn").click(function(){
       var username = $("#username").val();
@@ -12,7 +9,7 @@ $(document).ready(function(){
       
       // 假设登录成功后，跳转到主页
       if(username === "admin" && password === "123456"){
-         window.location.href = "/index";
+        router.push('/index');
       } else {
          alert("用户名或密码错误，请重新输入");
       }
@@ -31,7 +28,7 @@ $(document).ready(function(){
         <input type="password" id="password" placeholder="请输入您的密码...">
         <br>
         <button id="loginbtn">登录</button>
-        <p><a @click="goCheck">忘记密码？</a></p >
+        <p><a @click="$router.push('/check')">忘记密码？</a></p >
          </div>
          <div id="result"></div>
     </div>

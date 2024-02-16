@@ -44,6 +44,16 @@
   "resolved" "https://registry.npmmirror.com/@ctrl/tinycolor/-/tinycolor-3.6.1.tgz"
   "version" "3.6.1"
 
+"@element-plus/icons-vue@^2.3.1":
+  "integrity" "sha512-XxVUZv48RZAd87ucGS48jPf6pKu0yV5UCg9f4FFwtrYxXOwWuVJo6wOvSLKEoMQKjv8GsX/mhP6UsC1lRwbUWg=="
+  "resolved" "https://registry.npmmirror.com/@element-plus/icons-vue/-/icons-vue-2.3.1.tgz"
+  "version" "2.3.1"
+
+"@element-plus/icons@^0.0.11":
+  "integrity" "sha512-iKQXSxXu131Ai+I9Ymtcof9WId7kaXvB1+WRfAfpQCW7UiAMYgdNDqb/u0hgTo2Yq3MwC4MWJnNuTBEpG8r7+A=="
+  "resolved" "https://registry.npmmirror.com/@element-plus/icons/-/icons-0.0.11.tgz"
+  "version" "0.0.11"
+
 "@esbuild/win32-ia32@0.19.12":
   "integrity" "sha512-+ZOE6pUkMOJfmxmBZElNOx72NKpIa/HFOMGzu8fqzQJ5kgf6aTGrcJaFsNiVMH4JKpMipyK+7k0n2UXN7a8YKQ=="
   "resolved" "https://registry.npmmirror.com/@esbuild/win32-ia32/-/win32-ia32-0.19.12.tgz"
