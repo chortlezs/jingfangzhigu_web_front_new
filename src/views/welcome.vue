@@ -126,7 +126,7 @@ margin-right:30px;
   width: 40%;
   position: absolute; 
   bottom: 100px;  
-  left: 520px; 
+  left: 710px; 
   font-size: 50px;
 }
 

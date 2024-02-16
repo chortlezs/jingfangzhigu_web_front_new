@@ -1,25 +1,50 @@
-<script setup>
+<script>
 import { useRouter } from 'vue-router';
 const router = useRouter();
 function goChat(){
     router.push({path:'/chat'})
 }
+export default {
+  data () {
+    return {
+      username: '',
+      checknumber: '',
+      error: ''
+    }
+  },
+  methods: {
+    async check () {
+      //连接后端
+      try {
+        await this.$store.dispatch('login', {
+          username: this.username,
+          checknumber: this.checknumber
+        })
+        this.$router.push('/chat')
+      } catch (error) {
+        this.error = error.response.data.message
+      }
+    }
+  }
+}
 </script>
 
 <template>
 <div class="body">
+  <form @submit.prevent="check">
     <div class="container">
   <div class="content">
     <h1>欢迎回来！</h1>
     <p>验证码登录</p >
-    <input type="text" placeholder="请输入您的账号...">
+    <input type="text" placeholder="请输入您的账号..." v-model="username" required />
     <button class="btn-second" onclick="location.href='somethingelse.html'">获取验证码</button>
     <br>
-    <input type="password" placeholder="请输入验证码...">
+    <input type="password" placeholder="请输入验证码..." v-model="checknumber" required />
     <br>
     <button class="btn-first" @click="goChat">登录</button>
   </div>
 </div>
+</form>
 </div>
 </template>
 

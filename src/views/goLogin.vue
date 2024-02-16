@@ -1,30 +1,52 @@
-<script setup>
-import { useRouter } from 'vue-router';
-const router = useRouter();
-function goChat(){
-    router.push({path:'/chat'})
-}
-function goCheck(){
-    router.push({path:'/Check'})
-}
-</script>
 
 <template>
 <div class="body">
+  <form @submit.prevent="login">
     <div class="container">
         <div class="content">
         <h1>欢迎回来！</h1>
-        <p>登录您的账户</p >
-        <input type="text" placeholder="请输入您的账号...">
+        <p>登录您的账户</p>
+        <input type="text" placeholder="请输入您的账号..." v-model="username" required />
         <br>
-        <input type="password" placeholder="请输入您的密码...">
+        <input type="password" placeholder="请输入您的密码..." v-model="password" required />
         <br>
-        <button @click="goChat">登录</button>
-        <p><a @click="goCheck">忘记密码？</a></p >
+        <button type="submit">登录</button>
+        <p><a @click="$router.push('/check')">忘记密码？</a></p>
          </div>
+         <div id="result"></div>
     </div>
+  </form>
 </div>
 </template>
+
+<script>
+import $ from 'jquery'
+import { useRouter } from 'vue-router';
+const router = useRouter();
+export default {
+  data () {
+    return {
+      username: '',
+      password: '',
+      error: ''
+    }
+  },
+  methods: {
+    async login () {
+      //连接后端
+      try {
+        await this.$store.dispatch('login', {
+          username: this.username,
+          password: this.password
+        })
+        this.$router.push('/chat')
+      } catch (error) {
+        this.error = error.response.data.message
+      }
+    }
+  }
+}
+</script>
 
 <style scoped>
   .container {
@@ -50,6 +72,7 @@ function goCheck(){
   }
   h1{
   margin-left: 20px;
+  font-weight:bold;
   }
   input[type="text"], input[type="password"] {
     padding: 10px;

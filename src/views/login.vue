@@ -77,6 +77,7 @@ function goRegister(){
           margin-bottom: 10px;
           text-align: center;
           color: #fff;
+          font-weight:bold;
         }
     
         h2 {
@@ -84,6 +85,7 @@ function goRegister(){
           margin-bottom: 30px;
           text-align: center;
           color: #fff;
+          font-weight:bold;
         }
     
         img {
