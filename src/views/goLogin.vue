@@ -1,40 +1,52 @@
+
+<template>
+<div class="body">
+  <form @submit.prevent="login">
+    <div class="container">
+        <div class="content">
+        <h1>欢迎回来！</h1>
+        <p>登录您的账户</p>
+        <input type="text" placeholder="请输入您的账号..." v-model="username" required />
+        <br>
+        <input type="password" placeholder="请输入您的密码..." v-model="password" required />
+        <br>
+        <button type="submit">登录</button>
+        <p><a @click="$router.push('/check')">忘记密码？</a></p>
+         </div>
+         <div id="result"></div>
+    </div>
+  </form>
+</div>
+</template>
+
 <script>
 import $ from 'jquery'
 import { useRouter } from 'vue-router';
 const router = useRouter();
-$(document).ready(function(){
-   $("#loginbtn").click(function(){
-      var username = $("#username").val();
-      var password = $("#password").val();
-      
-      // 假设登录成功后，跳转到主页
-      if(username === "admin" && password === "123456"){
-        router.push('/index');
-      } else {
-         alert("用户名或密码错误，请重新输入");
+export default {
+  data () {
+    return {
+      username: '',
+      password: '',
+      error: ''
+    }
+  },
+  methods: {
+    async login () {
+      //连接后端
+      try {
+        await this.$store.dispatch('login', {
+          username: this.username,
+          password: this.password
+        })
+        this.$router.push('/chat')
+      } catch (error) {
+        this.error = error.response.data.message
       }
-   });
-});
+    }
+  }
+}
 </script>
-
-<template>
-<div class="body">
-    <div class="container">
-        <div class="content">
-        <h1>欢迎回来！</h1>
-        <p>登录您的账户</p >
-        <input type="text" id="username" placeholder="请输入您的账号...">
-        <br>
-        <input type="password" id="password" placeholder="请输入您的密码...">
-        <br>
-        <button id="loginbtn">登录</button>
-        <p><a @click="$router.push('/check')">忘记密码？</a></p >
-         </div>
-         <div id="result"></div>
-    </div>
-</div>
-</template>
-
 
 <style scoped>
   .container {

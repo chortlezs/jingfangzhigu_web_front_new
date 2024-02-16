@@ -1,40 +1,65 @@
-<script setup>
-import { useRouter } from 'vue-router';
-const router = useRouter();
-function goLogin(){
-    router.push({path:'/goLogin'})
-}
 
-
-</script>
 
 <template>
 <div class="body">
+  <form @submit.prevent="register">
     <div class="container">
   <div class="content">
     <h1>开始创建您的个人账户吧！</h1>
     <a>您可以使用手机号或邮箱作为您的账户</a>
     <p>请输入您的账号和密码</p >
     <div>
-    <input type="text" placeholder="请输入您的账号...">
+    <input type="text" placeholder="请输入您的账号..." v-model="username" required />
     <button class="btn-second" onclick="location.href='somethingelse.html'">获取验证码</button>
     </div>
     <div>
-    <input type="identify" placeholder="请输入验证码...">
+    <input type="identify" placeholder="请输入验证码..." v-model="check" required />
     </div>
     <div>
-    <input type="password" placeholder="请输入您的密码...">
+    <input type="password" placeholder="请输入您的密码..." v-model="password" required />
     </div>
     <div>
-    <input type="password" placeholder="请再次输入您的密码...">
+    <input type="password" placeholder=" 请再次输入您的密码..." v-model="re_password" required />
     </div>
     <button class="btn-first" >注册患者</button>
     <button class="btn-third" >注册医师</button>
-    <div>·已注册过账号？<a @click="goLogin">-点此登录-</a></div>
+    <div>·已注册过账号？<a @click="$router.push('/goLogin')">-点此登录-</a></div>
   </div>
 </div>
+</form>
 </div>
 </template>
+
+<script>
+import { useRouter } from 'vue-router';
+const router = useRouter();
+export default {
+  data () {
+    return {
+      username: '',
+      check: '',
+      password: '',
+      re_password: '',
+      error: ''
+    }
+  },
+  methods: {
+    async register () {
+      try {
+        await this.$store.dispatch('register', {
+          username: this.username,
+          check: this.check,
+          password: this.password,
+          re_password: this.re_password
+        })
+        this.$router.push('/chat')
+      } catch (error) {
+        this.error = error.response.data.message
+      }
+    }
+  }
+}
+</script>
 
 <style scoped>
 .container {

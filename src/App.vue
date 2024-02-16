@@ -1,6 +1,5 @@
 <script setup>
 import {ref} from 'vue'
-import $ from 'jquery'
 </script>
 
 <template>
