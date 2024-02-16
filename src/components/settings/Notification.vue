@@ -1,39 +1,54 @@
 <script setup>
-import { ExclamationCircleOutlined,SwitcherOutlined } from '@ant-design/icons-vue';
+import { ExclamationCircleOutlined, SwitcherOutlined } from '@ant-design/icons-vue';
+import { ref, reactive } from 'vue';
+
+const notificationStatus = ref(true); // 初始状态为开启
+const healthStatus = ref(true); // 初始状态为开启
+
+const toggleNotification = () => {
+  notificationStatus.value = !notificationStatus.value;
+};
+
+const toggleHealth = () => {
+  healthStatus.value = !healthStatus.value;
+};
 </script>
 
 <template>
 <div class="content">
-    <div class="user-settings">
-      <span class="user-name">通知设置</span>
-    </div>
-   <div class="separator"></div>
-	<ul class="list">
-		<li class="list-item">系统通知
-			<ExclamationCircleOutlined style="color: #1890ff;"/>
-		</li>
-		<li class="list-item">健康提示
-			<ExclamationCircleOutlined style="color: #1890ff;"/>
-		</li>
-	</ul>
+  <div class="user-settings">
+    <span class="user-name">通知设置</span>
+  </div>
+  <div class="separator"></div>
+  <ul class="list">
+    <li class="list-item">系统通知
+      <ExclamationCircleOutlined style="color: #1890ff;"/>
+      <img v-if="notificationStatus" src="@/assets/setting_pictures/open.png" alt="开启" class="toggle-icon" @click="toggleNotification" />
+      <img v-else src="@/assets/setting_pictures/off.png" alt="关闭" class="toggle-icon_off" @click="toggleNotification" />
+    </li>
+    <li class="list-item">健康提示
+      <ExclamationCircleOutlined style="color: #1890ff;"/>
+      <img v-if="healthStatus" src="@/assets/setting_pictures/open.png" alt="开启" class="toggle-icon" @click="toggleHealth" />
+      <img v-else src="@/assets/setting_pictures/off.png" alt="关闭" class="toggle-icon_off" @click="toggleHealth" />
+    </li>
+  </ul>
 </div>
-
 </template>
 
 <style scoped>
 .content {
-	width: 500px;
+  width: 500px;
 }
 .user-settings {
-	height: 70px;
-	display: flex;
-	align-items: center;
-	margin-left: 18px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  margin-left: 18px;
 }
 .user-name {
-	font-size: 20px;
-	font-weight: bold;
-	margin-top: 30px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 30px;
 }
 .separator {
   height: 2px;
@@ -47,4 +62,14 @@ import { ExclamationCircleOutlined,SwitcherOutlined } from '@ant-design/icons-vu
   font-size: 16px;
 }
 
+.toggle-icon {
+	position: relative;
+    left: 240px;
+	width: 61px;
+}
+.toggle-icon_off {
+	position: relative;
+    left: 260px;
+	width: 61px;
+}
 </style>

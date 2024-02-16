@@ -1,5 +1,16 @@
 <script setup>
 import { ExclamationCircleOutlined,SwitcherOutlined } from '@ant-design/icons-vue';
+import { ref, reactive } from 'vue';
+const notificationStatus = ref(true); // 初始状态为开启
+const healthStatus = ref(true); // 初始状态为开启
+
+const toggleHistory = () => {
+  notificationStatus.value = !notificationStatus.value;
+};
+
+const toggleAnony = () => {
+  healthStatus.value = !healthStatus.value;
+};
 </script>
 
 <template>
@@ -11,9 +22,13 @@ import { ExclamationCircleOutlined,SwitcherOutlined } from '@ant-design/icons-vu
 	<ul class="list">
 		<li class="list-item">对话历史记录和AI训练 
 			<ExclamationCircleOutlined style="color: #1890ff;"/>
+			<img v-if="notificationStatus" src="@/assets/setting_pictures/open.png" alt="开启" class="toggle-icon_open" @click="toggleHistory" />
+      		<img v-else src="@/assets/setting_pictures/off.png" alt="关闭" class="toggle-icon_off1" @click="toggleHistory" />
 		</li>
 		<li class="list-item">对外匿名
 			<ExclamationCircleOutlined style="color: #1890ff;"/>
+			<img v-if="healthStatus" src="@/assets/setting_pictures/open.png" alt="开启" class="toggle-icon" @click="toggleAnony" />
+			<img v-else src="@/assets/setting_pictures/off.png" alt="关闭" class="toggle-icon_off" @click="toggleAnony" />
 		</li>
 	</ul>
 </div>
@@ -46,5 +61,24 @@ import { ExclamationCircleOutlined,SwitcherOutlined } from '@ant-design/icons-vu
   padding: 20px;
   font-size: 16px;
 }
-
+.toggle-icon_open {
+	position: relative;
+	left: 145px;
+	width: 61px;
+}
+.toggle-icon_off1 {
+	position: relative;
+    left: 160px;
+	width: 61px;
+}
+.toggle-icon {
+	position: relative;
+    left: 240px;
+	width: 61px;
+}
+.toggle-icon_off {
+	position: relative;
+    left: 260px;
+	width: 61px;
+}
 </style>

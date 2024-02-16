@@ -1,5 +1,16 @@
 <script setup>
 import { ExclamationCircleOutlined,SwitcherOutlined } from '@ant-design/icons-vue';
+import { ref, reactive } from 'vue';
+const notificationStatus = ref(true); // 初始状态为开启
+const healthStatus = ref(true); // 初始状态为开启
+
+const toggleNotification = () => {
+  notificationStatus.value = !notificationStatus.value;
+};
+
+const toggleHealth = () => {
+  healthStatus.value = !healthStatus.value;
+};
 </script>
 
 <template>
@@ -10,8 +21,13 @@ import { ExclamationCircleOutlined,SwitcherOutlined } from '@ant-design/icons-vu
    <div class="separator"></div>
 	<ul class="list">
 		<li class="list-item">暗色模式
+			<img v-if="notificationStatus" src="@/assets/setting_pictures/open.png" alt="开启" class="toggle-icon" @click="toggleNotification" />
+      		<img v-else src="@/assets/setting_pictures/off.png" alt="关闭" class="toggle-icon_off" @click="toggleNotification" />
 		</li>
+		
 		<li class="list-item">大字模式
+			<img v-if="healthStatus" src="@/assets/setting_pictures/open.png" alt="开启" class="toggle-icon" @click="toggleHealth" />
+			<img v-else src="@/assets/setting_pictures/off.png" alt="关闭" class="toggle-icon_off" @click="toggleHealth" />
 		</li>
 	</ul>
 </div>
@@ -44,5 +60,14 @@ import { ExclamationCircleOutlined,SwitcherOutlined } from '@ant-design/icons-vu
   padding: 20px;
   font-size: 16px;
 }
-
+.toggle-icon {
+	position: relative;
+    left: 250px;
+	width: 61px;
+}
+.toggle-icon_off {
+	position: relative;
+    left: 268px;
+	width: 61px;
+}
 </style>
