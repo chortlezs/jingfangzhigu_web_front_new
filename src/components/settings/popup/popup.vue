@@ -26,10 +26,10 @@
         <button style="margin:20px 42px ;">再想想</button>
         <button style="margin:20px 35px;">确认</button>
       </div>
-      <div class="popup-content"  v-if="props.content === '删除所有对话'">
-        <span style="margin: 0px 60px;; color: #689AFB;">经方智谷助手提醒您：</span>
-        <span style="margin-left: 20px;">经方智谷助手为您的健康保驾护航，</span> 
-        <span style="margin: 0px 40px"> 您的账户一经删除无法找回！</span>
+      <div class="popup-content" style="width: 361px;"  v-if="props.content === '删除所有对话'">
+        <span style="margin: 0px 80px;; color: #689AFB;">经方智谷助手提醒您：</span>
+        <span style="margin:  0px 10px;"> 每一次诊疗对话记录都是您独特而宝贵的</span> 
+        <span style="margin: 0px 10px"> 健康财富，对话记录一经删除无法恢复！</span>
         <span style="margin-left: 75px;">请确认是否删除！</span>
         <button style="margin:20px 42px ;">再想想</button>
         <button style="margin:20px 35px;">确认</button>
