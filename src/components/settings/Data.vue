@@ -42,7 +42,7 @@ const openDeleteConversationPopup = () => {
 	</ul>
 </div>
 
-  <Popup v-if="showExportPopup" :content="handleExport" @close="showExportPopup = false" /> 
+<Popup v-if="showExportPopup" :content="handleExport" @close="showExportPopup = false" /> 
   <Popup v-if="showDeleteAccountPopup" :content="handleDeleteAccount" @close="showDeleteAccountPopup = false" /> 
   <Popup v-if="showDeleteConversationPopup" :content="handleDeleteConversation" @close="showDeleteConversationPopup = false" /> 
 
