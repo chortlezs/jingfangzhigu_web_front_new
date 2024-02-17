@@ -57,7 +57,7 @@ const handleMenuClick = (key) => {
         <div class="menu">
 		  <div class="menu-name">
 			<setting-outlined style="color: #1890ff; font-size: 20px; margin-right: 5px;" /> 
-			设置
+			<span style="color:#585858; font-size: 18px;">设置</span>
 		</div>
           <a-menu
             v-model:selectedKeys="selectedKeys"
@@ -69,7 +69,8 @@ const handleMenuClick = (key) => {
               v-for="item in menuData"
               :key="item.key"
               :icon="item.icon"
-              @click="() => handleMenuClick(item.key)">
+              @click="() => handleMenuClick(item.key)"
+              style="height: 47px; width: 127px; font-size: 18px; margin-left: 15px; color: #585858;">
               {{ item.title }}
             </a-menu-item>
           </a-menu>
@@ -96,8 +97,8 @@ body {
 }
 
 .center-container {
-  width: 800px;
-  height: 500px;
+  width: 1049px;
+  height: 598px;
   display: flex;
   align-items: center; /* 垂直居中 */
 }
@@ -138,8 +139,8 @@ body {
   align-items: center;
   position: relative;
   left: -20px;
-  width: 200px;
-  height: 348px;
+  width: 210px;
+  height: 447px;
   border-radius: 18px;
   background-color: #fff;
 }
@@ -148,25 +149,25 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  height: 80px;
+  height: 100px;
   width: 170px;
-  padding-left: 10px;
   font-size: 16px;
-  font-weight: bold
+  font-weight: bold;
+  padding: 20px;
 }
 
 .sidebar {
-  width: 200px;
+  width: 210px;
   background-color: #60a7e9;
   padding: 20px;
-  height: 500px;
+  height: 598px;
   border-radius: 18px;
 }
 
 .content {
-  width: 650px;
-  height: 500px;
-  margin-left: 20px;
+  width: 814px;
+  height: 598px;
+  margin-left: 15px;
   border-radius: 18px;
   background-color: #fff;
 }

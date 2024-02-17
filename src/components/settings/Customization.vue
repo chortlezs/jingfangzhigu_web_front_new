@@ -45,29 +45,31 @@ const toggleHealth = () => {
 	margin-left: 18px;
 }
 .user-name {
-	font-size: 20px;
+	font-size: 30px;
 	font-weight: bold;
 	margin-top: 30px;
 }
 .separator {
   height: 2px;
   width: 450px;
+  margin: 15px 0 0 15px;
   background: linear-gradient(to right, #2191f9, #dadfe1); /* 渐变效果 */
 }
-
 .list-item {
   height: 50px;
-  padding: 20px;
-  font-size: 16px;
+  padding: 25px;
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #585858;
 }
 .toggle-icon {
 	position: relative;
-    left: 250px;
-	width: 61px;
+    left: 450px;
+	width: 71px;
 }
 .toggle-icon_off {
 	position: relative;
-    left: 268px;
-	width: 61px;
+    left: 470px;
+    width: 71px;
 }
 </style>

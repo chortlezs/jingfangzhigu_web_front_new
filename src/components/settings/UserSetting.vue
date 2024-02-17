@@ -46,7 +46,7 @@ const toggleAnony = () => {
 	margin-left: 18px;
 }
 .user-name {
-	font-size: 20px;
+	font-size: 30px;
 	font-weight: bold;
 	margin-top: 30px;
 }
@@ -58,27 +58,29 @@ const toggleAnony = () => {
 
 .list-item {
   height: 50px;
-  padding: 20px;
-  font-size: 16px;
+  padding: 25px;
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #585858;
 }
 .toggle-icon_open {
 	position: relative;
-	left: 145px;
-	width: 61px;
+	left: 321px;
+	width: 71px;
 }
 .toggle-icon_off1 {
 	position: relative;
-    left: 160px;
-	width: 61px;
+    left: 339px;
+    width: 71px;
 }
 .toggle-icon {
 	position: relative;
-    left: 240px;
-	width: 61px;
+    left: 440px;
+	width: 71px;
 }
 .toggle-icon_off {
 	position: relative;
-    left: 260px;
-	width: 61px;
+    left: 460px;
+	width: 71px;
 }
 </style>
