@@ -2,7 +2,15 @@
 import {ref} from 'vue'
 import Aside from './index/Aside.vue'
 import Main from './index/Main.vue'
+import { useRouter } from 'vue-router';
 let title = ref('首页111')
+const router = useRouter();
+function goPersonal(){
+    router.push({path:'/personal'})
+}
+function goUser(){
+    router.push({path:'/user'})
+}
 </script>
 
 <template>
@@ -14,8 +22,8 @@ let title = ref('首页111')
             <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" class='avator' />
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>个人中心</el-dropdown-item>
-                <el-dropdown-item>设置</el-dropdown-item>
+                <el-dropdown-item @click="goPersonal">个人中心</el-dropdown-item>
+                <el-dropdown-item @click="goUser">设置</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>

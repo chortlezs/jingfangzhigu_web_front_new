@@ -53,6 +53,7 @@ const toggleAnony = () => {
 .separator {
   height: 2px;
   width: 450px;
+  margin: 15px 0 0 15px;
   background: linear-gradient(to right, #2191f9, #dadfe1); /* 渐变效果 */
 }
 
