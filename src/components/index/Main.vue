@@ -1,5 +1,6 @@
 <template>
     <el-main class="main">
+       <div v-if="!showChatBox">
         <el-row class="main">
             <el-row class="main-header1" id="main-header1">
                 <h1 >经方智谷</h1>
@@ -55,7 +56,27 @@
                 </div>
             </el-row>
         </el-row>
-            <!--<div class="box"></div>-->
+       </div>
+
+       <!-- 聊天框 -->
+       <div class="chat-container" ref="chatContainer" style=" max-height: 500px; overflow-y: auto; height: 2000px; ">
+            <div class="chat-box" style="display: flex; align-items: center; padding-right: 20px;">
+            <!-- 头像 -->
+            <div class="avatar"  style="position: relative; left: 1020px;">
+                <img src="@/assets/chat_pictures/icon.png" alt="Avatar" style="width: 40px; height: 40px; border-radius: 30%;">
+            </div>
+            <!-- 对话框 -->
+            <div class="bubble" v-for="(msg, index) in messages" :key="index"
+                :style="{ backgroundColor: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                            padding: '10px', position: 'relative',
+                            left: '910px', maxWidth: '70%', top: index * 60 + 'px' }">
+                {{ msg }}
+            </div>
+            </div>
+        </div>
+
+        
+        <!-- 底部输入框 -->
         <el-row class="foot">
             <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" :default-active="0">
                 <el-tab-pane name="first">
@@ -67,7 +88,7 @@
                     </template>
                     <template class="bottom">
                         <el-input
-                            v-model="textarea"
+                            v-model="inputMessage"
                             :rows="4"
                             :resize="'none'"
                             type="textarea"
@@ -76,8 +97,9 @@
                         />
                         <div class="button2">
                             <el-button type="primary" :icon="Microphone" round />
-                            <el-button type="primary" :icon="Position"  round />
+                            <el-button type="primary" :icon="Position" @click="sendMessage" round />
                         </div>
+
                     </template>
                 </el-tab-pane>
                 <el-tab-pane name="second">
@@ -155,20 +177,50 @@
 <style src="@/assets/main.css" >
 
 </style>
+
+
 <script setup lang="ts">
-import { ref } from 'vue'
-const textarea = ref('')
+import { Search,Edit,Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/icons-vue'
+const input2 = ref('')
+import { Monitor,Camera } from '@element-plus/icons-vue'
+import type { TabsPaneContext } from 'element-plus'
+import { ref, onMounted, watch } from 'vue'
+
 const buttons = [
   { text: '我最近头痛伴着流鼻涕,该吃什么药?' },
   { text: '最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？' },
   { text: '胃肠炎可以吃柚子吗？' },
 ] as const
-import type { TabsPaneContext } from 'element-plus'
+
+const showChatBox = ref(false)
+const textarea = ref('')
 const activeName = ref('first')
+
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
-import { Search,Edit,Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/icons-vue'
-const input2 = ref('')
-import { Monitor,Camera } from '@element-plus/icons-vue'
+
+const inputMessage = ref('')
+const messages = ref<string[]>([]) // 消息数组的类型为字符串数组
+
+const sendMessage = () => {
+  if (inputMessage.value.trim() !== '') {
+    console.log('Sending message:', inputMessage.value)
+    messages.value.push(inputMessage.value) // 将消息添加到数组中
+    inputMessage.value = '' // 清空输入框内容
+    showChatBox.value = true;
+  }
+}
+const chatContainer = ref<HTMLDivElement | null>(null);
+
+onMounted(() => {
+  watch(messages, () => {
+    if (chatContainer.value) {
+      const chatBox = chatContainer.value.querySelector('.chat-box');
+      if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+    }
+  });
+});
 </script>
