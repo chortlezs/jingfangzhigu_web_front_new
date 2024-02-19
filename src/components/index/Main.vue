@@ -1,6 +1,7 @@
 <template>
     <el-main class="main">
-       <div v-if="!showChatBox">
+     <div style="height: 420px;">
+        <div v-if="!showChatBox">
         <el-row class="main">
             <el-row class="main-header1" id="main-header1">
                 <h1 >经方智谷</h1>
@@ -59,22 +60,20 @@
        </div>
 
        <!-- 聊天框 -->
-       <div class="chat-container" ref="chatContainer" style=" max-height: 500px; overflow-y: auto; height: 2000px; ">
-            <div class="chat-box" style="display: flex; align-items: center; padding-right: 20px;">
-            <!-- 头像 -->
-            <div class="avatar"  style="position: relative; left: 1020px;">
-                <img src="@/assets/chat_pictures/icon.png" alt="Avatar" style="width: 40px; height: 40px; border-radius: 30%;">
-            </div>
-            <!-- 对话框 -->
-            <div class="bubble" v-for="(msg, index) in messages" :key="index"
-                :style="{ backgroundColor: '#fff', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                            padding: '10px', position: 'relative',
-                            left: '910px', maxWidth: '70%', top: index * 60 + 'px' }">
+       <div v-if="showChatBox" class="chat-container" ref="chatContainer" style="position: fixed; top: 80px; right: 0; padding: 10px; display: flex; flex-direction: column; align-items: flex-end; max-height: 56%; overflow-y: scroll;">
+    <!-- 对话框 -->
+            <div class="chat-box" v-for="(msg, index) in messages" :key="index" style="display: flex; align-items: center; margin-bottom: 10px;">
+            <div class="bubble" :class="{ 'last-message': index === messages.length - 1 }" style="background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
                 {{ msg }}
+            </div>
+            <!-- 头像 -->
+            <div class="avatar">
+                <img src="@/assets/chat_pictures/icon.png" alt="Avatar" style="width: 40px; height: 40px; border-radius: 30%;">
             </div>
             </div>
         </div>
 
+     </div>
         
         <!-- 底部输入框 -->
         <el-row class="foot">
@@ -170,6 +169,7 @@
                 </el-tab-pane>
             </el-tabs>
         </el-row>
+   
 
     </el-main>
 </template>
@@ -192,35 +192,62 @@ const buttons = [
   { text: '胃肠炎可以吃柚子吗？' },
 ] as const
 
-const showChatBox = ref(false)
+
 const textarea = ref('')
 const activeName = ref('first')
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
-
 const inputMessage = ref('')
 const messages = ref<string[]>([]) // 消息数组的类型为字符串数组
-
+const showChatBox = ref(false) // 控制是否展示对话框部分的状态
+    
 const sendMessage = () => {
   if (inputMessage.value.trim() !== '') {
     console.log('Sending message:', inputMessage.value)
     messages.value.push(inputMessage.value) // 将消息添加到数组中
     inputMessage.value = '' // 清空输入框内容
-    showChatBox.value = true;
+    showChatBox.value = true // 显示对话框部分
+    fetchResponse(inputMessage.value) // 向后端发送消息并获取回复
+    // 滚动
+    scrollToBottom();
   }
 }
-const chatContainer = ref<HTMLDivElement | null>(null);
 
-onMounted(() => {
-  watch(messages, () => {
-    if (chatContainer.value) {
-      const chatBox = chatContainer.value.querySelector('.chat-box');
-      if (chatBox) {
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
+// 向后端发送消息并获取回复
+const fetchResponse = async (message: string) => {
+  try {
+    const response = await fetch(`/sse/chat/{chatId}`, { // 发送到后端的路径
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message }) // 发送消息的内容
+    })
+    const data = await response.json()
+    if (data.message) {
+      messages.value.push(data.message) // 将后端返回的消息添加到数组中
+      scrollToBottom() // 每次收到消息都滚动到底部
     }
-  });
-});
+  } catch (error) {
+    console.error('Error fetching response:', error)
+  }
+}
+
+// 滚动到底部的方法
+const scrollToBottom = () => {
+  const chatContainer = document.querySelector('.chat-container')
+  if (chatContainer) {
+    chatContainer.scrollTop = chatContainer.scrollHeight
+  }
+}
+
+// 监听消息数组的变化，自动滚动到底部
+onMounted(() => {
+  scrollToBottom();
+  watch(messages, () => {
+    scrollToBottom() // 每次更新消息都滚动到底部
+  })
+})
 </script>
