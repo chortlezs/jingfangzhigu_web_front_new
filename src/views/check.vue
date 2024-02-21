@@ -16,7 +16,7 @@ export default {
     async check () {
       //连接后端
       try {
-        await this.$store.dispatch('login', {
+        const response = await axios.post('/user/smsLogin', {
           username: this.username,
           checknumber: this.checknumber
         })

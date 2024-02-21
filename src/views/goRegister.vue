@@ -46,12 +46,13 @@ export default {
   methods: {
     async register () {
       try {
-        await this.$store.dispatch('register', {
+        // 请根据你的后端接口调整URL和请求参数
+        const response = await axios.post('/user/register', {
           username: this.username,
           check: this.check,
           password: this.password,
           re_password: this.re_password
-        })
+        });
         this.$router.push('/chat')
       } catch (error) {
         this.error = error.response.data.message
