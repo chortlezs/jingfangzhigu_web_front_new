@@ -8,6 +8,7 @@
                 <h4 >—您的私人AI中医诊疗助手—</h4>
             </el-row>
 
+            <!-- 中间部分内容 -->
             <el-row class="content" id="content">
                 <el-row :gutter="40" class="custom-row">
                     <el-col :xs="6" :sm="8" :md="10" :lg="12" :xl="14" >
@@ -46,14 +47,8 @@
                 <p style="margin:0 20px;font-size: 14px;">你可以问我：</p>
                 <div class="content22" style="text-align: left;">
                     <el-button
-                    v-for="button in buttons"
-                    :key="button.text"
-                    type=""
-                    text
-                    bg
-                    style="text-align: left;"
-                    >{{ button.text }}</el-button
-                    >
+                    v-for="button in buttons" :key="button.text" type="" text bg style="text-align: left;">{{ button.text }}
+                    </el-button>
                 </div>
             </el-row>
         </el-row>
@@ -61,7 +56,7 @@
 
        <!-- 聊天框 -->
        <div v-if="showChatBox" class="chat-container" ref="chatContainer" style="position: fixed; top: 80px; right: 0; padding: 10px; display: flex; flex-direction: column; align-items: flex-end; max-height: 56%; overflow-y: scroll;">
-    <!-- 对话框 -->
+            <!-- 对话框 -->
             <div class="chat-box" v-for="(msg, index) in messages" :key="index" style="display: flex; align-items: center; margin-bottom: 10px;">
             <div class="bubble" :class="{ 'last-message': index === messages.length - 1 }" style="background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
                 {{ msg }}
@@ -95,7 +90,7 @@
                             placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
                         />
                         <div class="button2">
-                            <el-button type="primary" :icon="Microphone" round />
+                            <el-button type="primary" :icon="Microphone" round @click="startRecording" />
                             <el-button type="primary" :icon="Position" @click="sendMessage" round />
                         </div>
 
@@ -180,8 +175,13 @@
 
 
 <script setup lang="ts">
-import { Search,Edit,Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/icons-vue'
-const input2 = ref('')
+declare var webkitSpeechRecognition: any;
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+  }
+}
+import { Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/icons-vue'
 import { Monitor,Camera } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
 import { ref, onMounted, watch } from 'vue'
@@ -205,15 +205,39 @@ const showChatBox = ref(false) // 控制是否展示对话框部分的状态
     
 const sendMessage = () => {
   if (inputMessage.value.trim() !== '') {
-    console.log('Sending message:', inputMessage.value)
-    messages.value.push(inputMessage.value) // 将消息添加到数组中
-    inputMessage.value = '' // 清空输入框内容
-    showChatBox.value = true // 显示对话框部分
-    fetchResponse(inputMessage.value) // 向后端发送消息并获取回复
-    // 滚动
+    messages.value.push(inputMessage.value)
+    inputMessage.value = ''
+    showChatBox.value = true
+    fetchResponse(inputMessage.value)
     scrollToBottom();
   }
 }
+
+
+const recognition = new webkitSpeechRecognition();
+recognition.lang = "zh-CN";
+const recognitionActive = ref(false);
+
+function startRecording() {
+  if (!recognitionActive.value) {
+    recognition.start();
+    recognitionActive.value = true;
+  } else {
+    recognition.stop();
+    recognitionActive.value = false;
+  }
+}
+onMounted(() => {
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  
+  recognition.onresult = (event: any) => {
+    const transcript = Array.from(event.results)
+      .map(result => result[0].transcript)
+      .join('');
+    inputMessage.value = transcript; // 将语音识别结果赋值给输入框文本
+  };
+});
 
 // 向后端发送消息并获取回复
 const fetchResponse = async (message: string) => {
