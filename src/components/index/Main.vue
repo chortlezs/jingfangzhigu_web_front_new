@@ -135,9 +135,20 @@
                             placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
                         />
                         <div class="button2">
-                            <el-button type="primary" :icon="Microphone" round />
-                            <el-button type="primary" :icon="Position"  round />
+                        <el-upload
+                            class="upload-demo"
+                            :before-upload="handleUpload"
+                            :action="'/sse/tongue/{chatId}'"
+                            :on-success="handleSuccess"
+                            :on-error="handleError"
+                            :limit="1"
+                            :accept="'image/*'"
+                            :show-file-list="false">
+                            <el-button type="primary" :icon="Camera" round />
+                            </el-upload>                   
+                            <el-button type="primary" :icon="Position" round />
                         </div>
+                        
                     </template>
                 </el-tab-pane>
                 <el-tab-pane name="forth">
@@ -175,23 +186,19 @@
 
 
 <script setup lang="ts">
-declare var webkitSpeechRecognition: any;
-declare global {
-  interface Window {
-    SpeechRecognition: any;
-  }
-}
 import { Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/icons-vue'
 import { Monitor,Camera } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue';
+
+declare var navigator: any;
+declare var webkitSpeechRecognition: any;
 
 const buttons = [
   { text: '我最近头痛伴着流鼻涕,该吃什么药?' },
   { text: '最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？' },
   { text: '胃肠炎可以吃柚子吗？' },
 ] as const
-
 
 const textarea = ref('')
 const activeName = ref('first')
@@ -203,17 +210,7 @@ const inputMessage = ref('')
 const messages = ref<string[]>([]) // 消息数组的类型为字符串数组
 const showChatBox = ref(false) // 控制是否展示对话框部分的状态
     
-const sendMessage = () => {
-  if (inputMessage.value.trim() !== '') {
-    messages.value.push(inputMessage.value)
-    inputMessage.value = ''
-    showChatBox.value = true
-    fetchResponse(inputMessage.value)
-    scrollToBottom();
-  }
-}
-
-
+// 语音转文字功能
 const recognition = new webkitSpeechRecognition();
 recognition.lang = "zh-CN";
 const recognitionActive = ref(false);
@@ -258,7 +255,16 @@ const fetchResponse = async (message: string) => {
     console.error('Error fetching response:', error)
   }
 }
-
+// 点击发送功能
+const sendMessage = () => {
+  if (inputMessage.value.trim() !== '') {
+    messages.value.push(inputMessage.value)
+    inputMessage.value = ''
+    showChatBox.value = true
+    fetchResponse(inputMessage.value)
+    scrollToBottom();
+  }
+}
 // 滚动到底部的方法
 const scrollToBottom = () => {
   const chatContainer = document.querySelector('.chat-container')
@@ -274,4 +280,20 @@ onMounted(() => {
     scrollToBottom() // 每次更新消息都滚动到底部
   })
 })
+
+const handleUpload = (file: any) => {
+  console.log('111', file);
+  return true; // 返回 true 表示允许上传
+}
+
+// TODO:处理上传成功有问题
+const handleSuccess = (response: any, file: any) => {
+  console.log('处理上传成功:', response, file);
+  // 将图片路径或数据放入 textarea 中
+  textarea.value = response.url;
+}
+
+const handleError = (error: any, file: any) => {
+  console.error('处理上传失败:', error, file); 
+}
 </script>
