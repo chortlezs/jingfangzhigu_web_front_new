@@ -105,7 +105,7 @@
                     </template>
                     <template class="bottom">
                         <el-input
-                            v-model="textarea"
+                            v-model="inputMessage"
                             :rows="4"
                             :resize="'none'"
                             :autosize="false"
@@ -114,7 +114,7 @@
                         />
                         <div class="button2">
                             <el-button type="primary" :icon="Microphone" round />
-                            <el-button type="primary" :icon="Position"  round />
+                            <el-button type="primary" :icon="Position" @click="sendMessage" round />
                         </div>
                     </template>
                 </el-tab-pane>
@@ -127,7 +127,7 @@
                     </template>
                     <template class="bottom">
                         <el-input
-                            v-model="textarea"
+                            v-model="inputMessage"
                             :rows="4"
                             type="textarea"
                             :resize="'none'"
@@ -138,7 +138,7 @@
                         <el-upload
                             class="upload-demo"
                             :before-upload="handleUpload"
-                            :action="'/sse/tongue/{chatId}'"
+                            :action="'http://127.0.0.1:8001/sse/tongue/01886235-1249-446b-8df2-b0a9f2d2c326'"
                             :on-success="handleSuccess"
                             :on-error="handleError"
                             :limit="1"
@@ -146,7 +146,7 @@
                             :show-file-list="false">
                             <el-button type="primary" :icon="Camera" round />
                             </el-upload>                   
-                            <el-button type="primary" :icon="Position" round />
+                            <el-button type="primary" :icon="Position" @click="sendMessage" round />
                         </div>
                         
                     </template>
@@ -160,7 +160,7 @@
                     </template>
                     <template class="bottom">
                         <el-input
-                            v-model="textarea"
+                            v-model="inputMessage"
                             :rows="4"
                             type="textarea"
                             :resize="'none'"
@@ -169,7 +169,7 @@
                         />
                         <div class="button2">
                             <el-button type="primary" :icon="Microphone" round />
-                            <el-button type="primary" :icon="Position"  round />
+                            <el-button type="primary" :icon="Position" @click="sendMessage" round />
                         </div>
                     </template>
                 </el-tab-pane>
@@ -190,8 +190,7 @@ import { Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/ic
 import { Monitor,Camera } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
 import { ref, onMounted, watch } from 'vue';
-
-declare var navigator: any;
+import axios from 'axios';
 declare var webkitSpeechRecognition: any;
 
 const buttons = [
@@ -209,7 +208,8 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
 const inputMessage = ref('')
 const messages = ref<string[]>([]) // 消息数组的类型为字符串数组
 const showChatBox = ref(false) // 控制是否展示对话框部分的状态
-    
+
+
 // 语音转文字功能
 const recognition = new webkitSpeechRecognition();
 recognition.lang = "zh-CN";
@@ -224,7 +224,24 @@ function startRecording() {
     recognitionActive.value = false;
   }
 }
+
+// 订阅请求
+const subscribeToChat = () => {
+  const eventSource = new EventSource(`http://59.110.149.33:8001/sse/?JSESSIONID=9FEB5FF39E86FAD6227D6BE241EEE7C1`);
+  eventSource.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.message) {
+      messages.value.push(data.message);
+      scrollToBottom();
+      console.log('后端数据已经返回');
+    }
+  };
+  eventSource.onerror = (error) => {
+    console.error('订阅错误', error);
+  };
+};
 onMounted(() => {
+  subscribeToChat();
   recognition.continuous = true;
   recognition.interimResults = true;
   
@@ -236,25 +253,31 @@ onMounted(() => {
   };
 });
 
+// document.cookie = `JSESSIONID=9FEB5FF39E86FAD6227D6BE241EEE7C1;`
 // 向后端发送消息并获取回复
 const fetchResponse = async (message: string) => {
   try {
-    const response = await fetch(`/sse/chat/{chatId}`, { // 发送到后端的路径
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ message }) // 发送消息的内容
-    })
-    const data = await response.json()
+    const response = await axios.post(
+      'http://59.110.149.33:8001/sse/chat/{1aef6451-2f0e-48cf-b267-b3a31b828839}',
+      { message },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': 'JSESSIONID=9FEB5FF39E86FAD6227D6BE241EEE7C1'
+        }
+      }
+    );
+
+    const data = response.data;
     if (data.message) {
-      messages.value.push(data.message) // 将后端返回的消息添加到数组中
-      scrollToBottom() // 每次收到消息都滚动到底部
+      messages.value.push(data.message);
+      scrollToBottom();
+      console.log('后端数据已经返回');
     }
   } catch (error) {
-    console.error('Error fetching response:', error)
+    console.error(error);
   }
-}
+};
 // 点击发送功能
 const sendMessage = () => {
   if (inputMessage.value.trim() !== '') {
@@ -296,4 +319,6 @@ const handleSuccess = (response: any, file: any) => {
 const handleError = (error: any, file: any) => {
   console.error('处理上传失败:', error, file); 
 }
+
+
 </script>
