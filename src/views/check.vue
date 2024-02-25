@@ -13,8 +13,21 @@ export default {
     }
   },
   methods: {
+    sendVerificationCode() {
+      const params = {
+         username: this.username
+      };
+      
+      // 发起POST请求到服务器
+      axios.post('/user/sendSms', params)
+        .then(response => {
+           console.log('成功发送验证码');
+        })
+        .catch(error => {
+           console.error('发送验证码失败', error);
+        });
+   },
     async check () {
-      //连接后端
       try {
         const response = await axios.post('/user/smsLogin', {
           username: this.username,
@@ -37,7 +50,7 @@ export default {
     <h1>欢迎回来！</h1>
     <p>验证码登录</p >
     <input type="text" placeholder="请输入您的账号..." v-model="username" required />
-    <button class="btn-second" onclick="location.href='somethingelse.html'">获取验证码</button>
+    <button class="btn-second" @click="sendVerificationCode">获取验证码</button>
     <br>
     <input type="password" placeholder="请输入验证码..." v-model="checknumber" required />
     <br>

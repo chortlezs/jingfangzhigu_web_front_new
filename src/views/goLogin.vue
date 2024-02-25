@@ -43,7 +43,6 @@ export default {
         // 登录成功，跳转到聊天页面
         this.$router.push('/chat');
       } catch (error) {
-        // 处理登录失败的情况
         if (error.response) {
           this.error = error.response.data.message;
         } else {
