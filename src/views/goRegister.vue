@@ -10,7 +10,7 @@
     <p>请输入您的账号和密码</p >
     <div>
     <input type="text" placeholder="请输入您的账号..." v-model="username" required />
-    <button class="btn-second" onclick="location.href='somethingelse.html'">获取验证码</button>
+    <button class="btn-second" @click="sendVerificationCode">获取验证码</button>
     </div>
     <div>
     <input type="identify" placeholder="请输入验证码..." v-model="check" required />
@@ -44,14 +44,29 @@ export default {
     }
   },
   methods: {
+    sendVerificationCode() {
+      const params = {
+         username: this.username
+      };
+      
+      // 发起POST请求到服务器
+      axios.post('/user/sendSms', params)
+        .then(response => {
+           console.log('成功发送验证码');
+        })
+        .catch(error => {
+           console.error('发送验证码失败', error);
+        });
+   },
     async register () {
       try {
-        await this.$store.dispatch('register', {
+        // 请根据你的后端接口调整URL和请求参数
+        const response = await axios.post('/user/register', {
           username: this.username,
           check: this.check,
           password: this.password,
           re_password: this.re_password
-        })
+        });
         this.$router.push('/chat')
       } catch (error) {
         this.error = error.response.data.message

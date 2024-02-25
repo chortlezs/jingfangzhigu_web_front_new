@@ -9,7 +9,8 @@ import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 export default defineConfig({
   server:{
     open:true,
-    port:8088
+    port:8088,
+    host:'0.0.0.0'
   },
   resolve:{
     alias:{
@@ -20,5 +21,5 @@ export default defineConfig({
     vue(),
     Components({ resolvers: [ElementPlusResolver()],}),
     Components({ resolvers: AntDesignVueResolver() }),
-  ],
+  ], 
 })
