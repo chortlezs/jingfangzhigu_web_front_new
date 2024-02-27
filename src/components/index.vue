@@ -3,7 +3,7 @@ import {ref} from 'vue'
 import Aside from './index/Aside.vue'
 import Main from './index/Main.vue'
 import { useRouter } from 'vue-router';
-let title = ref('首页111')
+
 const router = useRouter();
 function goPersonal(){
     router.push({path:'/personal'})
@@ -11,6 +11,13 @@ function goPersonal(){
 function goUser(){
     router.push({path:'/user'})
 }
+const dialogues = ref([]);
+
+// 处理子组件发出的自定义事件
+const handleMessagesUpdated = (data) => {
+  dialogues.value = data;
+  console.log(data);
+};
 </script>
 
 <template>
@@ -39,8 +46,8 @@ function goUser(){
         </div>
       </el-header>
       <el-container class="leftandright">
-        <Aside />
-        <Main />
+        <Aside @messages-updated="handleMessagesUpdated"/>
+        <Main :dialogues="dialogues"/>
       </el-container>
     </el-container>
   </template>

@@ -199,10 +199,15 @@
 import { Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/icons-vue'
 import { Monitor,Camera } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
-import { ref, onMounted, watch, onUnmounted, reactive, nextTick } from 'vue';
+import { ref, onMounted, watch, onUnmounted, reactive, nextTick, PropType } from 'vue';
 import axios from 'axios';
 declare var webkitSpeechRecognition: any;
-
+// const props = defineProps({
+//   historyMessages: {
+//     type: Array as PropType<{ roleId: string, content: string }[]>,
+//     required: true
+//   }
+// });
 const buttons = [
   { text: '我最近头痛伴着流鼻涕,该吃什么药?' },
   { text: '最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？' },
@@ -264,8 +269,6 @@ const subscribeToChat = () => {
   onUnmounted(() => {
     eventSource.close();
   });
-
-
 };
 
 onMounted(() => {
@@ -280,7 +283,7 @@ onMounted(() => {
   };
 });
 const chatId = generateUUID()
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkwNDU3Njl9.dgB9mjUQlkv_6lALQZmnq6LeGhnpeluCkjSvIRh4EDI"
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkxMjU3NDF9.hNN7QZEWI7Jr-JXU7Qhkexd0arlwYSn8e4Gfbf1lmpg"
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
   try {
