@@ -73,10 +73,12 @@
     </el-menu>
     </el-row>
   </el-aside>
+    <!-- <Main :dialogues="dialogues" /> -->
 </template>
 
-<script lang="ts" setup>
-  import { ref } from 'vue'
+<script lang="ts"  setup>
+  import { inject, ref } from 'vue'
+  import Main from './Main.vue'; 
   import { Search } from '@element-plus/icons-vue'
   import axios from 'axios';
   const input2 = ref('')
@@ -88,7 +90,7 @@ const handleClose = (key: string, keyPath: string[]) => {
 }
 
   const dialogues = ref([])
-
+  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkwNDU3Njl9.dgB9mjUQlkv_6lALQZmnq6LeGhnpeluCkjSvIRh4EDI";
   // 获取所有对话
   const getAllDialogues = async () => {
     try {
@@ -96,10 +98,13 @@ const handleClose = (key: string, keyPath: string[]) => {
         withCredentials: true,
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'Cookie': 'JSESSIONID=9FEB5FF39E86FAD6227D6BE241EEE7C1'
+          "Authorization": token
         }
       });
-      dialogues.value = response.data.data;
+      // 将聊天的数据返回
+      dialogues.value = response.data.chats;
+      const dialoguesData = inject('dialogues');
+      return {dialoguesData}
     } catch (error) {
       console.error('获取所有对话失败:', error);
     }
@@ -110,10 +115,6 @@ const handleClose = (key: string, keyPath: string[]) => {
     try {
       const response = await axios.get(`http://59.110.149.33:8001/chat/${chatId}`, {
         withCredentials: true,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Cookie': 'JSESSIONID=9FEB5FF39E86FAD6227D6BE241EEE7C1'
-        }
       });
       return response.data; // 返回获取到的消息数据
     } catch (error) {
@@ -125,31 +126,34 @@ const handleClose = (key: string, keyPath: string[]) => {
   //调用所有对话的函数
   getAllDialogues();
 
-  const chatId = '1aef6451-2f0e-48cf-b267-b3a31b828839';
+  // const chatId = '1aef6451-2f0e-48cf-b267-b3a31b828839';
 
 // 获取当前id的所有消息
-  getMessagesByChatId(chatId)
-    .then(messages => {
-      // 将获取到的消息更新到 dialogues 中
-      dialogues.value = messages;
-    })
-    .catch(error => {
-      console.error('获取消息失败:', error);
-    });
+  // getMessagesByChatId(chatId)
+  //   .then(messages => {
+  //     // 将获取到的消息更新到 dialogues 中
+  //     dialogues.value = messages;
+  //   })
+  //   .catch(error => {
+  //     console.error('获取消息失败:', error);
+  //   });
 
  // 新建一个对话
  const createNewChat = async () => {
-    try {
-      const response = await axios.post('http://59.110.149.33:8001/chat/', {}, {
-        withCredentials: true,
-      });
-      // 新建对话成功后刷新对话列表
-      getAllDialogues();
-      console.log('新建对话成功:', response.data);
-    } catch (error) {
-      console.error('新建对话失败:', error);
-    }
-  };
+  try {
+    const newChatId = generateUUID();
+    const response = await axios.post('http://59.110.149.33:8001/chat/', {
+      chatId: newChatId,
+    }, {
+      withCredentials: true,
+    });
+    // 新建对话成功后刷新对话列表
+    getAllDialogues();
+    console.log('新建对话成功:', response.data);
+  } catch (error) {
+    console.error('新建对话失败:', error);
+  }
+};
   // 删除某一个对话
   const deleteChat = async (chatId) => {
     try {
@@ -168,6 +172,12 @@ const handleClose = (key: string, keyPath: string[]) => {
     }
   };
 
+  function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
 </script> 
 
 <style src="@/assets/aside.css" >

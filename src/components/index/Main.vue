@@ -1,6 +1,6 @@
 <template>
     <el-main class="main">
-     <div style="height: 420px;">
+     <div class="scroll" style="height: 420px; overflow: hidden; overflow-y: scroll;">
         <div v-if="!showChatBox">
         <el-row class="main">
             <el-row class="main-header1" id="main-header1">
@@ -53,23 +53,35 @@
             </el-row>
         </el-row>
        </div>
-
-       <!-- 聊天框 -->
-       <div v-if="showChatBox" class="chat-container" ref="chatContainer" style="position: fixed; top: 80px; right: 0; padding: 10px; display: flex; flex-direction: column; align-items: flex-end; max-height: 56%; overflow-y: scroll;">
-            <!-- 对话框 -->
-            <div class="chat-box" v-for="(msg, index) in messages" :key="index" style="display: flex; align-items: center; margin-bottom: 10px;">
-            <div class="bubble" :class="{ 'last-message': index === messages.length - 1 }" style="background-color: #fff; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
-                {{ msg }}
-            </div>
-            <!-- 头像 -->
-            <div class="avatar">
-                <img src="@/assets/chat_pictures/icon.png" alt="Avatar" style="width: 40px; height: 40px; border-radius: 30%;">
-            </div>
-            </div>
-        </div>
-
-     </div>
-        
+    
+      <!-- 聊天框 -->
+      <div v-if="showChatBox" v-for="(msg, index) in messages" :key="index"  class="chat-container" ref="chatContainer" style=" padding: 10px; display: flex; flex-direction: column; align-items: center; max-height: 66%;">
+          <!-- 对话框 -->
+          <div  v-if="msg.roleId === '1'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-left: auto;">
+              <!-- 用户消息 -->
+              <div class="chat-box" style="display: flex; justify-content: flex-end; align-items: center;" >
+                  <div class="bubble user-bubble last-message" style="background-color: #DCF8C6; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
+                      {{ msg.content }}
+                  </div>
+                  <div class="avatar">
+                      <img src="@/assets/chat_pictures/icon.png" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+                  </div>
+              </div>
+          </div>
+          <div v-else-if="msg.roleId === '2'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-right: auto;">
+              <!-- 助手消息 -->
+              <div  class="chat-box" style="display: flex; justify-content: flex-start; margin-bottom: 10px; align-items: center;">
+                  <div class="avatar">
+                      <img src="@/assets/chat_pictures/icon.png" style="width: 40px; height: 40px; border-radius: 50%;">
+                  </div>
+                  <div class="bubble assistant-bubble last-message" style="background-color: #F2F2F2; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
+                      {{ msg.content }}
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+  
         <!-- 底部输入框 -->
         <el-row class="foot">
             <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" :default-active="0">
@@ -138,12 +150,13 @@
                         <el-upload
                             class="upload-demo"
                             :before-upload="handleUpload"
-                            :action="'http://127.0.0.1:8001/sse/tongue/01886235-1249-446b-8df2-b0a9f2d2c326'"
+                            :action="'http://59.110.149.33:8001/file/tongueImg'"
                             :on-success="handleSuccess"
                             :on-error="handleError"
                             :limit="1"
                             :accept="'image/*'"
-                            :show-file-list="false">
+                            :show-file-list="false"
+                            :http-request="uploadImage">
                             <el-button type="primary" :icon="Camera" round />
                             </el-upload>                   
                             <el-button type="primary" :icon="Position" @click="sendMessage" round />
@@ -175,8 +188,6 @@
                 </el-tab-pane>
             </el-tabs>
         </el-row>
-   
-
     </el-main>
 </template>
 
@@ -184,12 +195,11 @@
 
 </style>
 
-
 <script setup lang="ts">
 import { Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/icons-vue'
 import { Monitor,Camera } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, onUnmounted, reactive, nextTick } from 'vue';
 import axios from 'axios';
 declare var webkitSpeechRecognition: any;
 
@@ -206,10 +216,12 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
 const inputMessage = ref('')
-const messages = ref<string[]>([]) // 消息数组的类型为字符串数组
+
 const showChatBox = ref(false) // 控制是否展示对话框部分的状态
-
-
+const messages = reactive([
+      { roleId: "1", content: "历史对话1" },
+      { roleId: "2", content: "历史对话2历史对话2历史对话2" }
+    ]);
 // 语音转文字功能
 const recognition = new webkitSpeechRecognition();
 recognition.lang = "zh-CN";
@@ -226,25 +238,40 @@ function startRecording() {
 }
 
 // 订阅请求
+let messageContent = ''
 const subscribeToChat = () => {
-  const eventSource = new EventSource(`http://59.110.149.33:8001/sse/?JSESSIONID=9FEB5FF39E86FAD6227D6BE241EEE7C1`);
+  const eventSource = new EventSource(`http://59.110.149.33:8001/sse/${chatId}`);
   eventSource.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (data.message) {
-      messages.value.push(data.message);
-      scrollToBottom();
-      console.log('后端数据已经返回');
+  let data = JSON.parse(event.data);
+  if (data["data"] && data["data"]["delta"]) {
+      messageContent += data["data"]["delta"];
     }
-  };
+  if (data["event"] === "end") {
+      console.log(111111);
+      const newMessage = {
+        roleId: "2",
+        content: messageContent
+      };
+      messages.push(newMessage);    
+      messageContent = '';
+      scrollToBottom();
+    }
+};
   eventSource.onerror = (error) => {
     console.error('订阅错误', error);
-  };
 };
+  // 在组件销毁或页面离开时关闭连接
+  onUnmounted(() => {
+    eventSource.close();
+  });
+
+
+};
+
 onMounted(() => {
-  subscribeToChat();
+  
   recognition.continuous = true;
   recognition.interimResults = true;
-  
   recognition.onresult = (event: any) => {
     const transcript = Array.from(event.results)
       .map(result => result[0].transcript)
@@ -252,61 +279,69 @@ onMounted(() => {
     inputMessage.value = transcript; // 将语音识别结果赋值给输入框文本
   };
 });
-
-// document.cookie = `JSESSIONID=9FEB5FF39E86FAD6227D6BE241EEE7C1;`
-// 向后端发送消息并获取回复
-const fetchResponse = async (message: string) => {
+const chatId = generateUUID()
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkwNDU3Njl9.dgB9mjUQlkv_6lALQZmnq6LeGhnpeluCkjSvIRh4EDI"
+// 发送问题获取响应
+const fetchResponse = async (requestData) => {
   try {
     const response = await axios.post(
-      'http://59.110.149.33:8001/sse/chat/{1aef6451-2f0e-48cf-b267-b3a31b828839}',
-      { message },
+      `http://59.110.149.33:8001/sse/chat/${chatId}`,
+      requestData,
       {
         headers: {
           'Content-Type': 'application/json',
-          'Cookie': 'JSESSIONID=9FEB5FF39E86FAD6227D6BE241EEE7C1'
+          'Authorization': token
         }
       }
     );
-
-    const data = response.data;
-    if (data.message) {
-      messages.value.push(data.message);
-      scrollToBottom();
-      console.log('后端数据已经返回');
-    }
   } catch (error) {
     console.error(error);
   }
 };
-// 点击发送功能
+
 const sendMessage = () => {
   if (inputMessage.value.trim() !== '') {
-    messages.value.push(inputMessage.value)
-    inputMessage.value = ''
-    showChatBox.value = true
-    fetchResponse(inputMessage.value)
-    scrollToBottom();
+    const requestDataToSend = {
+      messageId: generateUUID(),
+      text: inputMessage.value, // 发送用户输入的文本
+      messages: [ { roleId: "1", content: inputMessage.value },
+      { roleId: "2", content: '1' }],
+      historyCounter: 2,
+    };
+    subscribeToChat();
+    fetchResponse(requestDataToSend); // 发送动态创建的请求数据
+    messages.push({
+      roleId: '1',
+      content: inputMessage.value
+    }); // 将用户输入的消息添加到本地消息数组
+    inputMessage.value = ''; // 清空输入框
+    showChatBox.value = true; // 显示聊天框
   }
+}
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
 }
 // 滚动到底部的方法
 const scrollToBottom = () => {
-  const chatContainer = document.querySelector('.chat-container')
+  const chatContainer = document.querySelector('.scroll')
   if (chatContainer) {
     chatContainer.scrollTop = chatContainer.scrollHeight
   }
 }
-
 // 监听消息数组的变化，自动滚动到底部
 onMounted(() => {
   scrollToBottom();
-  watch(messages, () => {
-    scrollToBottom() // 每次更新消息都滚动到底部
-  })
+  watch(messages, async () => {
+    await nextTick(); // 等待DOM更新
+    scrollToBottom(); // 现在滚动到底部
+  });
 })
 
 const handleUpload = (file: any) => {
-  console.log('111', file);
-  return true; // 返回 true 表示允许上传
+  return true;
 }
 
 // TODO:处理上传成功有问题
@@ -319,6 +354,14 @@ const handleSuccess = (response: any, file: any) => {
 const handleError = (error: any, file: any) => {
   console.error('处理上传失败:', error, file); 
 }
-
+const  uploadImage = (request) => {
+    const formData = new FormData();
+    formData.append('img', request.file);
+    axios.post(request.action, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    })
+}
 
 </script>
