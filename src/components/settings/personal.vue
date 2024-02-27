@@ -124,7 +124,6 @@ const handleMenuClick = (key) => {
         </div>
         <div class="separator"></div>
         <div class="user-information">
-          
           <div class="user-basic">
             <div class="list">
               <span class="sub-titie">头像</span>
@@ -206,6 +205,10 @@ const handleMenuClick = (key) => {
             </div>
           </div>
         </div>
+        <div class="imformation-change"> 
+          <el-button type="primary">更新信息</el-button>
+        </div>
+       
       </div>
 
     </div>
@@ -253,7 +256,7 @@ body {
 	color: white;
   margin-right: -40px;
   padding: 2px;
-  background-color: rgb(83, 161, 202);
+  background-color:rgba(255, 255,255, 0.2);
   border-radius: 5px;
   margin-top: 30px;
 }
@@ -293,7 +296,7 @@ body {
 
 .sidebar {
   width: 200px;
-  background-color: #60a7e9;
+  background-color: #689AFB;
   padding: 20px;
   height: 500px;
   border-radius: 18px;
@@ -306,6 +309,8 @@ body {
   margin-left: 20px;
   border-radius: 18px;
   background-color: #fff;
+  display: flex;
+  flex-direction: column;
 }
 .user-settings {
 	height: 70px;
@@ -321,7 +326,7 @@ body {
 .separator {
   height: 2px;
   width:100%;
-  background: linear-gradient(to right, #2191f9, #dadfe1); /* 渐变效果 */
+  background: linear-gradient(to right, #689AFB, #dadfe1); /* 渐变效果 */
 }
 .user-information{
   display: flex;
@@ -373,5 +378,11 @@ body {
   width: 80px;
   height: 80px;
   text-align: center;
+}
+.imformation-change{
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+  margin-bottom: 30px;
 }
 </style>
