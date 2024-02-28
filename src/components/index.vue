@@ -16,7 +16,7 @@ const dialogues = ref([]);
 // 处理子组件发出的自定义事件
 const handleMessagesUpdated = (data) => {
   dialogues.value = data;
-  console.log(data);
+  // console.log(data);
 };
 </script>
 

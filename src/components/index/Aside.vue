@@ -98,7 +98,7 @@ const handleClose = (key: string, keyPath: string[]) => {
     .then(data => {
       // 将获取到的消息更新到 dialogues 中
       // dialogues.value = data.message;
-      console.log(dialogues);
+      // console.log(dialogues);
       
     })
     .catch(error => {

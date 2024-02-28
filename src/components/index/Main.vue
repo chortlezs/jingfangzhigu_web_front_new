@@ -68,14 +68,14 @@
                   </div>
               </div>
           </div>
-          <div v-else-if="msg.roleId === '2'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-right: auto;">
+          <div v-if="msg.roleId === '2'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-right: auto;">
               <!-- 助手消息 -->
               <div  class="chat-box" style="display: flex; justify-content: flex-start; margin-bottom: 10px; align-items: center;">
                   <div class="avatar">
                       <img src="@/assets/chat_pictures/icon.png" style="width: 40px; height: 40px; border-radius: 50%;">
                   </div>
                   <div class="bubble assistant-bubble last-message" style="background-color: #F2F2F2; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
-                      {{ msg.content }}
+                      {{ msg.content? msg.content : messageContent }}
                   </div>
               </div>
           </div>
@@ -202,12 +202,7 @@ import type { TabsPaneContext } from 'element-plus'
 import { ref, onMounted, watch, onUnmounted, reactive, nextTick, PropType } from 'vue';
 import axios from 'axios';
 declare var webkitSpeechRecognition: any;
-// const props = defineProps({
-//   historyMessages: {
-//     type: Array as PropType<{ roleId: string, content: string }[]>,
-//     required: true
-//   }
-// });
+
 const buttons = [
   { text: '我最近头痛伴着流鼻涕,该吃什么药?' },
   { text: '最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？' },
@@ -221,7 +216,6 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
 const inputMessage = ref('')
-
 const showChatBox = ref(false) // 控制是否展示对话框部分的状态
 const messages = reactive([
       { roleId: "1", content: "历史对话1" },
@@ -241,38 +235,7 @@ function startRecording() {
     recognitionActive.value = false;
   }
 }
-
-// 订阅请求
-let messageContent = ''
-const subscribeToChat = () => {
-  const eventSource = new EventSource(`http://59.110.149.33:8001/sse/${chatId}`);
-  eventSource.onmessage = (event) => {
-  let data = JSON.parse(event.data);
-  if (data["data"] && data["data"]["delta"]) {
-      messageContent += data["data"]["delta"];
-    }
-  if (data["event"] === "end") {
-      console.log(111111);
-      const newMessage = {
-        roleId: "2",
-        content: messageContent
-      };
-      messages.push(newMessage);    
-      messageContent = '';
-      scrollToBottom();
-    }
-};
-  eventSource.onerror = (error) => {
-    console.error('订阅错误', error);
-};
-  // 在组件销毁或页面离开时关闭连接
-  onUnmounted(() => {
-    eventSource.close();
-  });
-};
-
 onMounted(() => {
-  
   recognition.continuous = true;
   recognition.interimResults = true;
   recognition.onresult = (event: any) => {
@@ -282,6 +245,61 @@ onMounted(() => {
     inputMessage.value = transcript; // 将语音识别结果赋值给输入框文本
   };
 });
+
+// 订阅请求
+let messageContent = ref('')
+const subscribeToChat = () => {
+  const eventSource = new EventSource(`http://59.110.149.33:8001/sse/${chatId}`);
+  eventSource.addEventListener('message', function(event) {
+  let data = JSON.parse(event.data);
+ 
+    if (data["data"] && data["data"]["delta"]) {
+      messageContent.value += data["data"]["delta"];
+    }
+  let flag = data["data"]["flag"];
+  console.log(flag,'event');
+  if (flag) {
+    
+  }
+  
+});
+  eventSource.addEventListener('end', function(event) {
+    let endData = JSON.parse(event.data);
+    if (messageContent.value) {
+      let length=messages.length-1;
+      messages[length].content = endData['data']['totalDiagnosis']
+      messageContent.value = ''; // 重置累积的消息内容
+      scrollToBottom();
+    }
+  });
+
+  // 在组件销毁或页面离开时关闭连接
+  onUnmounted(() => {
+    eventSource.close();
+  });
+};
+const sendMessage = () => {
+  if (inputMessage.value.trim() !== '') {
+    const requestDataToSend = {
+      messageId: generateUUID(),
+      text: inputMessage.value, // 发送用户输入的文本
+      messages: [ { roleId: "1", content: inputMessage.value },
+      { roleId: "2", content: '1' }],
+      historyCounter: 2,
+    };
+    subscribeToChat();
+    fetchResponse(requestDataToSend); // 发送动态创建的请求数据
+    messages.push({
+      roleId: '1',
+      content: inputMessage.value
+    },{
+      roleId: '2',
+      content: ''
+    }); // 将用户输入的消息添加到本地消息数组
+    inputMessage.value = ''; // 清空输入框
+    showChatBox.value = true; // 显示聊天框
+  }
+}
 const chatId = generateUUID()
 const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkxMjU3NDF9.hNN7QZEWI7Jr-JXU7Qhkexd0arlwYSn8e4Gfbf1lmpg"
 // 发送问题获取响应
@@ -302,25 +320,7 @@ const fetchResponse = async (requestData) => {
   }
 };
 
-const sendMessage = () => {
-  if (inputMessage.value.trim() !== '') {
-    const requestDataToSend = {
-      messageId: generateUUID(),
-      text: inputMessage.value, // 发送用户输入的文本
-      messages: [ { roleId: "1", content: inputMessage.value },
-      { roleId: "2", content: '1' }],
-      historyCounter: 2,
-    };
-    subscribeToChat();
-    fetchResponse(requestDataToSend); // 发送动态创建的请求数据
-    messages.push({
-      roleId: '1',
-      content: inputMessage.value
-    }); // 将用户输入的消息添加到本地消息数组
-    inputMessage.value = ''; // 清空输入框
-    showChatBox.value = true; // 显示聊天框
-  }
-}
+
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
