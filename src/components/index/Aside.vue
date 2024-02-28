@@ -51,7 +51,7 @@ const handleClose = (key: string, keyPath: string[]) => {
 }
 
   let dialogues = ref([])
-  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkxMjU3NDF9.hNN7QZEWI7Jr-JXU7Qhkexd0arlwYSn8e4Gfbf1lmpg";
+  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyMDk2MDd9.TPgHXFztYDL_10zQOEwMmdFgw9r6pCLO52Q1cAd7TJ0";
   // 获取所有对话
   const getAllDialogues = async () => {
     try {
