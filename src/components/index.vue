@@ -11,11 +11,13 @@ function goPersonal(){
 function goUser(){
     router.push({path:'/user'})
 }
-const dialogues = ref([]);
+
+const mainRef = ref(null)
 
 // 处理子组件发出的自定义事件
 const handleMessagesUpdated = (data) => {
-  dialogues.value = data;
+  console.log('收到历史记录',data);
+  mainRef.value.updateMessage(data)
   console.log(data);
 };
 </script>
@@ -47,7 +49,7 @@ const handleMessagesUpdated = (data) => {
       </el-header>
       <el-container class="leftandright">
         <Aside @messages-updated="handleMessagesUpdated"/>
-        <Main :dialogues="dialogues"/>
+        <Main ref="mainRef"/>
       </el-container>
     </el-container>
   </template>

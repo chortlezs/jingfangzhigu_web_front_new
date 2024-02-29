@@ -57,7 +57,7 @@
       <!-- 聊天框 -->
       <div v-if="showChatBox" v-for="(msg, index) in messages" :key="index"  class="chat-container" ref="chatContainer" style=" padding: 10px; display: flex; flex-direction: column; align-items: center; max-height: 66%;">
           <!-- 对话框 -->
-          <div  v-if="msg.roleId === '1'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-left: auto;">
+          <div  v-if="msg.roleId === '1' || msg.roleId === 1" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-left: auto;">
               <!-- 用户消息 -->
               <div class="chat-box" style="display: flex; justify-content: flex-end; align-items: center;" >
                   <div class="bubble user-bubble last-message" style="background-color: #DCF8C6; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
@@ -68,7 +68,7 @@
                   </div>
               </div>
           </div>
-          <div v-else-if="msg.roleId === '2'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-right: auto;">
+          <div v-else-if="msg.roleId === '2' || msg.roleId === 2" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-right: auto;">
               <!-- 助手消息 -->
               <div  class="chat-box" style="display: flex; justify-content: flex-start; margin-bottom: 10px; align-items: center;">
                   <div class="avatar">
@@ -223,7 +223,7 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
 const inputMessage = ref('')
 
 const showChatBox = ref(false) // 控制是否展示对话框部分的状态
-const messages = reactive([
+const messages = ref([
       { roleId: "1", content: "历史对话1" },
       { roleId: "2", content: "历史对话2历史对话2历史对话2" }
     ]);
@@ -257,7 +257,7 @@ const subscribeToChat = () => {
         roleId: "2",
         content: messageContent
       };
-      messages.push(newMessage);    
+      messages.value = [...messages.value,...newMessage];    
       messageContent = '';
       scrollToBottom();
     }
@@ -283,7 +283,7 @@ onMounted(() => {
   };
 });
 const chatId = generateUUID()
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkxMjU3NDF9.hNN7QZEWI7Jr-JXU7Qhkexd0arlwYSn8e4Gfbf1lmpg"
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyMDk2MDd9.TPgHXFztYDL_10zQOEwMmdFgw9r6pCLO52Q1cAd7TJ0"
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
   try {
@@ -313,7 +313,7 @@ const sendMessage = () => {
     };
     subscribeToChat();
     fetchResponse(requestDataToSend); // 发送动态创建的请求数据
-    messages.push({
+    messages.value.push({
       roleId: '1',
       content: inputMessage.value
     }); // 将用户输入的消息添加到本地消息数组
@@ -337,11 +337,15 @@ const scrollToBottom = () => {
 // 监听消息数组的变化，自动滚动到底部
 onMounted(() => {
   scrollToBottom();
-  watch(messages, async () => {
-    await nextTick(); // 等待DOM更新
-    scrollToBottom(); // 现在滚动到底部
-  });
 })
+
+watch(messages, async () => {
+  console.log('messagesmessagesmessagesmessages变化了')
+  await nextTick(); // 等待DOM更新
+  scrollToBottom(); // 现在滚动到底部
+},{
+    immediate:true,deep:true
+});
 
 const handleUpload = (file: any) => {
   return true;
@@ -366,5 +370,21 @@ const  uploadImage = (request) => {
         },
     })
 }
+
+const updateMessage = (data)=>{
+  if(!showChatBox.value){
+    subscribeToChat();
+    showChatBox.value = true; // 显示聊天框
+  }
+  let arr = data.data.chat.message
+  messages.value = [...[
+      { roleId: "1", content: "历史对话1" },
+      { roleId: "2", content: "历史对话2历史对话2历史对话2" }
+    ],...arr]
+}
+
+defineExpose({
+  updateMessage
+})
 
 </script>
