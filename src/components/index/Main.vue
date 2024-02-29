@@ -57,7 +57,7 @@
       <!-- 聊天框 -->
       <div v-if="showChatBox" v-for="(msg, index) in messages" :key="index"  class="chat-container" ref="chatContainer" style=" padding: 10px; display: flex; flex-direction: column; align-items: center; max-height: 66%;">
           <!-- 对话框 -->
-          <div  v-if="msg.roleId === '1' || msg.roleId === 1" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-left: auto;">
+          <div  v-if="msg.roleId === '1'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-left: auto;">
               <!-- 用户消息 -->
               <div class="chat-box" style="display: flex; justify-content: flex-end; align-items: center;" >
                   <div class="bubble user-bubble last-message" style="background-color: #DCF8C6; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
@@ -68,7 +68,7 @@
                   </div>
               </div>
           </div>
-          <div v-else-if="msg.roleId === '2' || msg.roleId === 2" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-right: auto;">
+          <div v-else-if="msg.roleId === '2'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-right: auto;">
               <!-- 助手消息 -->
               <div  class="chat-box" style="display: flex; justify-content: flex-start; margin-bottom: 10px; align-items: center;">
                   <div class="avatar">
@@ -202,12 +202,7 @@ import type { TabsPaneContext } from 'element-plus'
 import { ref, onMounted, watch, onUnmounted, reactive, nextTick, PropType } from 'vue';
 import axios from 'axios';
 declare var webkitSpeechRecognition: any;
-// const props = defineProps({
-//   historyMessages: {
-//     type: Array as PropType<{ roleId: string, content: string }[]>,
-//     required: true
-//   }
-// });
+
 const buttons = [
   { text: '我最近头痛伴着流鼻涕,该吃什么药?' },
   { text: '最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？' },
@@ -283,7 +278,7 @@ onMounted(() => {
   };
 });
 const chatId = generateUUID()
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyMDk2MDd9.TPgHXFztYDL_10zQOEwMmdFgw9r6pCLO52Q1cAd7TJ0"
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyOTkwNDF9.brNO6-Rk28b7Eq-d3sZcjRSEvm9iLbGOcQbKHM1jIXk"
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
   try {
