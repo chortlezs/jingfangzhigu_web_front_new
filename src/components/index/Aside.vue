@@ -44,11 +44,11 @@
   const input2 = ref('')
   const instance = getCurrentInstance();
   const handleOpen = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
+    console.log(key, keyPath)
+  }
+  const handleClose = (key: string, keyPath: string[]) => {
+    console.log(key, keyPath)
+  }
 
   let dialogues = ref([])
   const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyMDk2MDd9.TPgHXFztYDL_10zQOEwMmdFgw9r6pCLO52Q1cAd7TJ0";
@@ -74,20 +74,20 @@ const handleClose = (key: string, keyPath: string[]) => {
   // 获取某一个 chatId 的所有消息
   const getMessagesByChatId = async (chatId) => {
     try {
-      const response = await axios.get(`http://59.110.149.33:8001/chat/${chatId}`, {
+      const response = await axios.get(`http://59.110.149.33:8001/chat/${chatId.chatId}`, {
         withCredentials: true,
         headers: {
           'Access-Control-Allow-Origin': '*',
           "Authorization": token
         }
       });
-      if (instance) {
-      instance.emit('messages-updated', response.data);
-    }
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-      throw error; // 抛出错误以便调用方处理
-    }
+      if (instance && response.data.code == 'SUCCESS') {
+        instance.emit('messages-updated', response.data);
+      }
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+        throw error; // 抛出错误以便调用方处理
+      }
   };
   //调用所有对话的函数
   getAllDialogues();
@@ -98,7 +98,7 @@ const handleClose = (key: string, keyPath: string[]) => {
     .then(data => {
       // 将获取到的消息更新到 dialogues 中
       // dialogues.value = data.message;
-      // console.log(dialogues);
+      console.log(dialogues);
       
     })
     .catch(error => {
