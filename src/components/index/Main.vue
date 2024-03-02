@@ -283,7 +283,7 @@ onMounted(() => {
   };
 });
 const chatId = generateUUID()
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyMDk2MDd9.TPgHXFztYDL_10zQOEwMmdFgw9r6pCLO52Q1cAd7TJ0"
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyOTkwNDF9.brNO6-Rk28b7Eq-d3sZcjRSEvm9iLbGOcQbKHM1jIXk"
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
   try {

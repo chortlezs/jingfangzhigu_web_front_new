@@ -6,6 +6,7 @@ import { SettingOutlined } from '@ant-design/icons-vue';
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
+import axios from 'axios'
 const radio2 = ref('1')
 const input2 = ref('')
 const imageUrl = ref('')
@@ -33,6 +34,10 @@ const options = [
   },
 ]
 
+const header = ref({
+  'Authorization': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyOTkwNDF9.brNO6-Rk28b7Eq-d3sZcjRSEvm9iLbGOcQbKHM1jIXk'
+})
+
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
   response,
   uploadFile
@@ -44,7 +49,7 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (rawFile.type !== 'image/jpeg') {
     ElMessage.error('Avatar picture must be JPG format!')
     return false
-  } else if (rawFile.size / 1024 / 1024 > 2) {
+  } else if (rawFile.size / 1024 / 1024 > 5) {
     ElMessage.error('Avatar picture size can not exceed 2MB!')
     return false
   }
@@ -79,6 +84,31 @@ const handleMenuClick = (key) => {
   selectedKeys.value = [key];
   selectItem({ key });
 };
+
+const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyOTkwNDF9.brNO6-Rk28b7Eq-d3sZcjRSEvm9iLbGOcQbKHM1jIXk'
+
+const handleFileUpload = (fileObj) => {
+  let formObj = new FormData()
+  formObj.append('avatar', fileObj.file)
+  axios.post(
+    `http://59.110.149.33:8001/file/avatar`,
+    formObj,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': token
+      }
+    }
+  ).then(res=>{
+    console.log(res)
+    if(res.data && res.data.code == 'SUCCESS'){
+      let data = res.data.data
+      imageUrl.value = data.avatarUrl
+    }
+  })
+}
+
+
 </script>
 
 <template>
@@ -89,7 +119,9 @@ const handleMenuClick = (key) => {
         <div class="avatar">
           <div class="avatar-info">
             <a-avatar :size="64">
-              <template #icon><UserOutlined /></template>
+              <template #icon>
+                <UserOutlined />
+              </template>
             </a-avatar>
             <span class="user-tag">患者用户</span>
           </div>
@@ -97,19 +129,12 @@ const handleMenuClick = (key) => {
         </div>
         <div class="menu">
           <div class="menu-name">
-            <setting-outlined style="color: #1890ff; font-size: 20px; margin-right: 5px;" /> 
+            <setting-outlined style="color: #1890ff; font-size: 20px; margin-right: 5px;" />
             个人中心
           </div>
-          <a-menu
-            v-model:selectedKeys="selectedKeys"
-            :open-keys="openKeys"
-            @select="selectItem"
-            mode="vertical"
+          <a-menu v-model:selectedKeys="selectedKeys" :open-keys="openKeys" @select="selectItem" mode="vertical"
             theme="#fff">
-            <a-menu-item
-              v-for="item in menuData"
-              :key="item.key"
-              :icon="item.icon"
+            <a-menu-item v-for="item in menuData" :key="item.key" :icon="item.icon"
               @click="() => handleMenuClick(item.key)">
               {{ item.title }}
             </a-menu-item>
@@ -127,15 +152,12 @@ const handleMenuClick = (key) => {
           <div class="user-basic">
             <div class="list">
               <span class="sub-titie">头像</span>
-              <el-upload
-                class="avatar-uploader"
-                action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload"
-              >
+              <el-upload class="avatar-uploader" :http-request="handleFileUpload" :show-file-list="false"
+                :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
                 <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+                <el-icon v-else class="avatar-uploader-icon">
+                  <Plus />
+                </el-icon>
               </el-upload>
               <span class="avatar-change">点击修改</span>
             </div>
@@ -145,34 +167,14 @@ const handleMenuClick = (key) => {
             </div>
             <div class="list">
               <span class="sub-titie">地点</span>
-              <el-select
-                v-model="value"
-                class="m-2"
-                placeholder="Select"
-                style="flex: 1;"
-              >
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
+              <el-select v-model="value" class="m-2" placeholder="Select" style="flex: 1;">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </div>
             <div class="list">
               <span class="sub-titie">身份</span>
-              <el-select
-                v-model="value"
-                class="m-2"
-                placeholder="Select"
-                style="flex: 1;"
-              >
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
+              <el-select v-model="value" class="m-2" placeholder="Select" style="flex: 1;">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </div>
           </div>
@@ -182,10 +184,10 @@ const handleMenuClick = (key) => {
             </div>
             <div class="list">
               <span class="sub-titie">性别</span>
-                <el-radio-group v-model="radio2" class="ml-4">
-                  <el-radio label="1">男</el-radio>
-                  <el-radio label="2">女</el-radio>
-                </el-radio-group>
+              <el-radio-group v-model="radio2" class="ml-4">
+                <el-radio label="1">男</el-radio>
+                <el-radio label="2">女</el-radio>
+              </el-radio-group>
             </div>
             <div class="list">
               <span class="sub-titie">年龄</span>
@@ -205,10 +207,10 @@ const handleMenuClick = (key) => {
             </div>
           </div>
         </div>
-        <div class="imformation-change"> 
+        <div class="imformation-change">
           <el-button type="primary">更新信息</el-button>
         </div>
-       
+
       </div>
 
     </div>
@@ -221,7 +223,6 @@ const handleMenuClick = (key) => {
   height: 80px;
   display: block;
 }
-
 </style>
 <style>
 body {
@@ -238,25 +239,30 @@ body {
   width: 800px;
   height: 500px;
   display: flex;
-  align-items: center; /* 垂直居中 */
+  align-items: center;
+  /* 垂直居中 */
 }
+
 .avatar {
   display: flex;
-  flex-direction: column; /* 垂直方向排列 */
-  align-items: center; /* 水平居中 */
+  flex-direction: column;
+  /* 垂直方向排列 */
+  align-items: center;
+  /* 水平居中 */
   margin-top: 20px;
 }
 
 .avatar-info {
   display: flex;
-  align-items: center; /* 水平垂直居中 */
+  align-items: center;
+  /* 水平垂直居中 */
 }
 
 .user-tag {
-	color: white;
+  color: white;
   margin-right: -40px;
   padding: 2px;
-  background-color:rgba(255, 255,255, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   border-radius: 5px;
   margin-top: 30px;
 }
@@ -312,53 +318,64 @@ body {
   display: flex;
   flex-direction: column;
 }
+
 .user-settings {
-	height: 70px;
-	display: flex;
-	align-items: center;
-	margin-left: 18px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  margin-left: 18px;
 }
+
 .user-name {
-	font-size: 20px;
-	font-weight: bold;
-	margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
 }
+
 .separator {
   height: 2px;
-  width:100%;
-  background: linear-gradient(to right, #689AFB, #dadfe1); /* 渐变效果 */
+  width: 100%;
+  background: linear-gradient(to right, #689AFB, #dadfe1);
+  /* 渐变效果 */
 }
-.user-information{
+
+.user-information {
   display: flex;
-	align-items: center;
+  align-items: center;
   width: 100%;
   justify-content: center;
   margin-top: 10px
 }
-.user-basic{
-	align-items: center;
-	margin-right: 10px;
+
+.user-basic {
+  align-items: center;
+  margin-right: 10px;
   width: 45%;
 }
-.user-body{
-	align-items: center;
-	margin-left: 10px;
+
+.user-body {
+  align-items: center;
+  margin-left: 10px;
   width: 45%;
 }
-.list{
+
+.list {
   display: flex;
   padding: 10px;
   align-items: center;
   width: 100%;
 }
-.list .sub-titie{
+
+.list .sub-titie {
   width: 60px;
 }
+
 .avatar-change {
-	color: grey;
+  color: grey;
   padding: 2px;
   margin-top: 60px;
 }
+
 .avatar-uploader .el-upload {
   border: 1px dashed var(--el-border-color);
   border-radius: 50%;
@@ -379,7 +396,8 @@ body {
   height: 80px;
   text-align: center;
 }
-.imformation-change{
+
+.imformation-change {
   display: flex;
   justify-content: center;
   margin-top: auto;
