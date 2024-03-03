@@ -60,7 +60,7 @@
           <div  v-if="msg.roleId === '1'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-left: auto;">
               <!-- 用户消息 -->
               <div class="chat-box" style="display: flex; justify-content: flex-end; align-items: center;" >
-                  <div class="bubble user-bubble last-message" style="background-color: #DCF8C6; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
+                  <div class="bubble user-bubble last-message" style="background-color: #5B93FF; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
                       {{ msg.content }}
                   </div>
                   <div class="avatar">
@@ -74,7 +74,7 @@
                   <div class="avatar">
                       <img src="@/assets/chat_pictures/icon.png" style="width: 40px; height: 40px; border-radius: 50%;">
                   </div>
-                  <div class="bubble assistant-bubble last-message" style="background-color: #F2F2F2; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
+                  <div class="bubble assistant-bubble last-message" style="background-color: ##FFFFFF; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
                       {{ msg.content? msg.content : messageContent }}
                   </div>
               </div>
@@ -214,8 +214,9 @@
 import { Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/icons-vue'
 import { Monitor,Camera } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
-import { ref, onMounted, watch, onUnmounted, reactive, nextTick, PropType } from 'vue';
+import { ref, onMounted, watch, onUnmounted, reactive, nextTick,  defineProps, watchEffect, } from 'vue';
 import axios from 'axios';
+
 declare var webkitSpeechRecognition: any;
 const dialogVisible = ref(false)
 
@@ -224,13 +225,21 @@ const buttons = [
   { text: '最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？' },
   { text: '胃肠炎可以吃柚子吗？' },
 ] as const
-
 const textarea = ref('')
 const activeName = ref('first')
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
+const props = defineProps({
+  messageArray: Array
+});
+
+watchEffect(() => {
+  console.log(1111);
+  
+  console.log('messageArray updated:', props.messageArray);
+});
 const inputMessage = ref('')
 const showChatBox = ref(false) // 控制是否展示对话框部分的状态
 const messages = reactive([
@@ -264,7 +273,7 @@ onMounted(() => {
 
 // 订阅请求
 let messageContent = ref('')
-let historyCounter: number = 0;
+// let historyCounter = ref(0);
 const subscribeToChat = () => {
   const eventSource = new EventSource(`http://59.110.149.33:8001/sse/${chatId}`);
   eventSource.addEventListener('message', function(event) {
@@ -272,8 +281,9 @@ const subscribeToChat = () => {
     if (data["data"] && data["data"]["delta"]) {
       messageContent.value += data["data"]["delta"];
     }
-  historyCounter = data["data"]["historyCounter"]
-  
+  let historyCounter = data["data"]["historyCounter"]
+  localStorage.setItem('historyCounter',historyCounter.toString())
+  console.log(historyCounter)
   let flag = data["data"]["flag"];
   if (flag) { 
     dialogVisible.value = true; // 显示弹窗
@@ -283,7 +293,7 @@ const subscribeToChat = () => {
     let endData = JSON.parse(event.data);
     if (messageContent.value) {
       let length=messages.length-1;
-      messages[length].content = endData['data']['totalDiagnosis']
+      messages[length].content = endData['data']['totalMessage']
       messageContent.value = ''; // 重置累积的消息内容
       scrollToBottom();
     }
@@ -295,14 +305,14 @@ const subscribeToChat = () => {
   });
 };
 const sendMessage = () => {
-  const newHistoryCounter = historyCounter + 1;
   if (inputMessage.value.trim() !== '') {
     const requestDataToSend = {
       messageId: generateUUID(),
       text: inputMessage.value, // 发送用户输入的文本
-      messages: [ { roleId: "1", content: inputMessage.value },
+      messages: [ 
+      { roleId: "1", content: inputMessage.value },
       { roleId: "2", content: '1' }],
-      historyCounter: newHistoryCounter,
+      historyCounter: Number(localStorage.getItem('historyCounter')),
     };
     subscribeToChat();
     fetchResponse(requestDataToSend); // 发送动态创建的请求数据
@@ -317,8 +327,8 @@ const sendMessage = () => {
     showChatBox.value = true; // 显示聊天框
   }
 }
-const chatId = generateUUID()
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyOTkwNDF9.brNO6-Rk28b7Eq-d3sZcjRSEvm9iLbGOcQbKHM1jIXk"
+const chatId = 'd8660e6d-1ff7-44d4-8d86-9dc96aad956b'
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc"
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
   try {
@@ -375,7 +385,18 @@ const  uploadImage = (request) => {
         let imgUrl = response.data.data["url"];
         inputMessage.value = imgUrl;
     })
-    
 }
+
+const updateMessage =(data) =>{
+  console.log(1111);
+  
+  console.log(data,'data')
+
+}
+
+defineExpose({
+  updateMessage
+})
+
 
 </script>
