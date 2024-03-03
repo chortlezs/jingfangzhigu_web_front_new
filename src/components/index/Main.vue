@@ -57,7 +57,7 @@
       <!-- 聊天框 -->
       <div v-if="showChatBox" v-for="(msg, index) in messages" :key="index"  class="chat-container" ref="chatContainer" style=" padding: 10px; display: flex; flex-direction: column; align-items: center; max-height: 66%;">
           <!-- 对话框 -->
-          <div  v-if="msg.roleId === '1'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-left: auto;">
+          <div  v-if="msg.roleId === 1" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-left: auto;">
               <!-- 用户消息 -->
               <div class="chat-box" style="display: flex; justify-content: flex-end; align-items: center;" >
                   <div class="bubble user-bubble last-message" style="background-color: #5B93FF; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
@@ -68,7 +68,7 @@
                   </div>
               </div>
           </div>
-          <div v-if="msg.roleId === '2'" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-right: auto;">
+          <div v-if="msg.roleId === 2" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-right: auto;">
               <!-- 助手消息 -->
               <div  class="chat-box" style="display: flex; justify-content: flex-start; margin-bottom: 10px; align-items: center;">
                   <div class="avatar">
@@ -80,7 +80,6 @@
               </div>
           </div>
       </div>
-
 
         <el-dialog
           v-model="dialogVisible"
@@ -105,7 +104,6 @@
         </el-dialog>
     </div>
 
-    
         <!-- 底部输入框 -->
         <el-row class="foot">
             <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" :default-active="0">
@@ -207,14 +205,13 @@
 </template>
 
 <style src="@/assets/main.css" >
-
 </style>
 
 <script setup lang="ts">
 import { Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/icons-vue'
 import { Monitor,Camera } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
-import { ref, onMounted, watch, onUnmounted, reactive, nextTick,  defineProps, watchEffect, } from 'vue';
+import { ref, onMounted, watch, onUnmounted, reactive, nextTick,  defineProps, watchEffect, toRefs, toRaw, } from 'vue';
 import axios from 'axios';
 
 declare var webkitSpeechRecognition: any;
@@ -231,20 +228,48 @@ const activeName = ref('first')
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
+interface Message {
+  messageId: string;
+  chatId: string;
+  roleId: number;
+  createTime: string;
+  content: string;
+}
+
+const messages = reactive<Message[]>([]);
 const props = defineProps({
   messageArray: Array,
   selectedChatId: String
 });
 
-watchEffect(() => {
-  console.log('messageArray updated:', props.messageArray);
+// 监听 selectedChatId 的变化，如果有值则显示聊天框
+watch(() => props.selectedChatId, (newVal) => {
+  // 清空messages数组
+  messages.splice(0, messages.length);
+  if (newVal) {
+    let rawMessageArray:any = toRaw(props.messageArray);
+    console.log(rawMessageArray);
+    if (Array.isArray(rawMessageArray)) {
+      rawMessageArray.forEach(item => {
+        // 确保item具有我们需要的属性
+        if (item) {
+          messages.push({
+            messageId: item.messageId,
+            chatId: item.chatId,
+            roleId: item.roleId,
+            createTime: item.createTime,
+            content: item.content
+          });
+        }
+      });
+    }
+  }
+  showChatBox.value = newVal !== null && newVal !== '';
 });
+
 const inputMessage = ref('')
 const showChatBox = ref(false) // 控制是否展示对话框部分的状态
-const messages = reactive([
-      { roleId: "1", content: "历史对话1" },
-      { roleId: "2", content: "历史对话2历史对话2历史对话2" }
-    ]);
+
 // 语音转文字功能
 const recognition = new webkitSpeechRecognition();
 recognition.lang = "zh-CN";
@@ -317,10 +342,16 @@ const sendMessage = () => {
     fetchResponse(requestDataToSend); // 发送动态创建的请求数据
     messages.push({
       roleId: '1',
-      content: inputMessage.value
+      content: inputMessage.value,
+      chatId:chatId,
+      createTime: '',
+      messageId: generateUUID(),
     },{
       roleId: '2',
-      content: ''
+      content: '',
+      chatId:chatId,
+      createTime: '',
+      messageId: generateUUID(),
     }); // 将用户输入的消息添加到本地消息数组
     inputMessage.value = ''; // 清空输入框
     showChatBox.value = true; // 显示聊天框

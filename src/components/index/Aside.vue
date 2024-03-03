@@ -26,11 +26,11 @@
           <el-scrollbar max-height="60vh" >
             <!-- 渲染对话列表 -->
             <el-menu-item v-for="(dialogue, index) in dialogues" :key="index">
-              <div class="menu-item-text" @click="getMessagesByChatId(dialogue.chatId)">{{ dialogue.chatName }}</div>
+              <div class="menu-item-text" @click="selectChat(dialogue.chatId)">{{ dialogue.chatName }}</div>
               <!-- 这里要修改 -->
               <img src="@/assets/chat_pictures/delete.png" 
                     style="display: inline-block; height: 18px; width: 18px;"
-                    @click="deleteChat(dialogue.chatId)">
+                    @click.stop="deleteChat(dialogue.chatId)">
             </el-menu-item>
           </el-scrollbar>
       </el-sub-menu>
@@ -41,8 +41,8 @@
 </template>
 
 <script lang="ts"  setup>
-  import { ref, getCurrentInstance, reactive } from 'vue'
-  import { Search, Delete,} from '@element-plus/icons-vue'
+  import { ref, getCurrentInstance, reactive,defineProps, defineEmits } from 'vue'
+  import { Search } from '@element-plus/icons-vue'
   import axios from 'axios';
   const input2 = ref('')
   const instance = getCurrentInstance();
@@ -64,7 +64,9 @@ const handleClose = (key: string, keyPath: string[]) => {
         message: null
   }
 ])
-
+const props = defineProps({
+  dialogues: Array
+});
 
   const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
   // 获取所有对话
@@ -84,7 +86,13 @@ const handleClose = (key: string, keyPath: string[]) => {
       console.error('获取所有对话失败:', error);
     }
   };
-
+  const emits = defineEmits(['select-chat','message-updated']);
+  const selectChat = (chatId) => {
+    // 这里可以调用获取对应聊天信息的方法
+    getMessagesByChatId(chatId);
+    // 向父组件发出事件
+    emits('select-chat', chatId);
+  };
   // const chatId = 'd8660e6d-1ff7-44d4-8d86-9dc96aad956b'
  
   // 获取某一个 chatId 的所有消息

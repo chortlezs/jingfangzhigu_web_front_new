@@ -18,6 +18,14 @@ const handleMessagesUpdated = (data) => {
   messageArray.value = data;
   // console.log(messageArray,'data');
 };
+const dialogues = ref([
+  // 这里是对话列表的数据
+]);
+
+let selectedChatId = ref('');
+const selectChat = (chatId) => {
+  selectedChatId.value = chatId;
+};
 
 </script>
 
@@ -47,8 +55,8 @@ const handleMessagesUpdated = (data) => {
         </div>
       </el-header>
       <el-container class="leftandright">
-        <Aside @messages-updated="handleMessagesUpdated"/>
-        <Main :messageArray = "messageArray" />
+        <Aside :dialogues="dialogues" @messages-updated="handleMessagesUpdated" @select-chat="selectChat"/>
+        <Main :messageArray = "messageArray" :selectedChatId="selectedChatId"  />
       </el-container>
     </el-container>
   </template>
