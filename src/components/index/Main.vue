@@ -334,20 +334,20 @@ const sendMessage = () => {
       messageId: generateUUID(),
       text: inputMessage.value, // 发送用户输入的文本
       messages: [ 
-      { roleId: "1", content: inputMessage.value },
-      { roleId: "2", content: '1' }],
+      { roleId: 1, content: inputMessage.value },
+      { roleId: 2, content: '1' }],
       historyCounter: Number(localStorage.getItem('historyCounter')),
     };
     subscribeToChat();
     fetchResponse(requestDataToSend); // 发送动态创建的请求数据
     messages.push({
-      roleId: '1',
+      roleId: 1,
       content: inputMessage.value,
       chatId:chatId,
       createTime: '',
       messageId: generateUUID(),
     },{
-      roleId: '2',
+      roleId: 2,
       content: '',
       chatId:chatId,
       createTime: '',
