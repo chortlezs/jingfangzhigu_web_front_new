@@ -11,13 +11,12 @@ function goPersonal(){
 function goUser(){
     router.push({path:'/user'})
 }
-let messageArray = ([]);
+let messageArray = ref([]);
 
 // 处理子组件发出的自定义事件
 const handleMessagesUpdated = (data) => {
-  messageArray = data;
-  console.log(messageArray,'data');
-
+  messageArray.value = data;
+  // console.log(messageArray,'data');
 };
 
 </script>
@@ -49,7 +48,7 @@ const handleMessagesUpdated = (data) => {
       </el-header>
       <el-container class="leftandright">
         <Aside @messages-updated="handleMessagesUpdated"/>
-        <Main :messageArray = "messageArray"/>
+        <Main :messageArray = "messageArray" />
       </el-container>
     </el-container>
   </template>

@@ -232,12 +232,11 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
 }
 const props = defineProps({
-  messageArray: Array
+  messageArray: Array,
+  selectedChatId: String
 });
 
 watchEffect(() => {
-  console.log(1111);
-  
   console.log('messageArray updated:', props.messageArray);
 });
 const inputMessage = ref('')
