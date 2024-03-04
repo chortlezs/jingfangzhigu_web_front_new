@@ -81,27 +81,6 @@
           </div>
       </div>
 
-        <el-dialog
-          v-model="dialogVisible"
-          title="Tips"
-          width="500"
-        >
-          <span>请上传您的舌苔图片</span>
-          <template #footer>
-            <div class="dialog-footer">
-              <el-button @click="dialogVisible = false">取消</el-button>
-              <el-upload
-                  style="display: inline-block; margin-left: 10px"
-                  :show-file-list="false"
-                  :action="'http://59.110.149.33:8001/file/tongueImg'"
-                  :http-request="uploadImage">
-                  <el-button type="primary">
-                  确认上传
-                  </el-button>
-              </el-upload> 
-            </div>
-          </template>
-        </el-dialog>
     </div>
 
         <!-- 底部输入框 -->
@@ -215,7 +194,6 @@ import { ref, onMounted, watch, onUnmounted, reactive, nextTick,  defineProps, w
 import axios from 'axios';
 
 declare var webkitSpeechRecognition: any;
-const dialogVisible = ref(false)
 
 const buttons = [
   { text: '我最近头痛伴着流鼻涕,该吃什么药?' },
@@ -224,6 +202,7 @@ const buttons = [
 ] as const
 const textarea = ref('')
 const activeName = ref('first')
+let isNewChat = ref(false)
 
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event)
@@ -235,24 +214,26 @@ interface Message {
   createTime: string;
   content: string;
 }
-
-const messages = reactive<Message[]>([]);
+const chatId = ref('');
+let messages = reactive<Message[]>([]);
 const props = defineProps({
   messageArray: Array  as PropType<Message[]>,
   selectedChatId: String
 });
 
 watch(() => props.messageArray, (newVal, oldVal) => {
-  console.log('messageArray changed:', newVal, oldVal);
-  filterMessages();
-  showChatBox.value = newVal !== null ;
+  if (newVal && newVal.length > 0) {
+    filterMessages();
+    chatId.value = props.selectedChatId as string;
+    showChatBox.value = true;
+  } else {
+    showChatBox.value = false;
+  }
 });
 
-// 筛选消息的函数
 function filterMessages() {
   messages.splice(0, messages.length);
     let rawMessageArray:any = toRaw(props.messageArray);
-    console.log(rawMessageArray);
     if (Array.isArray(rawMessageArray)) {
       rawMessageArray.forEach(item => {
         // 确保item具有我们需要的属性
@@ -294,16 +275,11 @@ onMounted(() => {
     inputMessage.value = transcript; // 将语音识别结果赋值给输入框文本
   };
 });
-let chatId = ref('')
 
 // 订阅请求
 let messageContent = ref('')
-// let historyCounter = ref(0);
 const subscribeToChat = () => {
-  const currentChatId = chatId.value;
-  console.log(currentChatId,'2222');
-  
-  const eventSource = new EventSource(`http://59.110.149.33:8001/sse/${currentChatId}`);
+  const eventSource = new EventSource(`http://59.110.149.33:8001/sse/${chatId.value}`);
   eventSource.addEventListener('message', function(event) {
   let data = JSON.parse(event.data);
     if (data["data"] && data["data"]["delta"]) {
@@ -313,7 +289,7 @@ const subscribeToChat = () => {
   localStorage.setItem('historyCounter',historyCounter.toString())
   let flag = data["data"]["flag"];
   if (flag) { 
-    dialogVisible.value = true; // 显示弹窗
+
     }
 });
   eventSource.addEventListener('end', function(event) {
@@ -332,17 +308,14 @@ const subscribeToChat = () => {
   });
 };
 
-// chatId.value = props.selectedChatId
-const sendMessage = (chatId) => {
+
+const sendMessage = () => {
   const currentChatId = chatId.value;
   if (inputMessage.value.trim() !== '') {
     const requestDataToSend = {
       messageId: generateUUID(),
       text: inputMessage.value, // 发送用户输入的文本
-      messages: [ 
-      { roleId: 1, content: inputMessage.value },
-      { roleId: 2, content: '1' }],
-      historyCounter: Number(localStorage.getItem('historyCounter')),
+      messages: toRaw(props.messageArray),
     };
     subscribeToChat();
     fetchResponse(requestDataToSend); // 发送动态创建的请求数据
@@ -366,10 +339,10 @@ const sendMessage = (chatId) => {
 const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc"
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
-  const currentChatId = chatId.value;
+  
   try {
     const response = await axios.post(
-      `http://59.110.149.33:8001/sse/chat/${currentChatId}`,
+      `http://59.110.149.33:8001/sse/chat/${chatId.value}`,
       requestData,
       {
         headers: {
@@ -422,17 +395,5 @@ const  uploadImage = (request) => {
         inputMessage.value = imgUrl;
     })
 }
-
-const updateMessage =(data) =>{
-  console.log(1111);
-  
-  console.log(data,'data')
-
-}
-
-defineExpose({
-  updateMessage
-})
-
 
 </script>

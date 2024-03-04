@@ -16,7 +16,7 @@ let messageArray = ref([]);
 // 处理子组件发出的自定义事件
 const handleMessagesUpdated = (data) => {
   messageArray.value = data;
-  console.log(messageArray,'data');
+  // console.log(messageArray,'data');
 };
 const dialogues = ref([
   // 这里是对话列表的数据

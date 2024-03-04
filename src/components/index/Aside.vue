@@ -27,7 +27,6 @@
             <!-- 渲染对话列表 -->
             <el-menu-item v-for="(dialogue, index) in dialogues" :key="index">
               <div class="menu-item-text" @click="selectChat(dialogue.chatId)">{{ dialogue.chatName }}</div>
-              <!-- 这里要修改 -->
               <img src="@/assets/chat_pictures/delete.png" 
                     style="display: inline-block; height: 18px; width: 18px;"
                     @click.stop="deleteChat(dialogue.chatId)">
@@ -129,6 +128,8 @@ const props = defineProps({
           "Authorization": token
         }
     });
+    getAllDialogues(); // 创建对话成功后立即更新对话列表
+    selectChat(newChatId); // 选择新创建的对话
   } catch (error) {
     console.error('新建对话失败:', error);
   }
@@ -136,6 +137,9 @@ const props = defineProps({
   // 删除某一个对话
   const deleteChat = async (chatId) => {
     try {
+      const currentIndex = dialogues.findIndex(dialogue => dialogue.chatId === chatId);
+      
+      const nextChatId = dialogues[currentIndex + 1]?.chatId || dialogues[currentIndex - 1]?.chatId;
       const response = await axios.delete(`http://59.110.149.33:8001/chat/${chatId}`, {
         withCredentials: true,
         headers: {
@@ -143,8 +147,17 @@ const props = defineProps({
           "Authorization": token
         }
       });
+      // 从 dialogues 数组中过滤掉被删除的对话
       dialogues = dialogues.filter(dialogue => dialogue.chatId !== chatId);
-       getAllDialogues();
+
+      if(dialogues.length > 0) {
+          // 获取下一个对话的 chatId
+          const nextChatId = dialogues[0].chatId;
+          // 调用 selectChat 函数加载下一个对话信息
+          selectChat(nextChatId);
+      } else {
+          // 若没有下一个对话，则清空信息（可根据需求处理）
+      }
     } catch (error) {}
   };
 
