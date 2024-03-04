@@ -41,6 +41,7 @@
   import { ref, getCurrentInstance } from 'vue'
   import { Search } from '@element-plus/icons-vue'
   import axios from 'axios';
+  import { token }from '@/config/requestConfig.js'
   const input2 = ref('')
   const instance = getCurrentInstance();
   const handleOpen = (key: string, keyPath: string[]) => {
@@ -51,7 +52,6 @@
   }
 
   let dialogues = ref([])
-  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyOTkwNDF9.brNO6-Rk28b7Eq-d3sZcjRSEvm9iLbGOcQbKHM1jIXk";
   // 获取所有对话
   const getAllDialogues = async () => {
     try {

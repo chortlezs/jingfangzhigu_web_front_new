@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { UserOutlined } from '@ant-design/icons-vue';
 import { SettingOutlined } from '@ant-design/icons-vue';
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
+import { token }from '@/config/requestConfig.js'
 import axios from 'axios'
 const radio2 = ref('1')
 const input2 = ref('')
@@ -35,7 +36,7 @@ const options = [
 ]
 
 const header = ref({
-  'Authorization': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc'
+  'Authorization': token
 })
 
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
@@ -55,6 +56,10 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   }
   return true
 }
+
+const userInfo = ref({})
+const userInfoBefore = ref({})
+
 const menuData = [
   {
     key: 'personal',
@@ -85,9 +90,52 @@ const handleMenuClick = (key) => {
   selectItem({ key });
 };
 
+const getUserInfo = () => {
+    axios.get('http://59.110.149.33:8001/user/info', {
+        headers: {
+            Authorization: token
+        }
+    }).then(res => {
+        console.log(res)
+        if(res.data && res.data.code == "SUCCESS"){
+            userInfo.value = {...res.data.data.userInfo}
+            userInfoBefore.value =  {...res.data.data.userInfo}
+        }
+    })
+}
 
+onMounted(()=>{
+    getUserInfo()
+})
 
-const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc'
+const handleUserInfoUpload = ()=>{
+  let formObj = new FormData()
+  formObj.append('avatar', userInfo.value.avatar)
+  formObj.append('username', userInfo.value.username)
+  formObj.append('address', userInfo.value.address)
+  formObj.append('gender', userInfo.value.gender)
+  formObj.append('role', 1)
+  formObj.append('age', userInfo.value.age)
+  formObj.append('height', userInfo.value.height)
+  formObj.append('weight', userInfo.value.weight)
+  formObj.append('anamnesis', userInfo.value.anamnesis)
+  axios.post(
+    `http://59.110.149.33:8001/user/info`,
+    formObj,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': token
+      }
+    }
+  ).then(res=>{
+    console.log(res)
+    if(res.data && res.data.code == 'SUCCESS'){
+      userInfoBefore.value.avatar = userInfo.value.avatar
+      localStorage.setItem('headimg',userInfo.value.avatar)
+    }
+  })
+}
 
 const handleFileUpload = (fileObj) => {
   let formObj = new FormData()
@@ -105,11 +153,16 @@ const handleFileUpload = (fileObj) => {
     console.log(res)
     if(res.data && res.data.code == 'SUCCESS'){
       let data = res.data.data
-      imageUrl.value = data.avatarUrl
+      userInfo.value.avatar = data.avatarUrl
       window.localStorage.setItem('headimg',data.avatarUrl)
     }
   })
 }
+
+let headUrl = localStorage.getItem('headimg')
+  if(headUrl){
+    userInfo.value.avatar = headUrl
+  }
 
 
 </script>
@@ -123,13 +176,13 @@ const handleFileUpload = (fileObj) => {
           <div class="avatar-info">
             <a-avatar :size="64">
               <template #icon>
-                <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                <img v-if="userInfo.avatar" :src="userInfo.avatar" class="avatarleft" />
                 <UserOutlined v-else />;
               </template>
             </a-avatar>
             <span class="user-tag">患者用户</span>
           </div>
-          <p class="username">loopy，China,19</p>
+          <p class="username">{{ userInfoBefore.username }}</p>
         </div>
         <div class="menu">
           <div class="menu-name">
@@ -158,7 +211,7 @@ const handleFileUpload = (fileObj) => {
               <span class="sub-titie">头像</span>
               <el-upload class="avatar-uploader" :http-request="handleFileUpload" :show-file-list="false"
                 :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                <img v-if="userInfo.avatar" :src="userInfo.avatar" class="avatarright" />
                 <el-icon v-else class="avatar-uploader-icon">
                   <Plus />
                 </el-icon>
@@ -167,17 +220,15 @@ const handleFileUpload = (fileObj) => {
             </div>
             <div class="list">
               <span class="sub-titie">用户名</span>
-              <el-input v-model="input2" style="flex: 1;" placeholder="loopy" />
+              <el-input v-model="userInfo.username" style="flex: 1;" placeholder="用户名" />
             </div>
             <div class="list">
               <span class="sub-titie">地点</span>
-              <el-select v-model="value" class="m-2" placeholder="Select" style="flex: 1;">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-              </el-select>
+              <el-input v-model="userInfo.address" style="flex: 1;" placeholder="地址" />
             </div>
             <div class="list">
               <span class="sub-titie">身份</span>
-              <el-select v-model="value" class="m-2" placeholder="Select" style="flex: 1;">
+              <el-select v-model="userInfo.role" class="m-2" placeholder="Select" style="flex: 1;">
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </div>
@@ -188,31 +239,31 @@ const handleFileUpload = (fileObj) => {
             </div>
             <div class="list">
               <span class="sub-titie">性别</span>
-              <el-radio-group v-model="radio2" class="ml-4">
-                <el-radio label="1">男</el-radio>
-                <el-radio label="2">女</el-radio>
+              <el-radio-group v-model="userInfo.gender" class="ml-4">
+                <el-radio label="male">男</el-radio>
+                <el-radio label="female">女</el-radio>
               </el-radio-group>
             </div>
             <div class="list">
               <span class="sub-titie">年龄</span>
-              <el-input v-model="input2" style="flex: 1;" placeholder="19" />
+              <el-input v-model="userInfo.age" style="flex: 1;" placeholder="19" />
             </div>
             <div class="list">
               <span class="sub-titie">身高</span>
-              <el-input v-model="input2" style="flex: 1;" placeholder="180cm" />
+              <el-input v-model="userInfo.height" style="flex: 1;" placeholder="180cm" />
             </div>
             <div class="list">
               <span class="sub-titie">体重</span>
-              <el-input v-model="input2" style="flex: 1;" placeholder="65kg" />
+              <el-input v-model="userInfo.weight" style="flex: 1;" placeholder="65kg" />
             </div>
             <div class="list">
               <span class="sub-titie">既往病史</span>
-              <el-input v-model="input2" style="flex: 1;" placeholder="暂无" />
+              <el-input v-model="userInfo.anamnesis" style="flex: 1;" placeholder="暂无" />
             </div>
           </div>
         </div>
         <div class="imformation-change">
-          <el-button type="primary">更新信息</el-button>
+          <el-button @click="handleUserInfoUpload" type="primary">更新信息</el-button>
         </div>
 
       </div>
@@ -226,9 +277,11 @@ const handleFileUpload = (fileObj) => {
   width: 80px;
   height: 80px;
   display: block;
+  
 }
 </style>
 <style>
+
 body {
   margin: 0;
   height: 100vh;
@@ -239,6 +292,11 @@ body {
   align-items: center;
 }
 
+.avatarright {
+  width: 80px; /* 或者具体的像素值 */
+  height: 80px; /* 确保宽度和高度相等 */
+  object-fit: cover; /* 保持图片比例，超出部分裁剪 */
+}
 .center-container {
   width: 800px;
   height: 500px;
@@ -260,6 +318,12 @@ body {
   display: flex;
   align-items: center;
   /* 水平垂直居中 */
+}
+
+.avatarleft {
+  width: 80px;
+  height: 80px;
+  display: block;
 }
 
 .user-tag {
@@ -384,7 +448,7 @@ body {
   border: 1px dashed var(--el-border-color);
   border-radius: 50%;
   cursor: pointer;
-  position: relative;
+  position: related;
   overflow: hidden;
   transition: var(--el-transition-duration-fast);
 }

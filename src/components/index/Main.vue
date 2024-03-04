@@ -64,7 +64,7 @@
                       {{ msg.content }}
                   </div>
                   <div class="avatar">
-                      <img src="@/assets/chat_pictures/icon.png" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+                      <img :src="imageUrl" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
                   </div>
               </div>
           </div>
@@ -201,13 +201,9 @@ import { Monitor,Camera } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
 import { ref, onMounted, watch, onUnmounted, reactive, nextTick, PropType } from 'vue';
 import axios from 'axios';
+import { token }from '@/config/requestConfig.js'
 declare var webkitSpeechRecognition: any;
-// const props = defineProps({
-//   historyMessages: {
-//     type: Array as PropType<{ roleId: string, content: string }[]>,
-//     required: true
-//   }
-// });
+const imageUrl = ref('https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png')
 const buttons = [
   { text: '我最近头痛伴着流鼻涕,该吃什么药?' },
   { text: '最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？' },
@@ -281,9 +277,12 @@ onMounted(() => {
       .join('');
     inputMessage.value = transcript; // 将语音识别结果赋值给输入框文本
   };
+  let headUrl = localStorage.getItem('headimg')
+  if(headUrl){
+      imageUrl.value = headUrl
+  }
 });
 const chatId = generateUUID()
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyOTkwNDF9.brNO6-Rk28b7Eq-d3sZcjRSEvm9iLbGOcQbKHM1jIXk"
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
   try {
