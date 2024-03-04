@@ -93,7 +93,6 @@ const props = defineProps({
     // 向父组件发出事件
     emits('select-chat', chatId);
   };
-  // const chatId = 'd8660e6d-1ff7-44d4-8d86-9dc96aad956b'
  
   // 获取某一个 chatId 的所有消息
   const getMessagesByChatId = async (chatId) => {

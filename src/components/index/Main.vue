@@ -74,7 +74,7 @@
                   <div class="avatar">
                       <img src="@/assets/chat_pictures/icon.png" style="width: 40px; height: 40px; border-radius: 50%;">
                   </div>
-                  <div class="bubble assistant-bubble last-message" style="background-color: ##FFFFFF; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
+                  <div class="bubble assistant-bubble last-message" style="background-color: #FFFFFF; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
                       {{ msg.content? msg.content : messageContent }}
                   </div>
               </div>
@@ -246,7 +246,8 @@ const props = defineProps({
 watch(() => props.selectedChatId, (newVal) => {
   // 清空messages数组
   messages.splice(0, messages.length);
-  if (newVal) {
+  if (newVal ) {
+    chatId.value = newVal;
     let rawMessageArray:any = toRaw(props.messageArray);
     console.log(rawMessageArray);
     if (Array.isArray(rawMessageArray)) {
@@ -269,7 +270,6 @@ watch(() => props.selectedChatId, (newVal) => {
 
 const inputMessage = ref('')
 const showChatBox = ref(false) // 控制是否展示对话框部分的状态
-
 // 语音转文字功能
 const recognition = new webkitSpeechRecognition();
 recognition.lang = "zh-CN";
@@ -294,12 +294,16 @@ onMounted(() => {
     inputMessage.value = transcript; // 将语音识别结果赋值给输入框文本
   };
 });
+let chatId = ref('')
 
 // 订阅请求
 let messageContent = ref('')
 // let historyCounter = ref(0);
 const subscribeToChat = () => {
-  const eventSource = new EventSource(`http://59.110.149.33:8001/sse/${chatId}`);
+  const currentChatId = chatId.value;
+  console.log(currentChatId,'2222');
+  
+  const eventSource = new EventSource(`http://59.110.149.33:8001/sse/${currentChatId}`);
   eventSource.addEventListener('message', function(event) {
   let data = JSON.parse(event.data);
     if (data["data"] && data["data"]["delta"]) {
@@ -307,7 +311,6 @@ const subscribeToChat = () => {
     }
   let historyCounter = data["data"]["historyCounter"]
   localStorage.setItem('historyCounter',historyCounter.toString())
-  console.log(historyCounter)
   let flag = data["data"]["flag"];
   if (flag) { 
     dialogVisible.value = true; // 显示弹窗
@@ -328,7 +331,10 @@ const subscribeToChat = () => {
     eventSource.close();
   });
 };
-const sendMessage = () => {
+
+// chatId.value = props.selectedChatId
+const sendMessage = (chatId) => {
+  const currentChatId = chatId.value;
   if (inputMessage.value.trim() !== '') {
     const requestDataToSend = {
       messageId: generateUUID(),
@@ -343,13 +349,13 @@ const sendMessage = () => {
     messages.push({
       roleId: 1,
       content: inputMessage.value,
-      chatId:chatId,
+      chatId:currentChatId,
       createTime: '',
       messageId: generateUUID(),
     },{
       roleId: 2,
       content: '',
-      chatId:chatId,
+      chatId:currentChatId,
       createTime: '',
       messageId: generateUUID(),
     }); // 将用户输入的消息添加到本地消息数组
@@ -357,13 +363,13 @@ const sendMessage = () => {
     showChatBox.value = true; // 显示聊天框
   }
 }
-const chatId = 'd8660e6d-1ff7-44d4-8d86-9dc96aad956b'
 const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc"
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
+  const currentChatId = chatId.value;
   try {
     const response = await axios.post(
-      `http://59.110.149.33:8001/sse/chat/${chatId}`,
+      `http://59.110.149.33:8001/sse/chat/${currentChatId}`,
       requestData,
       {
         headers: {
