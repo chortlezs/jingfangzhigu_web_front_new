@@ -16,7 +16,7 @@ let messageArray = ref([]);
 // 处理子组件发出的自定义事件
 const handleMessagesUpdated = (data) => {
   messageArray.value = data;
-  // console.log(messageArray,'data');
+  console.log(messageArray,'data');
 };
 const dialogues = ref([
   // 这里是对话列表的数据
@@ -56,7 +56,7 @@ const selectChat = (chatId) => {
       </el-header>
       <el-container class="leftandright">
         <Aside :dialogues="dialogues" @messages-updated="handleMessagesUpdated" @select-chat="selectChat"/>
-        <Main :messageArray = "messageArray" :selectedChatId="selectedChatId"  />
+        <Main  :messageArray = "messageArray" :selectedChatId="selectedChatId"  />
       </el-container>
     </el-container>
   </template>

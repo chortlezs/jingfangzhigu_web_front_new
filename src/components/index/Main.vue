@@ -211,7 +211,7 @@
 import { Position,Microphone,DataAnalysis,ChatLineSquare} from '@element-plus/icons-vue'
 import { Monitor,Camera } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
-import { ref, onMounted, watch, onUnmounted, reactive, nextTick,  defineProps, watchEffect, toRefs, toRaw, } from 'vue';
+import { ref, onMounted, watch, onUnmounted, reactive, nextTick,  defineProps, watchEffect, toRefs, toRaw, PropType, } from 'vue';
 import axios from 'axios';
 
 declare var webkitSpeechRecognition: any;
@@ -238,22 +238,25 @@ interface Message {
 
 const messages = reactive<Message[]>([]);
 const props = defineProps({
-  messageArray: Array,
+  messageArray: Array  as PropType<Message[]>,
   selectedChatId: String
 });
 
-// 监听 selectedChatId 的变化，如果有值则显示聊天框
-watch(() => props.selectedChatId, (newVal) => {
-  // 清空messages数组
+watch(() => props.messageArray, (newVal, oldVal) => {
+  console.log('messageArray changed:', newVal, oldVal);
+  filterMessages();
+  showChatBox.value = newVal !== null ;
+});
+
+// 筛选消息的函数
+function filterMessages() {
   messages.splice(0, messages.length);
-  if (newVal ) {
-    chatId.value = newVal;
     let rawMessageArray:any = toRaw(props.messageArray);
     console.log(rawMessageArray);
     if (Array.isArray(rawMessageArray)) {
       rawMessageArray.forEach(item => {
         // 确保item具有我们需要的属性
-        if (item) {
+        if (item ) {
           messages.push({
             messageId: item.messageId,
             chatId: item.chatId,
@@ -264,10 +267,7 @@ watch(() => props.selectedChatId, (newVal) => {
         }
       });
     }
-  }
-  showChatBox.value = newVal !== null && newVal !== '';
-});
-
+}
 const inputMessage = ref('')
 const showChatBox = ref(false) // 控制是否展示对话框部分的状态
 // 语音转文字功能
