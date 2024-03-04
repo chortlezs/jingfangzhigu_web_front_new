@@ -35,7 +35,7 @@ const options = [
 ]
 
 const header = ref({
-  'Authorization': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyOTkwNDF9.brNO6-Rk28b7Eq-d3sZcjRSEvm9iLbGOcQbKHM1jIXk'
+  'Authorization': 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc'
 })
 
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
@@ -85,7 +85,9 @@ const handleMenuClick = (key) => {
   selectItem({ key });
 };
 
-const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyOTkwNDF9.brNO6-Rk28b7Eq-d3sZcjRSEvm9iLbGOcQbKHM1jIXk'
+
+
+const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc'
 
 const handleFileUpload = (fileObj) => {
   let formObj = new FormData()
@@ -104,6 +106,7 @@ const handleFileUpload = (fileObj) => {
     if(res.data && res.data.code == 'SUCCESS'){
       let data = res.data.data
       imageUrl.value = data.avatarUrl
+      window.localStorage.setItem('headimg',data.avatarUrl)
     }
   })
 }
@@ -120,7 +123,8 @@ const handleFileUpload = (fileObj) => {
           <div class="avatar-info">
             <a-avatar :size="64">
               <template #icon>
-                <UserOutlined />
+                <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                <UserOutlined v-else />;
               </template>
             </a-avatar>
             <span class="user-tag">患者用户</span>
