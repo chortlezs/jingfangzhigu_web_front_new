@@ -215,19 +215,32 @@ interface Message {
   content: string;
 }
 const chatId = ref('');
+let isFirstMessageInChat = ref(true); //跟踪是否是当前chatId下的第一次发送消息
 let messages = reactive<Message[]>([]);
 const props = defineProps({
   messageArray: Array  as PropType<Message[]>,
-  selectedChatId: String
+  selectedChatId: String,
+  dialogues: Array,
 });
 
 watch(() => props.messageArray, (newVal, oldVal) => {
+  // 新建之后的chatId
+  console.log(props.selectedChatId,'newVal11111111111');
+  
   if (newVal && newVal.length > 0) {
     filterMessages();
     chatId.value = props.selectedChatId as string;
     showChatBox.value = true;
   } else {
     showChatBox.value = false;
+  }
+});
+
+watch(() => props.selectedChatId, (newVal, oldVal) => {
+  if (newVal !== oldVal && newVal) {
+    chatId.value = newVal; // 更新当前chatId
+    subscribeToChat(); // 重新订阅新的chatId
+    isFirstMessageInChat.value = true; 
   }
 });
 
@@ -278,47 +291,65 @@ onMounted(() => {
 
 // 订阅请求
 let messageContent = ref('')
+let currentEventSource: EventSource | null = null;
 const subscribeToChat = () => {
+  // 如果已经有一个订阅，先关闭它
+  if (currentEventSource) {
+    currentEventSource.close();
+    currentEventSource = null;
+  }
+  // 创建新的EventSource订阅
   const eventSource = new EventSource(`http://59.110.149.33:8001/sse/${chatId.value}`);
+  currentEventSource = eventSource; // 更新当前订阅
+  
   eventSource.addEventListener('message', function(event) {
-  let data = JSON.parse(event.data);
+    let data = JSON.parse(event.data);
     if (data["data"] && data["data"]["delta"]) {
       messageContent.value += data["data"]["delta"];
     }
-  let historyCounter = data["data"]["historyCounter"]
-  localStorage.setItem('historyCounter',historyCounter.toString())
-  let flag = data["data"]["flag"];
-  if (flag) { 
-
+    let historyCounter = data["data"]["historyCounter"]
+    localStorage.setItem('historyCounter', historyCounter.toString())
+    let flag = data["data"]["flag"];
+    if (flag) { 
+      // 处理flag逻辑（如果有）
     }
-});
+  });
+
   eventSource.addEventListener('end', function(event) {
     let endData = JSON.parse(event.data);
     if (messageContent.value) {
-      let length=messages.length-1;
+      let length = messages.length - 1;
       messages[length].content = endData['data']['totalMessage']
       messageContent.value = ''; // 重置累积的消息内容
       scrollToBottom();
     }
   });
-
   // 在组件销毁或页面离开时关闭连接
   onUnmounted(() => {
-    eventSource.close();
+    if (currentEventSource) {
+      currentEventSource.close();
+    }
   });
 };
 
-
 const sendMessage = () => {
-  const currentChatId = chatId.value;
   if (inputMessage.value.trim() !== '') {
-    const requestDataToSend = {
-      messageId: generateUUID(),
-      text: inputMessage.value, // 发送用户输入的文本
-      messages: toRaw(props.messageArray),
-    };
+    if (props.selectedChatId !== undefined && chatId.value === props.selectedChatId) {
+      if (isFirstMessageInChat.value) {
+        messages.splice(0, messages.length); // 清空当前消息数组
+        isFirstMessageInChat.value = false; // 更新标志
+      }
+      const currentChatId = props.selectedChatId;
+      chatId.value = currentChatId;
+      console.log('chatId.valuechatId.valuechatId.value',chatId.value)
+      const requestDataToSend = {
+        messageId: generateUUID(),
+        text: inputMessage.value, // 发送用户输入的文本
+        messages: toRaw(props.messageArray),
+      };
     subscribeToChat();
     fetchResponse(requestDataToSend); // 发送动态创建的请求数据
+    // 发送消息后触发事件，将第一条消息内容作为参数传递
     messages.push({
       roleId: 1,
       content: inputMessage.value,
@@ -332,14 +363,16 @@ const sendMessage = () => {
       createTime: '',
       messageId: generateUUID(),
     }); // 将用户输入的消息添加到本地消息数组
+    
     inputMessage.value = ''; // 清空输入框
     showChatBox.value = true; // 显示聊天框
   }
+  }
 }
+
 const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc"
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
-  
   try {
     const response = await axios.post(
       `http://59.110.149.33:8001/sse/chat/${chatId.value}`,
@@ -353,7 +386,6 @@ const fetchResponse = async (requestData) => {
     );
   } catch (error) {}
 };
-
 
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

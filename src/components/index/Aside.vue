@@ -25,7 +25,7 @@
           </template>
           <el-scrollbar max-height="60vh" >
             <!-- 渲染对话列表 -->
-            <el-menu-item v-for="(dialogue, index) in dialogues" :key="index">
+            <el-menu-item v-for="(dialogue, index) in dialoguesArray" :key="index">
               <div class="menu-item-text" @click="selectChat(dialogue.chatId)">{{ dialogue.chatName }}</div>
               <img src="@/assets/chat_pictures/delete.png" 
                     style="display: inline-block; height: 18px; width: 18px;"
@@ -52,11 +52,11 @@ const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
 
-  let dialogues = reactive([
+  let dialoguesArray = reactive([
   {
         chatId: "1",
         userId: "1",
-        chatName: "测试对话",
+        chatName: "",
         createTime: "2023-11-17T11:58:58.000+00:00",
         updateTime: "2023-11-17T11:59:02.000+00:00",
         is_delete: 0,
@@ -66,6 +66,7 @@ const handleClose = (key: string, keyPath: string[]) => {
 const props = defineProps({
   dialogues: Array
 });
+console.log(props.dialogues,'111111111111');
 
   const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
   // 获取所有对话
@@ -79,8 +80,8 @@ const props = defineProps({
         }
       });
       // 返回是一个数组里面多个对象
-      dialogues = response.data.data.chats;
-      console.log(dialogues,'dialogues');
+      dialoguesArray.length = 0;
+      response.data.data.chats.forEach(chat => dialoguesArray.push(chat));
       
     } catch (error) {
       console.error('获取所有对话失败:', error);
@@ -115,12 +116,13 @@ const props = defineProps({
   };
   //调用所有对话的函数
   getAllDialogues();
-
   const createNewChat = async () => {
   try {
     const newChatId = generateUUID();
+    console.log(newChatId,'newChatId');
     const response = await axios.post('http://59.110.149.33:8001/chat/', {
       chatId: newChatId,
+      chatName: '新建对话',
     }, {
       withCredentials: true,
       headers: {
@@ -128,21 +130,10 @@ const props = defineProps({
         "Authorization": token
       }
     });
-    // 创建对话成功后再更新对话列表
-    await getAllDialogues();
-    // 添加新对话到对话列表
-    const newChat = {
-      chatId: newChatId,
-      userId: '',
-      chatName: '新建对话',
-      createTime: '',
-      updateTime: '', 
-      is_delete: 0,
-       message: null, 
-      // 其他属性根据实际情况添加
-    };
-    dialogues.push(newChat);
-    console.log(newChatId, 'newChatId');
+    if (response.data && response.data.data) {
+      dialoguesArray.push(response.data.data);
+      selectChat(newChatId);
+    }
   } catch (error) {
     console.error('创建对话失败:', error);
   }
@@ -151,7 +142,7 @@ const props = defineProps({
   // 删除某一个对话
 const deleteChat = async (chatId) => {
   try {
-    const currentIndex = dialogues.findIndex(dialogue => dialogue.chatId === chatId);
+    const currentIndex = dialoguesArray.findIndex(dialogue => dialogue.chatId === chatId);
     const response = await axios.delete(`http://59.110.149.33:8001/chat/${chatId}`, {
       withCredentials: true,
       headers: {
@@ -160,15 +151,10 @@ const deleteChat = async (chatId) => {
       }
     });
     // 删除对话成功后直接更新对话列表
-    dialogues.splice(currentIndex, 1);
-
-    if (dialogues.length > 0) {
-      // 获取下一个对话的 chatId
-      const nextChatId = dialogues[0].chatId;
-      // 调用 selectChat 函数加载下一个对话信息
+    dialoguesArray.splice(currentIndex, 1);
+    if (dialoguesArray.length > 0) {
+      const nextChatId = dialoguesArray[0].chatId;
       selectChat(nextChatId);
-    } else {
-      // 若没有下一个对话，则清空信息（可根据需求处理）
     }
   } catch (error) {
     console.error('删除对话失败:', error);
@@ -181,6 +167,7 @@ const deleteChat = async (chatId) => {
     return v.toString(16);
   });
 }
+
 </script> 
 
 <style src="@/assets/aside.css" >
