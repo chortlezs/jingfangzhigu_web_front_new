@@ -80,6 +80,7 @@ const props = defineProps({
       });
       // 返回是一个数组里面多个对象
       dialogues = response.data.data.chats;
+      console.log(dialogues,'dialogues');
       
     } catch (error) {
       console.error('获取所有对话失败:', error);
@@ -115,8 +116,7 @@ const props = defineProps({
   //调用所有对话的函数
   getAllDialogues();
 
- // 新建一个对话
- const createNewChat = async () => {
+  const createNewChat = async () => {
   try {
     const newChatId = generateUUID();
     const response = await axios.post('http://59.110.149.33:8001/chat/', {
@@ -124,42 +124,56 @@ const props = defineProps({
     }, {
       withCredentials: true,
       headers: {
-          'Access-Control-Allow-Origin': '*',
-          "Authorization": token
-        }
+        'Access-Control-Allow-Origin': '*',
+        "Authorization": token
+      }
     });
-    getAllDialogues(); // 创建对话成功后立即更新对话列表
-    selectChat(newChatId); // 选择新创建的对话
+    // 创建对话成功后再更新对话列表
+    await getAllDialogues();
+    // 添加新对话到对话列表
+    const newChat = {
+      chatId: newChatId,
+      userId: '',
+      chatName: '新建对话',
+      createTime: '',
+      updateTime: '', 
+      is_delete: 0,
+       message: null, 
+      // 其他属性根据实际情况添加
+    };
+    dialogues.push(newChat);
+    console.log(newChatId, 'newChatId');
   } catch (error) {
-    console.error('新建对话失败:', error);
+    console.error('创建对话失败:', error);
   }
 };
-  // 删除某一个对话
-  const deleteChat = async (chatId) => {
-    try {
-      const currentIndex = dialogues.findIndex(dialogue => dialogue.chatId === chatId);
-      
-      const nextChatId = dialogues[currentIndex + 1]?.chatId || dialogues[currentIndex - 1]?.chatId;
-      const response = await axios.delete(`http://59.110.149.33:8001/chat/${chatId}`, {
-        withCredentials: true,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          "Authorization": token
-        }
-      });
-      // 从 dialogues 数组中过滤掉被删除的对话
-      dialogues = dialogues.filter(dialogue => dialogue.chatId !== chatId);
 
-      if(dialogues.length > 0) {
-          // 获取下一个对话的 chatId
-          const nextChatId = dialogues[0].chatId;
-          // 调用 selectChat 函数加载下一个对话信息
-          selectChat(nextChatId);
-      } else {
-          // 若没有下一个对话，则清空信息（可根据需求处理）
+  // 删除某一个对话
+const deleteChat = async (chatId) => {
+  try {
+    const currentIndex = dialogues.findIndex(dialogue => dialogue.chatId === chatId);
+    const response = await axios.delete(`http://59.110.149.33:8001/chat/${chatId}`, {
+      withCredentials: true,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        "Authorization": token
       }
-    } catch (error) {}
-  };
+    });
+    // 删除对话成功后直接更新对话列表
+    dialogues.splice(currentIndex, 1);
+
+    if (dialogues.length > 0) {
+      // 获取下一个对话的 chatId
+      const nextChatId = dialogues[0].chatId;
+      // 调用 selectChat 函数加载下一个对话信息
+      selectChat(nextChatId);
+    } else {
+      // 若没有下一个对话，则清空信息（可根据需求处理）
+    }
+  } catch (error) {
+    console.error('删除对话失败:', error);
+  }
+};
 
   function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
