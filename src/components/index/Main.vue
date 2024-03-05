@@ -251,7 +251,7 @@ function filterMessages() {
     let rawMessageArray:any = toRaw(props.messageArray);
     if (Array.isArray(rawMessageArray)) {
       rawMessageArray.forEach(item => {
-        // 确保item具有我们需要的属性
+        // 确保item的属性
         if (item ) {
           messages.push({
             messageId: item.messageId,
