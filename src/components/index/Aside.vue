@@ -41,6 +41,10 @@
   import { ref, getCurrentInstance } from 'vue'
   import { Search } from '@element-plus/icons-vue'
   import axios from 'axios';
+<<<<<<< HEAD
+=======
+  import { token }from '@/config/requestConfig.js'
+>>>>>>> ee6af49a9eb69963e93147f32a1be7d9213b6593
   const input2 = ref('')
   const instance = getCurrentInstance();
   const handleOpen = (key: string, keyPath: string[]) => {

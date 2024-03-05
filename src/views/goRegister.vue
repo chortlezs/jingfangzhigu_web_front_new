@@ -31,7 +31,10 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import axios from 'axios';
+=======
+>>>>>>> ee6af49a9eb69963e93147f32a1be7d9213b6593
 import { useRouter } from 'vue-router';
 const router = useRouter();
 export default {
@@ -45,6 +48,7 @@ export default {
     }
   },
   methods: {
+<<<<<<< HEAD
     async sendVerificationCode() {
       try {
             // 向后端发送登录请求
@@ -110,6 +114,35 @@ export default {
               this.error = '登录失败，请重试';
             }
           }
+=======
+    sendVerificationCode() {
+      const params = {
+         username: this.username
+      };
+      
+      // 发起POST请求到服务器
+      axios.post('/user/sendSms', params)
+        .then(response => {
+           console.log('成功发送验证码');
+        })
+        .catch(error => {
+           console.error('发送验证码失败', error);
+        });
+   },
+    async register () {
+      try {
+        // 请根据你的后端接口调整URL和请求参数
+        const response = await axios.post('/user/register', {
+          username: this.username,
+          check: this.check,
+          password: this.password,
+          re_password: this.re_password
+        });
+        this.$router.push('/chat')
+      } catch (error) {
+        this.error = error.response.data.message
+      }
+>>>>>>> ee6af49a9eb69963e93147f32a1be7d9213b6593
     }
   }
 }

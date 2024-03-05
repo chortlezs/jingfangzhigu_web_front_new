@@ -1,3 +1,50 @@
+<<<<<<< HEAD
+=======
+<script>
+import { useRouter } from 'vue-router';
+const router = useRouter();
+function goChat(){
+    router.push({path:'/chat'})
+}
+export default {
+  data () {
+    return {
+      username: '',
+      checknumber: '',
+      error: ''
+    }
+  },
+  methods: {
+    sendVerificationCode() {
+      const params = {
+         username: this.username
+      };
+      
+      // 发起POST请求到服务器
+      axios.post('/user/sendSms', params)
+        .then(response => {
+           console.log('成功发送验证码');
+        })
+        .catch(error => {
+           console.error('发送验证码失败', error);
+        });
+   },
+    async check () {
+      try {
+        const response = await axios.post('/user/smsLogin', {
+          username: this.username,
+          checknumber: this.checknumber
+        })
+        this.$router.push('/chat')
+      } catch (error) {
+        this.error = error.response.data.message
+      }
+    }
+  }
+}
+</script>
+
+>>>>>>> ee6af49a9eb69963e93147f32a1be7d9213b6593
 <template>
 <div class="body">
   <form @submit.prevent="check">
@@ -17,6 +64,7 @@
 </div>
 </template>
 
+<<<<<<< HEAD
 <script>
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -97,6 +145,8 @@ export default {
 }
 </script>
 
+=======
+>>>>>>> ee6af49a9eb69963e93147f32a1be7d9213b6593
 <style scoped>
   .container {
     position: absolute;
