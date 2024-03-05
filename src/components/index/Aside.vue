@@ -106,7 +106,7 @@ const props = defineProps({
     const newChatId = generateUUID();
     const response = await axios.post('http://59.110.149.33:8001/chat/', {
       chatId: newChatId,
-      chatName: 'props.newChatName',
+      chatName: '新建对话',
     }, {
       withCredentials: true,
       headers: {
@@ -115,8 +115,7 @@ const props = defineProps({
       }
     });
     if (response.data && response.data.data) {
-      dialoguesArray.push(response.data.data);
-      dialoguesArray = [...dialoguesArray];
+      getAllDialogues();
       selectChat(newChatId);
     }
   } catch (error) {
