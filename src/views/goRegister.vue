@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { useRouter } from 'vue-router';
 const router = useRouter();
 export default {
@@ -44,33 +45,71 @@ export default {
     }
   },
   methods: {
-    sendVerificationCode() {
-      const params = {
-         username: this.username
-      };
-      
-      // 发起POST请求到服务器
-      axios.post('/user/sendSms', params)
-        .then(response => {
-           console.log('成功发送验证码');
-        })
-        .catch(error => {
-           console.error('发送验证码失败', error);
-        });
+    async sendVerificationCode() {
+      try {
+            // 向后端发送登录请求
+            const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
+            const response = await axios.post('http://59.110.149.33:8001/user/sendSms', {
+              phone: this.username
+            },{
+                withCredentials: true,
+                headers: {
+                'Access-Control-Allow-Origin': '*',
+                "Authorization": token,
+                'Content-Type': 'application/x-www-form-urlencoded'
+        }
+            });
+            if (response.data.code === 'success') {
+            // 登录成功，跳转到聊天页面
+            console.log(response);
+            } else {
+            // 登录失败，弹出提示框
+            this.error = '登录失败，请重试';
+            console.log(response)
+            }
+          } catch (error) {
+            if (error.response) {
+              this.error = error.response.data.message;
+            } else {
+              this.error = '登录失败，请重试';
+            }
+          }
    },
     async register () {
       try {
-        // 请根据你的后端接口调整URL和请求参数
-        const response = await axios.post('/user/register', {
-          username: this.username,
-          check: this.check,
-          password: this.password,
-          re_password: this.re_password
-        });
-        this.$router.push('/chat')
-      } catch (error) {
-        this.error = error.response.data.message
-      }
+            // 向后端发送登录请求
+            const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
+            const response = await axios.post('http://59.110.149.33:8001/user/register', {
+              phone: this.username,
+              code: this.check,
+              pwd: this.password,
+              role: 1
+            },{
+                withCredentials: true,
+                headers: {
+                'Access-Control-Allow-Origin': '*',
+                "Authorization": token,
+                'Content-Type': 'application/x-www-form-urlencoded'
+        }
+            });
+            if (response.data.code === 'success') {
+            // 注册成功，跳转到聊天页面
+            console.log('success');
+            console.log(response);
+            this.$router.push('/chat');
+            } else {
+            // 注册失败，弹出提示框
+            this.error = '登录失败，请重试';
+            console.log('failed');
+            console.log(response)
+            }
+          } catch (error) {
+            if (error.response) {
+              this.error = error.response.data.message;
+            } else {
+              this.error = '登录失败，请重试';
+            }
+          }
     }
   }
 }
