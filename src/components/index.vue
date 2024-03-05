@@ -21,12 +21,21 @@ onMounted(()=>{
     }
 })
 
-
+let messageArray = ref([]);
 // 处理子组件发出的自定义事件
 const handleMessagesUpdated = (data) => {
-  console.log('收到历史记录',data);
-  mainRef.value.updateMessage(data)
-  console.log(data);
+  messageArray.value = data;
+};
+const dialogues = ref([]);
+
+let selectedChatId = ref('');
+const selectChat = (chatId) => {
+  selectedChatId.value = chatId;
+};
+const newChatName = ref('');
+const handleUpdateChatName = (newChatNameValue, chatId) => {
+  newChatName.value = newChatNameValue;
+  console.log(newChatName,'newChatName');
 };
 </script>
 
@@ -56,8 +65,8 @@ const handleMessagesUpdated = (data) => {
         </div>
       </el-header>
       <el-container class="leftandright">
-        <Aside @messages-updated="handleMessagesUpdated"/>
-        <Main :headUrl="headUrl" ref="mainRef"/>
+        <Aside :dialogues="dialogues" @messages-updated="handleMessagesUpdated" @select-chat="selectChat" :newChatName="newChatName"/>
+        <Main  :messageArray = "messageArray" :selectedChatId="selectedChatId" @update-chat-name="handleUpdateChatName"/>
       </el-container>
     </el-container>
   </template>

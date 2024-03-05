@@ -4,54 +4,55 @@
       <el-button class="newchat" type="primary" plain @click="createNewChat">新建对话</el-button>
     </el-row>
     <el-row class="search-history">
-      <el-input
-        v-model="input2"
-        class="search-history"
-        placeholder="搜索历史记录"
-        :prefix-icon="Search"
-        style="color: white;"
-      />
+      <el-input v-model="input2" class="search-history" placeholder="搜索历史记录" :prefix-icon="Search" style="color: white;" />
     </el-row>
     <el-row class="history">
-      <el-menu
-          class="el-menu-vertical-demo"
-          @open="handleOpen"
-          @close="handleClose"
-          :default-opened="true"
-      >
+      <el-menu class="el-menu-vertical-demo" :default-opened="true">
       <el-sub-menu index="1" popper-class="custom-sub-menu" >
           <template #title >
             <span>网页历史对话</span>
           </template>
           <el-scrollbar max-height="60vh" >
             <!-- 渲染对话列表 -->
-            <el-menu-item v-for="(dialogue, index) in dialogues" :key="index">
-              <div class="menu-item-text" @click="getMessagesByChatId(dialogue)">{{ dialogue.chatName }}</div>
-              <!-- 这里要修改 -->
-              <el-button type="danger" size="mini" @click="deleteChat(dialogue.chatId)">删除</el-button>
+            <el-menu-item v-for="(dialogue, index) in dialoguesArray" :key="index">
+              <div class="menu-item-text" @click="selectChat(dialogue.chatId)">{{ dialogue.chatName }}</div>
+              <img src="@/assets/chat_pictures/delete.png" 
+                    style="display: inline-block; height: 18px; width: 18px;"
+                    @click.stop="deleteChat(dialogue.chatId)">
             </el-menu-item>
           </el-scrollbar>
-        </el-sub-menu>
+      </el-sub-menu>
     </el-menu>
     </el-row>
   </el-aside>
+
 </template>
 
 <script lang="ts"  setup>
-  import { ref, getCurrentInstance } from 'vue'
+  import { ref, getCurrentInstance, reactive,defineProps, defineEmits } from 'vue'
   import { Search } from '@element-plus/icons-vue'
   import axios from 'axios';
-  import { token }from '@/config/requestConfig.js'
+  // import { token }from '@/config/requestConfig.js'
   const input2 = ref('')
   const instance = getCurrentInstance();
-  const handleOpen = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
-  }
-  const handleClose = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
-  }
 
-  let dialogues = ref([])
+  let dialoguesArray = reactive([
+  {
+        chatId: "1",
+        userId: "1",
+        chatName: "",
+        createTime: "2023-11-17T11:58:58.000+00:00",
+        updateTime: "2023-11-17T11:59:02.000+00:00",
+        is_delete: 0,
+        message: null
+  }
+])
+const newChatNameValue = ref('')
+const props = defineProps({
+  newChatName: String,
+});
+
+  const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
   // 获取所有对话
   const getAllDialogues = async () => {
     try {
@@ -63,13 +64,20 @@
         }
       });
       // 返回是一个数组里面多个对象
-      dialogues = response.data.data.chats;
+      dialoguesArray.length = 0;
+      response.data.data.chats.forEach(chat => dialoguesArray.push(chat));
+      
     } catch (error) {
       console.error('获取所有对话失败:', error);
     }
   };
-
-  const chatId = 'd8660e6d-1ff7-44d4-8d86-9dc96aad956b'
+  const emits = defineEmits(['select-chat','message-updated']);
+  const selectChat = (chatId) => {
+    // 这里可以调用获取对应聊天信息的方法
+    getMessagesByChatId(chatId);
+    // 向父组件发出事件
+    emits('select-chat', chatId);
+  };
  
   // 获取某一个 chatId 的所有消息
   const getMessagesByChatId = async (chatId) => {
@@ -81,65 +89,62 @@
           "Authorization": token
         }
       });
-      if (instance && response.data.code == 'SUCCESS') {
-        instance.emit('messages-updated', response.data);
+      let messageArry = response.data.data.chat.message;
+      if (instance) {
+      instance.emit('messages-updated', messageArry);
       }
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-        throw error; // 抛出错误以便调用方处理
-      }
+    } catch (error) {
+      console.error('', error);
+      throw error; // 抛出错误以便调用方处理
+    }
   };
   //调用所有对话的函数
   getAllDialogues();
 
-
-// 获取当前id的所有消息
-  getMessagesByChatId(chatId)
-    .then(data => {
-      // 将获取到的消息更新到 dialogues 中
-      // dialogues.value = data.message;
-      console.log(dialogues);
-      
-    })
-    .catch(error => {
-      console.error('获取消息失败:', error);
-    });
-
- // 新建一个对话
- const createNewChat = async () => {
+  const createNewChat = async () => {
   try {
     const newChatId = generateUUID();
     const response = await axios.post('http://59.110.149.33:8001/chat/', {
       chatId: newChatId,
+      chatName: 'props.newChatName',
     }, {
       withCredentials: true,
       headers: {
-          'Access-Control-Allow-Origin': '*',
-          "Authorization": token
-        }
+        'Access-Control-Allow-Origin': '*',
+        "Authorization": token
+      }
     });
-    getAllDialogues();
-    location.reload();
+    if (response.data && response.data.data) {
+      dialoguesArray.push(response.data.data);
+      dialoguesArray = [...dialoguesArray];
+      selectChat(newChatId);
+    }
   } catch (error) {
-    console.error('新建对话失败:', error);
+    console.error('创建对话失败:', error);
   }
 };
+
   // 删除某一个对话
-  const deleteChat = async (chatId) => {
-    try {
-      const response = await axios.delete(`http://59.110.149.33:8001/chat/${chatId}`, {
-        withCredentials: true,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          "Authorization": token
-        }
-      });
-      alert('删除成功')
-       // 删除对话成功后刷新对话列表
-       getAllDialogues();
-       location.reload();
-    } catch (error) {}
-  };
+const deleteChat = async (chatId) => {
+  try {
+    const currentIndex = dialoguesArray.findIndex(dialogue => dialogue.chatId === chatId);
+    const response = await axios.delete(`http://59.110.149.33:8001/chat/${chatId}`, {
+      withCredentials: true,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        "Authorization": token
+      }
+    });
+    // 删除对话成功后直接更新对话列表
+    dialoguesArray.splice(currentIndex, 1);
+    if (dialoguesArray.length > 0) {
+      const nextChatId = dialoguesArray[0].chatId;
+      selectChat(nextChatId);
+    }
+  } catch (error) {
+    console.error('删除对话失败:', error);
+  }
+};
 
   function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -147,6 +152,7 @@
     return v.toString(16);
   });
 }
+
 </script> 
 
 <style src="@/assets/aside.css" >
