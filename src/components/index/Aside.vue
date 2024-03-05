@@ -4,21 +4,10 @@
       <el-button class="newchat" type="primary" plain @click="createNewChat">新建对话</el-button>
     </el-row>
     <el-row class="search-history">
-      <el-input
-        v-model="input2"
-        class="search-history"
-        placeholder="搜索历史记录"
-        :prefix-icon="Search"
-        style="color: white;"
-      />
+      <el-input v-model="input2" class="search-history" placeholder="搜索历史记录" :prefix-icon="Search" style="color: white;" />
     </el-row>
     <el-row class="history">
-      <el-menu
-          class="el-menu-vertical-demo"
-          @open="handleOpen"
-          @close="handleClose"
-          :default-opened="true"
-      >
+      <el-menu class="el-menu-vertical-demo" :default-opened="true">
       <el-sub-menu index="1" popper-class="custom-sub-menu" >
           <template #title >
             <span>网页历史对话</span>
@@ -45,12 +34,6 @@
   import axios from 'axios';
   const input2 = ref('')
   const instance = getCurrentInstance();
-  const handleOpen = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
-const handleClose = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
-}
 
   let dialoguesArray = reactive([
   {
@@ -63,10 +46,10 @@ const handleClose = (key: string, keyPath: string[]) => {
         message: null
   }
 ])
+const newChatNameValue = ref('')
 const props = defineProps({
-  dialogues: Array
+  newChatName: String,
 });
-console.log(props.dialogues,'111111111111');
 
   const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
   // 获取所有对话
@@ -116,13 +99,13 @@ console.log(props.dialogues,'111111111111');
   };
   //调用所有对话的函数
   getAllDialogues();
+
   const createNewChat = async () => {
   try {
     const newChatId = generateUUID();
-    console.log(newChatId,'newChatId');
     const response = await axios.post('http://59.110.149.33:8001/chat/', {
       chatId: newChatId,
-      chatName: '新建对话',
+      chatName: 'props.newChatName',
     }, {
       withCredentials: true,
       headers: {
@@ -132,6 +115,7 @@ console.log(props.dialogues,'111111111111');
     });
     if (response.data && response.data.data) {
       dialoguesArray.push(response.data.data);
+      dialoguesArray = [...dialoguesArray];
       selectChat(newChatId);
     }
   } catch (error) {

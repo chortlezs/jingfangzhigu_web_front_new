@@ -200,7 +200,7 @@ const buttons = [
   { text: '最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？' },
   { text: '胃肠炎可以吃柚子吗？' },
 ] as const
-const textarea = ref('')
+
 const activeName = ref('first')
 let isNewChat = ref(false)
 
@@ -220,13 +220,9 @@ let messages = reactive<Message[]>([]);
 const props = defineProps({
   messageArray: Array  as PropType<Message[]>,
   selectedChatId: String,
-  dialogues: Array,
 });
 
-watch(() => props.messageArray, (newVal, oldVal) => {
-  // 新建之后的chatId
-  console.log(props.selectedChatId,'newVal11111111111');
-  
+watch(() => props.messageArray, (newVal, oldVal) => { 
   if (newVal && newVal.length > 0) {
     filterMessages();
     chatId.value = props.selectedChatId as string;
@@ -332,23 +328,24 @@ const subscribeToChat = () => {
   });
 };
 
+const emit = defineEmits(['update-chat-name']);
 const sendMessage = () => {
   if (inputMessage.value.trim() !== '') {
     if (props.selectedChatId !== undefined && chatId.value === props.selectedChatId) {
-      if (isFirstMessageInChat.value) {
+      if (isFirstMessageInChat.value && (!props.messageArray || props.messageArray.length === 0)) {
         messages.splice(0, messages.length); // 清空当前消息数组
-        isFirstMessageInChat.value = false; // 更新标志
+        isFirstMessageInChat.value = false;
+        emit('update-chat-name', inputMessage.value, chatId.value);
       }
       const currentChatId = props.selectedChatId;
       chatId.value = currentChatId;
-      console.log('chatId.valuechatId.valuechatId.value',chatId.value)
       const requestDataToSend = {
         messageId: generateUUID(),
-        text: inputMessage.value, // 发送用户输入的文本
+        text: inputMessage.value,
         messages: toRaw(props.messageArray),
       };
     subscribeToChat();
-    fetchResponse(requestDataToSend); // 发送动态创建的请求数据
+    fetchResponse(requestDataToSend);
     // 发送消息后触发事件，将第一条消息内容作为参数传递
     messages.push({
       roleId: 1,
@@ -363,7 +360,6 @@ const sendMessage = () => {
       createTime: '',
       messageId: generateUUID(),
     }); // 将用户输入的消息添加到本地消息数组
-    
     inputMessage.value = ''; // 清空输入框
     showChatBox.value = true; // 显示聊天框
   }
