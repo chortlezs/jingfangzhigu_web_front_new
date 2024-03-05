@@ -32,6 +32,8 @@
   import { ref, getCurrentInstance, reactive,defineProps, defineEmits } from 'vue'
   import { Search } from '@element-plus/icons-vue'
   import axios from 'axios';
+import { watch } from 'fs';
+import { log } from 'console';
   const input2 = ref('')
   const instance = getCurrentInstance();
 
@@ -65,6 +67,7 @@ const props = defineProps({
       // 返回是一个数组里面多个对象
       dialoguesArray.length = 0;
       response.data.data.chats.forEach(chat => dialoguesArray.push(chat));
+      console.log('kk',dialoguesArray);
       
     } catch (error) {
       console.error('获取所有对话失败:', error);
@@ -105,7 +108,7 @@ const props = defineProps({
     const newChatId = generateUUID();
     const response = await axios.post('http://59.110.149.33:8001/chat/', {
       chatId: newChatId,
-      chatName: 'props.newChatName',
+      chatName: '新建对话',
     }, {
       withCredentials: true,
       headers: {
@@ -114,14 +117,15 @@ const props = defineProps({
       }
     });
     if (response.data && response.data.data) {
-      dialoguesArray.push(response.data.data);
-      dialoguesArray = [...dialoguesArray];
+      console.log(response.data.data,'response.data.data');
+      getAllDialogues();
       selectChat(newChatId);
     }
   } catch (error) {
     console.error('创建对话失败:', error);
   }
 };
+
 
   // 删除某一个对话
 const deleteChat = async (chatId) => {
