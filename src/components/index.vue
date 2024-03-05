@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {ref} from 'vue'
+import {ref,onMounted} from 'vue'
 import Aside from './index/Aside.vue'
 import Main from './index/Main.vue'
 import { useRouter } from 'vue-router';
@@ -13,6 +13,14 @@ function goUser(){
 }
 
 const mainRef = ref(null)
+const imageUrl = ref('https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png')
+onMounted(()=>{
+    let headUrl = localStorage.getItem('headimg')
+    if(headUrl){
+        imageUrl.value = headUrl
+    }
+})
+
 
 // 处理子组件发出的自定义事件
 const handleMessagesUpdated = (data) => {
@@ -28,7 +36,7 @@ const handleMessagesUpdated = (data) => {
             <img class='logoimg' src="@/assets/chat_pictures/logo.png"/>
         <div class="search">
           <el-dropdown>
-            <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" class='avator' />
+            <el-avatar :src="imageUrl" class='avator' />
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="goPersonal">个人中心</el-dropdown-item>
@@ -49,7 +57,7 @@ const handleMessagesUpdated = (data) => {
       </el-header>
       <el-container class="leftandright">
         <Aside @messages-updated="handleMessagesUpdated"/>
-        <Main ref="mainRef"/>
+        <Main :headUrl="headUrl" ref="mainRef"/>
       </el-container>
     </el-container>
   </template>

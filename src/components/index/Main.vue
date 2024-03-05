@@ -8,47 +8,67 @@
               <h4 >—您的私人AI中医诊疗助手—</h4>
           </el-row>
 
-          <!-- 中间部分内容 -->
-          <el-row class="content" id="content">
-              <el-row :gutter="40" class="custom-row">
-                  <el-col :xs="6" :sm="8" :md="10" :lg="12" :xl="14" >
-                      <div class="rectangle">
-                          <h4>【我想知道】</h4>
-                          <p>药物属性是热是凉?这个生病能不能吃?</p>
-                          <p>更多您想知道的，我们知无不言。</p>
-                      </div>
-                  </el-col>
-                  <el-col :xs="6" :sm="8" :md="10" :lg="12" :xl="14">
-                      <div class="rectangle">
-                          <h4>【我要治病】</h4>
-                          <p>我发现今天头有点晕，我生了什么病吗?</p>
-                          <p>我突然开始咳嗽打喷嚏，我要吃什么药治疗?</p>
-                      </div>
-                  </el-col>
-              </el-row>
-              <el-row :gutter="40" class="custom-row">
-                  <el-col :xs="6" :sm="8" :md="10" :lg="12" :xl="14">
-                      <div class="rectangle">
-                          <h4>【拍照诊疗】</h4>
-                          <p>我不会描述病情，我想上传舌苔照片来分析诊治。</p>
-                          <p></p>
-                      </div>
-                  </el-col>
-                  <el-col :xs="6" :sm="8" :md="10" :lg="12" :xl="14">
-                      <div class="rectangle">
-                          <h4>【其他设备】</h4>
-                          <p>我有智能手表可以提供身体健康数据。</p>
-                          <p>我想绑定其他可穿戴设备来监测健康情况。</p>
-                      </div>
-                  </el-col>
-              </el-row>
-          </el-row>
-          <el-row class="content2">
-              <p style="margin:0 20px;font-size: 14px;">你可以问我：</p>
-              <div class="content22" style="text-align: left;">
-                  <el-button
-                  v-for="button in buttons" :key="button.text" type="" text bg style="text-align: left;">{{ button.text }}
-                  </el-button>
+            <!-- 中间部分内容 -->
+            <el-row class="content" id="content">
+                <el-row :gutter="40" class="custom-row">
+                    <el-col :xs="6" :sm="8" :md="10" :lg="12" :xl="14" >
+                        <div class="rectangle">
+                            <h4>【我想知道】</h4>
+                            <p>药物属性是热是凉?这个生病能不能吃?</p>
+                            <p>更多您想知道的，我们知无不言。</p>
+                        </div>
+                    </el-col>
+                    <el-col :xs="6" :sm="8" :md="10" :lg="12" :xl="14">
+                        <div class="rectangle">
+                            <h4>【我要治病】</h4>
+                            <p>我发现今天头有点晕，我生了什么病吗?</p>
+                            <p>我突然开始咳嗽打喷嚏，我要吃什么药治疗?</p>
+                        </div>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="40" class="custom-row">
+                    <el-col :xs="6" :sm="8" :md="10" :lg="12" :xl="14">
+                        <div class="rectangle">
+                            <h4>【拍照诊疗】</h4>
+                            <p>我不会描述病情，我想上传舌苔照片来分析诊治。</p>
+                            <p></p>
+                        </div>
+                    </el-col>
+                    <el-col :xs="6" :sm="8" :md="10" :lg="12" :xl="14">
+                        <div class="rectangle">
+                            <h4>【其他设备】</h4>
+                            <p>我有智能手表可以提供身体健康数据。</p>
+                            <p>我想绑定其他可穿戴设备来监测健康情况。</p>
+                        </div>
+                    </el-col>
+                </el-row>
+            </el-row>
+            <el-row class="content2">
+                <p style="margin:0 20px;font-size: 14px;">你可以问我：</p>
+                <div class="content22" style="text-align: left;">
+                    <el-button
+                    v-for="button in buttons" :key="button.text" type="" text bg style="text-align: left;">{{ button.text }}
+                    </el-button>
+                </div>
+            </el-row>
+        </el-row>
+       </div>
+    
+      <!-- 聊天框 -->
+      <div v-if="showChatBox" v-for="(msg, index) in messages" :key="index"  class="chat-container" ref="chatContainer" style=" padding: 10px; display: flex; flex-direction: column; align-items: center; max-height: 66%;">
+          <!-- 对话框 -->
+          <div  v-if="msg.roleId === 1" style="display: flex; justify-content: flex-end; margin-bottom: 10px; margin-left: auto;">
+              <!-- 用户消息 -->
+              <div class="chat-box" style="display: flex; justify-content: flex-end; align-items: center;" >
+                  <div class="bubble user-bubble last-message" style="background-color: #DCF8C6; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
+                      {{ msg.content }}
+                  </div>
+                  <div class="avatar">
+                      <img src="@/assets/chat_pictures/icon.png" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+                  </div>
+                  <div class="bubble assistant-bubble last-message" style="background-color: #F2F2F2; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
+                    {{ msg.content? msg.content : messageContent }}
+                </div>
               </div>
           </el-row>
       </el-row>
@@ -216,14 +236,15 @@ import { Monitor,Camera } from '@element-plus/icons-vue'
 import type { TabsPaneContext } from 'element-plus'
 import { ref, onMounted, watch, onUnmounted, reactive, nextTick, PropType } from 'vue';
 import axios from 'axios';
+import { token }from '@/config/requestConfig.js'
 declare var webkitSpeechRecognition: any;
-const dialogVisible = ref(false)
-
+const imageUrl = ref('https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png')
 const buttons = [
 { text: '我最近头痛伴着流鼻涕,该吃什么药?' },
 { text: '最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？' },
 { text: '胃肠炎可以吃柚子吗？' },
 ] as const
+
 
 const textarea = ref('')
 const activeName = ref('first')
@@ -274,9 +295,19 @@ let data = JSON.parse(event.data);
   }
 historyCounter = data["data"]["historyCounter"]
 
-let flag = data["data"]["flag"];
-if (flag) { 
-  dialogVisible.value = true; // 显示弹窗
+onMounted(() => {
+  
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.onresult = (event: any) => {
+    const transcript = Array.from(event.results)
+      .map(result => result[0].transcript)
+      .join('');
+    inputMessage.value = transcript; // 将语音识别结果赋值给输入框文本
+  };
+  let headUrl = localStorage.getItem('headimg')
+  if(headUrl){
+      imageUrl.value = headUrl
   }
 });
 eventSource.addEventListener('end', function(event) {
@@ -293,7 +324,7 @@ eventSource.addEventListener('end', function(event) {
 onUnmounted(() => {
   eventSource.close();
 });
-};
+
 const sendMessage = () => {
 const newHistoryCounter = historyCounter + 1;
 if (inputMessage.value.trim() !== '') {
@@ -318,7 +349,6 @@ if (inputMessage.value.trim() !== '') {
 }
 }
 const chatId = generateUUID()
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MDkyOTkwNDF9.brNO6-Rk28b7Eq-d3sZcjRSEvm9iLbGOcQbKHM1jIXk"
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
 try {
@@ -341,7 +371,7 @@ return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
   var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
   return v.toString(16);
 });
-}
+};
 // 滚动到底部的方法
 const scrollToBottom = () => {
 const chatContainer = document.querySelector('.scroll')
@@ -355,7 +385,7 @@ scrollToBottom();
 watch(messages, async () => {
   await nextTick(); // 等待DOM更新
   scrollToBottom(); // 现在滚动到底部
-});
+})
 })
 
 // const handleUpload = (file: any) => {
@@ -375,7 +405,7 @@ const  uploadImage = (request) => {
       let imgUrl = response.data.data["url"];
       inputMessage.value = imgUrl;
   })
-  
 }
+
 
 </script>

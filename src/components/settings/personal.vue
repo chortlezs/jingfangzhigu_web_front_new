@@ -1,11 +1,13 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { UserOutlined } from '@ant-design/icons-vue';
 import { SettingOutlined } from '@ant-design/icons-vue';
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import type { UploadProps } from 'element-plus'
+import { token }from '@/config/requestConfig.js'
+import axios from 'axios'
 const radio2 = ref('1')
 const input2 = ref('')
 const imageUrl = ref('')
@@ -33,6 +35,10 @@ const options = [
   },
 ]
 
+const header = ref({
+  'Authorization': token
+})
+
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
   response,
   uploadFile
@@ -44,12 +50,16 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (rawFile.type !== 'image/jpeg') {
     ElMessage.error('Avatar picture must be JPG format!')
     return false
-  } else if (rawFile.size / 1024 / 1024 > 2) {
+  } else if (rawFile.size / 1024 / 1024 > 5) {
     ElMessage.error('Avatar picture size can not exceed 2MB!')
     return false
   }
   return true
 }
+
+const userInfo = ref({})
+const userInfoBefore = ref({})
+
 const menuData = [
   {
     key: 'personal',
@@ -79,6 +89,82 @@ const handleMenuClick = (key) => {
   selectedKeys.value = [key];
   selectItem({ key });
 };
+
+const getUserInfo = () => {
+    axios.get('http://59.110.149.33:8001/user/info', {
+        headers: {
+            Authorization: token
+        }
+    }).then(res => {
+        console.log(res)
+        if(res.data && res.data.code == "SUCCESS"){
+            userInfo.value = {...res.data.data.userInfo}
+            userInfoBefore.value =  {...res.data.data.userInfo}
+        }
+    })
+}
+
+onMounted(()=>{
+    getUserInfo()
+})
+
+const handleUserInfoUpload = ()=>{
+  let formObj = new FormData()
+  formObj.append('avatar', userInfo.value.avatar)
+  formObj.append('username', userInfo.value.username)
+  formObj.append('address', userInfo.value.address)
+  formObj.append('gender', userInfo.value.gender)
+  formObj.append('role', 1)
+  formObj.append('age', userInfo.value.age)
+  formObj.append('height', userInfo.value.height)
+  formObj.append('weight', userInfo.value.weight)
+  formObj.append('anamnesis', userInfo.value.anamnesis)
+  axios.post(
+    `http://59.110.149.33:8001/user/info`,
+    formObj,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': token
+      }
+    }
+  ).then(res=>{
+    console.log(res)
+    if(res.data && res.data.code == 'SUCCESS'){
+      userInfoBefore.value.avatar = userInfo.value.avatar
+      localStorage.setItem('headimg',userInfo.value.avatar)
+    }
+  })
+}
+
+const handleFileUpload = (fileObj) => {
+  let formObj = new FormData()
+  formObj.append('avatar', fileObj.file)
+  axios.post(
+    `http://59.110.149.33:8001/file/avatar`,
+    formObj,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': token
+      }
+    }
+  ).then(res=>{
+    console.log(res)
+    if(res.data && res.data.code == 'SUCCESS'){
+      let data = res.data.data
+      userInfo.value.avatar = data.avatarUrl
+      window.localStorage.setItem('headimg',data.avatarUrl)
+    }
+  })
+}
+
+let headUrl = localStorage.getItem('headimg')
+  if(headUrl){
+    userInfo.value.avatar = headUrl
+  }
+
+
 </script>
 
 <template>
@@ -89,27 +175,23 @@ const handleMenuClick = (key) => {
         <div class="avatar">
           <div class="avatar-info">
             <a-avatar :size="64">
-              <template #icon><UserOutlined /></template>
+              <template #icon>
+                <img v-if="userInfo.avatar" :src="userInfo.avatar" class="avatarleft" />
+                <UserOutlined v-else />;
+              </template>
             </a-avatar>
             <span class="user-tag">患者用户</span>
           </div>
-          <p class="username">loopy，China,19</p>
+          <p class="username">{{ userInfoBefore.username }}</p>
         </div>
         <div class="menu">
           <div class="menu-name">
-            <setting-outlined style="color: #1890ff; font-size: 20px; margin-right: 5px;" /> 
+            <setting-outlined style="color: #1890ff; font-size: 20px; margin-right: 5px;" />
             个人中心
           </div>
-          <a-menu
-            v-model:selectedKeys="selectedKeys"
-            :open-keys="openKeys"
-            @select="selectItem"
-            mode="vertical"
+          <a-menu v-model:selectedKeys="selectedKeys" :open-keys="openKeys" @select="selectItem" mode="vertical"
             theme="#fff">
-            <a-menu-item
-              v-for="item in menuData"
-              :key="item.key"
-              :icon="item.icon"
+            <a-menu-item v-for="item in menuData" :key="item.key" :icon="item.icon"
               @click="() => handleMenuClick(item.key)">
               {{ item.title }}
             </a-menu-item>
@@ -127,52 +209,27 @@ const handleMenuClick = (key) => {
           <div class="user-basic">
             <div class="list">
               <span class="sub-titie">头像</span>
-              <el-upload
-                class="avatar-uploader"
-                action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess"
-                :before-upload="beforeAvatarUpload"
-              >
-                <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+              <el-upload class="avatar-uploader" :http-request="handleFileUpload" :show-file-list="false"
+                :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                <img v-if="userInfo.avatar" :src="userInfo.avatar" class="avatarright" />
+                <el-icon v-else class="avatar-uploader-icon">
+                  <Plus />
+                </el-icon>
               </el-upload>
               <span class="avatar-change">点击修改</span>
             </div>
             <div class="list">
               <span class="sub-titie">用户名</span>
-              <el-input v-model="input2" style="flex: 1;" placeholder="loopy" />
+              <el-input v-model="userInfo.username" style="flex: 1;" placeholder="用户名" />
             </div>
             <div class="list">
               <span class="sub-titie">地点</span>
-              <el-select
-                v-model="value"
-                class="m-2"
-                placeholder="Select"
-                style="flex: 1;"
-              >
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
-              </el-select>
+              <el-input v-model="userInfo.address" style="flex: 1;" placeholder="地址" />
             </div>
             <div class="list">
               <span class="sub-titie">身份</span>
-              <el-select
-                v-model="value"
-                class="m-2"
-                placeholder="Select"
-                style="flex: 1;"
-              >
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                />
+              <el-select v-model="userInfo.role" class="m-2" placeholder="Select" style="flex: 1;">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </div>
           </div>
@@ -182,33 +239,33 @@ const handleMenuClick = (key) => {
             </div>
             <div class="list">
               <span class="sub-titie">性别</span>
-                <el-radio-group v-model="radio2" class="ml-4">
-                  <el-radio label="1">男</el-radio>
-                  <el-radio label="2">女</el-radio>
-                </el-radio-group>
+              <el-radio-group v-model="userInfo.gender" class="ml-4">
+                <el-radio label="male">男</el-radio>
+                <el-radio label="female">女</el-radio>
+              </el-radio-group>
             </div>
             <div class="list">
               <span class="sub-titie">年龄</span>
-              <el-input v-model="input2" style="flex: 1;" placeholder="19" />
+              <el-input v-model="userInfo.age" style="flex: 1;" placeholder="19" />
             </div>
             <div class="list">
               <span class="sub-titie">身高</span>
-              <el-input v-model="input2" style="flex: 1;" placeholder="180cm" />
+              <el-input v-model="userInfo.height" style="flex: 1;" placeholder="180cm" />
             </div>
             <div class="list">
               <span class="sub-titie">体重</span>
-              <el-input v-model="input2" style="flex: 1;" placeholder="65kg" />
+              <el-input v-model="userInfo.weight" style="flex: 1;" placeholder="65kg" />
             </div>
             <div class="list">
               <span class="sub-titie">既往病史</span>
-              <el-input v-model="input2" style="flex: 1;" placeholder="暂无" />
+              <el-input v-model="userInfo.anamnesis" style="flex: 1;" placeholder="暂无" />
             </div>
           </div>
         </div>
-        <div class="imformation-change"> 
-          <el-button type="primary">更新信息</el-button>
+        <div class="imformation-change">
+          <el-button @click="handleUserInfoUpload" type="primary">更新信息</el-button>
         </div>
-       
+
       </div>
 
     </div>
@@ -220,10 +277,11 @@ const handleMenuClick = (key) => {
   width: 80px;
   height: 80px;
   display: block;
+  
 }
-
 </style>
 <style>
+
 body {
   margin: 0;
   height: 100vh;
@@ -234,29 +292,45 @@ body {
   align-items: center;
 }
 
+.avatarright {
+  width: 80px; /* 或者具体的像素值 */
+  height: 80px; /* 确保宽度和高度相等 */
+  object-fit: cover; /* 保持图片比例，超出部分裁剪 */
+}
 .center-container {
   width: 800px;
   height: 500px;
   display: flex;
-  align-items: center; /* 垂直居中 */
+  align-items: center;
+  /* 垂直居中 */
 }
+
 .avatar {
   display: flex;
-  flex-direction: column; /* 垂直方向排列 */
-  align-items: center; /* 水平居中 */
+  flex-direction: column;
+  /* 垂直方向排列 */
+  align-items: center;
+  /* 水平居中 */
   margin-top: 20px;
 }
 
 .avatar-info {
   display: flex;
-  align-items: center; /* 水平垂直居中 */
+  align-items: center;
+  /* 水平垂直居中 */
+}
+
+.avatarleft {
+  width: 80px;
+  height: 80px;
+  display: block;
 }
 
 .user-tag {
-	color: white;
+  color: white;
   margin-right: -40px;
   padding: 2px;
-  background-color:rgba(255, 255,255, 0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   border-radius: 5px;
   margin-top: 30px;
 }
@@ -312,58 +386,69 @@ body {
   display: flex;
   flex-direction: column;
 }
+
 .user-settings {
-	height: 70px;
-	display: flex;
-	align-items: center;
-	margin-left: 18px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  margin-left: 18px;
 }
+
 .user-name {
-	font-size: 20px;
-	font-weight: bold;
-	margin-top: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
 }
+
 .separator {
   height: 2px;
-  width:100%;
-  background: linear-gradient(to right, #689AFB, #dadfe1); /* 渐变效果 */
+  width: 100%;
+  background: linear-gradient(to right, #689AFB, #dadfe1);
+  /* 渐变效果 */
 }
-.user-information{
+
+.user-information {
   display: flex;
-	align-items: center;
+  align-items: center;
   width: 100%;
   justify-content: center;
   margin-top: 10px
 }
-.user-basic{
-	align-items: center;
-	margin-right: 10px;
+
+.user-basic {
+  align-items: center;
+  margin-right: 10px;
   width: 45%;
 }
-.user-body{
-	align-items: center;
-	margin-left: 10px;
+
+.user-body {
+  align-items: center;
+  margin-left: 10px;
   width: 45%;
 }
-.list{
+
+.list {
   display: flex;
   padding: 10px;
   align-items: center;
   width: 100%;
 }
-.list .sub-titie{
+
+.list .sub-titie {
   width: 60px;
 }
+
 .avatar-change {
-	color: grey;
+  color: grey;
   padding: 2px;
   margin-top: 60px;
 }
+
 .avatar-uploader .el-upload {
   border: 1px dashed var(--el-border-color);
   border-radius: 50%;
   cursor: pointer;
-  position: relative;
+  position: related;
   overflow: hidden;
   transition: var(--el-transition-duration-fast);
 }
@@ -379,7 +464,8 @@ body {
   height: 80px;
   text-align: center;
 }
-.imformation-change{
+
+.imformation-change {
   display: flex;
   justify-content: center;
   margin-top: auto;
