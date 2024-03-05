@@ -33,6 +33,7 @@
   import { Search } from '@element-plus/icons-vue'
   import axios from 'axios';
   // import { token }from '@/config/requestConfig.js'
+
   const input2 = ref('')
   const instance = getCurrentInstance();
 
@@ -66,6 +67,7 @@ const props = defineProps({
       // 返回是一个数组里面多个对象
       dialoguesArray.length = 0;
       response.data.data.chats.forEach(chat => dialoguesArray.push(chat));
+      console.log('kk',dialoguesArray);
       
     } catch (error) {
       console.error('获取所有对话失败:', error);
@@ -122,6 +124,7 @@ const props = defineProps({
     console.error('创建对话失败:', error);
   }
 };
+
 
   // 删除某一个对话
 const deleteChat = async (chatId) => {
