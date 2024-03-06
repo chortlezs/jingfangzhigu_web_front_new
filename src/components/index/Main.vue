@@ -226,6 +226,7 @@ let messages = reactive<Message[]>([]);
 const props = defineProps({
   messageArray: Array  as PropType<Message[]>,
   selectedChatId: String,
+  dialogues: Array as any,
 });
 
 watch(() => props.messageArray, (newVal, oldVal) => { 
@@ -300,8 +301,6 @@ const subscribeToChat = () => {
     if (data["data"] && data["data"]["delta"]) {
       messageContent.value += data["data"]["delta"];
     }
-    let historyCounter = data["data"]["historyCounter"]
-    localStorage.setItem('historyCounter', historyCounter.toString())
     let flag = data["data"]["flag"];
     if (flag) { 
       // 处理flag逻辑（如果有）
@@ -329,7 +328,12 @@ const emit = defineEmits(['update-chat-name']);
 const sendMessage = () => {
   if (inputMessage.value.trim() !== ''&& props.messageArray) {
     if (props.selectedChatId !== undefined && chatId.value === props.selectedChatId) {
-      if (isFirstMessageInChat.value && (!props.messageArray || props.messageArray.length === 0)) {
+      if (isFirstMessageInChat.value && (!props.messageArray || props.messageArray.length === 0) && props.dialogues) {
+        const dialogueIndex = props.dialogues.findIndex(item => item.chatId === props.selectedChatId);
+          if (dialogueIndex !== -1) {
+            props.dialogues[dialogueIndex].chatName = inputMessage.value;
+            // 由于 Vue 3 的响应性，这应该会导致视图自动更新
+          }
         messages.splice(0, messages.length); // 清空当前消息数组
         isFirstMessageInChat.value = false;
         emit('update-chat-name', inputMessage.value, chatId.value);

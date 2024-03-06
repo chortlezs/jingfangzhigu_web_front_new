@@ -48,10 +48,6 @@
         message: null
   }
 ])
-const newChatNameValue = ref('')
-const props = defineProps({
-  newChatName: String,
-});
 
   const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
   // 获取所有对话
@@ -67,13 +63,12 @@ const props = defineProps({
       // 返回是一个数组里面多个对象
       dialoguesArray.length = 0;
       response.data.data.chats.forEach(chat => dialoguesArray.push(chat));
-      console.log('kk',dialoguesArray);
-      
+      emits('update-dialogues', dialoguesArray);
     } catch (error) {
       console.error('获取所有对话失败:', error);
     }
   };
-  const emits = defineEmits(['select-chat','message-updated']);
+  const emits = defineEmits(['select-chat','message-updated','update-dialogues']);
   const selectChat = (chatId) => {
     // 这里可以调用获取对应聊天信息的方法
     getMessagesByChatId(chatId);

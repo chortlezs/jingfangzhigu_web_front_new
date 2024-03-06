@@ -27,7 +27,9 @@ const handleMessagesUpdated = (data) => {
   messageArray.value = data;
 };
 const dialogues = ref([]);
-
+const handleUpdateDialogues = (updatedDialogues) => {
+  dialogues.value = updatedDialogues;
+};
 let selectedChatId = ref('');
 const selectChat = (chatId) => {
   selectedChatId.value = chatId;
@@ -65,8 +67,8 @@ const handleUpdateChatName = (newChatNameValue, chatId) => {
         </div>
       </el-header>
       <el-container class="leftandright">
-        <Aside :dialogues="dialogues" @messages-updated="handleMessagesUpdated" @select-chat="selectChat" :newChatName="newChatName"/>
-        <Main  :messageArray = "messageArray" :selectedChatId="selectedChatId" @update-chat-name="handleUpdateChatName"/>
+        <Aside @messages-updated="handleMessagesUpdated" @select-chat="selectChat" :newChatName="newChatName" @update-dialogues="handleUpdateDialogues"/>
+        <Main  :messageArray = "messageArray" :selectedChatId="selectedChatId" @update-chat-name="handleUpdateChatName"  :dialogues="dialogues" />
       </el-container>
     </el-container>
   </template>
