@@ -84,7 +84,7 @@ const props = defineProps({
   // 获取某一个 chatId 的所有消息
   const getMessagesByChatId = async (chatId) => {
     try {
-      const response = await axios.get(`http://59.110.149.33:8001/chat/${chatId.chatId}`, {
+      const response = await axios.get(`http://59.110.149.33:8001/chat/${chatId}`, {
         withCredentials: true,
         headers: {
           'Access-Control-Allow-Origin': '*',

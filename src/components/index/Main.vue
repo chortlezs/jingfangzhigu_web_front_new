@@ -327,7 +327,7 @@ const subscribeToChat = () => {
 
 const emit = defineEmits(['update-chat-name']);
 const sendMessage = () => {
-  if (inputMessage.value.trim() !== '') {
+  if (inputMessage.value.trim() !== ''&& props.messageArray) {
     if (props.selectedChatId !== undefined && chatId.value === props.selectedChatId) {
       if (isFirstMessageInChat.value && (!props.messageArray || props.messageArray.length === 0)) {
         messages.splice(0, messages.length); // 清空当前消息数组
@@ -339,23 +339,23 @@ const sendMessage = () => {
       const requestDataToSend = {
         messageId: generateUUID(),
         text: inputMessage.value,
-        messages: toRaw(props.messageArray),
+        messages:  toRaw([...props.messageArray, ...messages]),
       };
     subscribeToChat();
     fetchResponse(requestDataToSend);
     // 发送消息后触发事件，将第一条消息内容作为参数传递
     messages.push({
-      roleId: 1,
+      chatId:currentChatId,
       content: inputMessage.value,
-      chatId:currentChatId,
       createTime: '',
       messageId: generateUUID(),
+      roleId: 1,
     },{
-      roleId: 2,
-      content: '',
       chatId:currentChatId,
+      content: '',
       createTime: '',
       messageId: generateUUID(),
+      roleId: 2,
     }); // 将用户输入的消息添加到本地消息数组
     inputMessage.value = ''; // 清空输入框
     showChatBox.value = true; // 显示聊天框
