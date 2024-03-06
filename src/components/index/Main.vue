@@ -466,6 +466,7 @@ const sendMessage = () => {
         messages.splice(0, messages.length); // 清空当前消息数组
         isFirstMessageInChat.value = false;
         emit("update-chat-name", inputMessage.value, chatId.value);
+        updateChatName(chatId.value, inputMessage.value);
       }
       const currentChatId = props.selectedChatId;
       chatId.value = currentChatId;
@@ -498,7 +499,29 @@ const sendMessage = () => {
     }
   }
 };
-
+const updateChatName = async (chatId, newChatName) => {
+  try {
+    const response = await axios.post(
+      `/chat/name`, 
+      {
+        chatId: chatId,
+        chatName: newChatName,
+      },
+      {
+        withCredentials: true,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          "Authorization": token
+        }
+      }
+    );
+    console.log('Chat name updated successfully:', response);
+    // 可以在这里调用获取所有对话的函数，以更新UI
+    getAllDialogues();
+  } catch (error) {
+    console.error('Failed to update chat name:', error);
+  }
+};
 const token =
   "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
 // 发送问题获取响应

@@ -127,7 +127,7 @@ const createNewChat = async () => {
   try {
     const newChatId = generateUUID();
     const response = await axios.post(
-      " /chat/",
+      "/chat/",
       {
         chatId: newChatId,
         chatName: "新建对话",
