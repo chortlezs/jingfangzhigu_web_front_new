@@ -92,7 +92,7 @@ const handleMenuClick = (key) => {
 
 const getUserInfo = () => {
   axios
-    .get(" /user/info", {
+    .get("/user/info", {
       headers: {
         Authorization: token,
       },
@@ -122,7 +122,7 @@ const handleUserInfoUpload = () => {
   formObj.append("weight", userInfo.value.weight);
   formObj.append("anamnesis", userInfo.value.anamnesis);
   axios
-    .post(` /user/info`, formObj, {
+    .post(`/user/info`, formObj, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: token,
@@ -141,7 +141,7 @@ const handleFileUpload = (fileObj) => {
   let formObj = new FormData();
   formObj.append("avatar", fileObj.file);
   axios
-    .post(` /file/avatar`, formObj, {
+    .post(`/file/avatar`, formObj, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: token,
