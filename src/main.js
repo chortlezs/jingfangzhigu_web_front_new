@@ -5,7 +5,7 @@ import router from "./router";
 import Antd from "ant-design-vue";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://59.110.149.33:8001/api";
+axios.defaults.baseURL = "http://59.110.149.33:8080/api";
 
 const app = createApp(App);
 app.use(Antd);

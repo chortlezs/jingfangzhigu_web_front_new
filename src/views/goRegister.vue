@@ -73,7 +73,7 @@ export default {
         const token =
           "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
         const response = await axios.post(
-          " /user/sendSms",
+          "/user/sendSms",
           {
             phone: this.username,
           },
@@ -86,12 +86,10 @@ export default {
             },
           }
         );
-        if (response.data.code === "success") {
-          // 登录成功，跳转到聊天页面
+        if (response.data.code === "SUCCESS") {
           console.log(response);
         } else {
-          // 登录失败，弹出提示框
-          this.error = "登录失败，请重试";
+          alert("发送验证码失败，请重试") ;
           console.log(response);
         }
       } catch (error) {
@@ -102,13 +100,13 @@ export default {
         }
       }
     },
-    async register() {
+    async register(){
       try {
         // 向后端发送登录请求
         const token =
           "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
         const response = await axios.post(
-          " /user/register",
+          "/user/register",
           {
             phone: this.username,
             code: this.check,
@@ -124,26 +122,22 @@ export default {
             },
           }
         );
-        if (response.data.code === "success") {
-          // 注册成功，跳转到聊天页面
-          console.log("success");
+        if (response.data.code === "SUCCESS") {
           console.log(response);
-          this.$router.push("/chat");
         } else {
-          // 注册失败，弹出提示框
-          this.error = "登录失败，请重试";
-          console.log("failed");
+          // 登录失败，弹出提示框
+          alert(response.data.message);
           console.log(response);
         }
       } catch (error) {
         if (error.response) {
           this.error = error.response.data.message;
         } else {
-          this.error = "登录失败，请重试";
+          alert("注册失败，请重试");
         }
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -211,6 +205,7 @@ input[type="text"] {
   border: none;
   border-radius: 12px;
   font-size: 14px;
+  cursor: pointer;
 }
 
 .btn-first {
@@ -236,13 +231,17 @@ input[type="text"] {
 .btn-first:hover {
   background-color: #d3d3d3;
   color: #000000;
+  cursor: pointer;
 }
 .btn-second:hover {
   background-color: #d3d3d3;
   color: #000000;
+  cursor: pointer;
 }
 .btn-third:hover {
   background-color: #d3d3d3;
   color: #000000;
+  cursor: pointer;
+  
 }
 </style>

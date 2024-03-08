@@ -103,7 +103,7 @@ export default {
           this.$router.push("/chat");
         } else {
           // 注册失败，弹出提示框
-          this.error = "登录失败，请重试";
+          alert(response.data.message) ;
           console.log("failed");
           console.log(response);
         }
@@ -165,6 +165,7 @@ input[type="text"] {
   border: none;
   border-radius: 12px;
   font-size: 14px;
+  cursor: pointer;
 }
 .btn-first {
   margin-top: 10px;
@@ -174,11 +175,14 @@ input[type="text"] {
   border: none;
   border-radius: 12px;
   font-size: 16px;
+  cursor: pointer;
 }
 .btn-first:hover {
   background-color: #76bdb3;
+  cursor: pointer;
 }
 .btn-second:hover {
   background-color: #76bdb3;
+  cursor: pointer;
 }
 </style>

@@ -67,12 +67,9 @@ export default {
           this.$router.push("/chat");
         } else {
           // 登录失败，弹出提示框
-          this.error = "登录失败，请重试";
-          console.log(response.data.code);
+          alert(response.data.message) ;
+          console.log(response);
         }
-        // // 登录成功，跳转到聊天页面
-        // console.log(response)
-        // this.$router.push('/chat');
       } catch (error) {
         if (error.response) {
           this.error = error.response.data.message;
@@ -127,8 +124,10 @@ button {
   border: none;
   border-radius: 12px;
   font-size: 16px;
+  cursor: pointer;
 }
 button:hover {
   background-color: #76bdb3;
+  cursor: pointer;
 }
 </style>
