@@ -4,6 +4,8 @@ import { useRouter } from "vue-router";
 import { UserOutlined } from "@ant-design/icons-vue";
 import { SettingOutlined } from "@ant-design/icons-vue";
 import { ElMessage } from "element-plus";
+import { h } from 'vue';
+import { ElNotification } from 'element-plus';
 import { Plus } from "@element-plus/icons-vue";
 import type { UploadProps } from "element-plus";
 import { token } from "@/config/requestConfig.js";
@@ -112,6 +114,35 @@ onMounted(() => {
 
 const handleUserInfoUpload = () => {
   let formObj = new FormData();
+
+  let invalidFields = []; // 用于存储不符合要求的字段
+
+  // 字段名称映射
+  const fieldMap = {
+    age: '年龄',
+    height: '身高',
+    weight: '体重'
+  };
+
+  // 验证 age、height 和 weight 字段
+  const numberRegex = /^\d+$/;
+  const fieldsToCheck = ['age', 'height', 'weight'];
+  fieldsToCheck.forEach((field) => {
+    if (!numberRegex.test(userInfo.value[field])) {
+      invalidFields.push(fieldMap[field] || field); // 使用映射的字段名称，如果映射不存在则使用原始字段名
+    }
+  });
+
+  // 如果有字段不符合要求，显示通知并返回
+  if (invalidFields.length > 0) {
+    let notificationMessage = `${invalidFields.join('，')}只允许输入数字`;
+    ElNotification({
+      message: h('i', { style: 'color: red' }, notificationMessage),
+      type: 'error',
+    });
+    return; // 退出函数，不再发送请求
+  }
+
   formObj.append("avatar", userInfo.value.avatar);
   formObj.append("username", userInfo.value.username);
   formObj.append("address", userInfo.value.address);
@@ -133,7 +164,18 @@ const handleUserInfoUpload = () => {
       if (res.data && res.data.code == "SUCCESS") {
         userInfoBefore.value.avatar = userInfo.value.avatar;
         localStorage.setItem("headimg", userInfo.value.avatar);
+        ElNotification({
+          message: h('i',{ style: 'color:teal' },'更新用户信息成功'),
+          type: 'success',
+        })
       }
+    })
+    .catch(function (error) {
+      console.log(error.toJSON());
+      ElNotification({
+        message: h('i',{ style: 'color:red' },'更新用户信息失败'),
+        type: 'error',
+      })
     });
 };
 
@@ -317,7 +359,7 @@ if (headUrl) {
           </div>
         </div>
         <div class="imformation-change">
-          <el-button @click="handleUserInfoUpload" type="primary"
+          <el-button @click="handleUserInfoUpload" plain type="primary"
             >更新信息</el-button
           >
         </div>
