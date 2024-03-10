@@ -482,7 +482,7 @@ const sendMessage = async () => {
       const requestDataToSend = {
         messageId: generateUUID(),
         text: inputMessage.value,
-        messages: toRaw([...messages]),
+        messages:  toRaw([...props.messageArray, ...messages]),
       };
       await subscribeToChat(); // 使用 await 确保先订阅完成
       fetchResponse(requestDataToSend);
