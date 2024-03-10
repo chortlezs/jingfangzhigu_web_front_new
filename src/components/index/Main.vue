@@ -442,10 +442,12 @@ const subscribeToChat = () => {
 
   // TODO: 把错误文字显示到界面上
   eventSource.addEventListener("error", function (event) {
-    // let data = JSON.parse(event.data);
-    // if (data.data) {
-    //   messageContent.value += data.data;
-    // }
+    if (event.data) {
+      let data = JSON.parse(event.data);
+      if (data.data) {
+        messageContent.value += data.data;
+      }
+    }
   });
 
   eventSource.addEventListener("end", function (event) {
