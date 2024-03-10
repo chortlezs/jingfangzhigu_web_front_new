@@ -1,8 +1,8 @@
 <template>
   <el-main class="main">
     <div
-      class="scroll"
-      style="height: 420px; overflow: hidden; overflow-y: scroll"
+        class="scroll"
+        style="height: 420px; overflow: hidden; overflow-y: scroll"
     >
       <div v-if="!showChatBox">
         <el-row class="main">
@@ -50,13 +50,13 @@
             <p style="margin: 0 20px; font-size: 14px">你可以问我：</p>
             <div class="content22" style="text-align: left">
               <el-button
-                v-for="button in buttons"
-                :key="button.text"
-                type=""
-                text
-                bg
-                style="text-align: left"
-                >{{ button.text }}
+                  v-for="button in buttons"
+                  :key="button.text"
+                  type=""
+                  text
+                  bg
+                  style="text-align: left"
+              >{{ button.text }}
               </el-button>
             </div>
           </el-row>
@@ -65,12 +65,12 @@
 
       <!-- 聊天框 -->
       <div
-        v-if="showChatBox"
-        v-for="(msg, index) in messages"
-        :key="index"
-        class="chat-container"
-        ref="chatContainer"
-        style="
+          v-if="showChatBox"
+          v-for="(msg, index) in messages"
+          :key="index"
+          class="chat-container"
+          ref="chatContainer"
+          style="
           padding: 10px;
           display: flex;
           flex-direction: column;
@@ -80,8 +80,8 @@
       >
         <!-- 对话框 -->
         <div
-          v-if="msg.roleId === 1"
-          style="
+            v-if="msg.roleId === 1"
+            style="
             display: flex;
             justify-content: flex-end;
             margin-bottom: 10px;
@@ -90,16 +90,16 @@
         >
           <!-- 用户消息 -->
           <div
-            class="chat-box"
-            style="
+              class="chat-box"
+              style="
               display: flex;
               justify-content: flex-end;
               align-items: center;
             "
           >
             <div
-              class="bubble user-bubble last-message"
-              style="
+                class="bubble user-bubble last-message"
+                style="
                 background-color: #5b93ff;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 padding: 10px;
@@ -109,16 +109,16 @@
             </div>
             <div class="avatar">
               <img
-                src="@/assets/chat_pictures/icon.png"
-                alt="User Avatar"
-                style="width: 40px; height: 40px; border-radius: 50%"
+                  src="@/assets/chat_pictures/icon.png"
+                  alt="User Avatar"
+                  style="width: 40px; height: 40px; border-radius: 50%"
               />
             </div>
           </div>
         </div>
         <div
-          v-if="msg.roleId === 2"
-          style="
+            v-if="msg.roleId === 2"
+            style="
             display: flex;
             justify-content: flex-end;
             margin-bottom: 10px;
@@ -127,8 +127,8 @@
         >
           <!-- 助手消息 -->
           <div
-            class="chat-box"
-            style="
+              class="chat-box"
+              style="
               display: flex;
               justify-content: flex-start;
               margin-bottom: 10px;
@@ -137,13 +137,13 @@
           >
             <div class="avatar">
               <img
-                src="@/assets/chat_pictures/icon.png"
-                style="width: 40px; height: 40px; border-radius: 50%"
+                  src="@/assets/chat_pictures/icon.png"
+                  style="width: 40px; height: 40px; border-radius: 50%"
               />
             </div>
             <div
-              class="bubble assistant-bubble last-message"
-              style="
+                class="bubble assistant-bubble last-message"
+                style="
                 background-color: #ffffff;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 padding: 10px;
@@ -159,39 +159,40 @@
     <!-- 底部输入框 -->
     <el-row class="foot">
       <el-tabs
-        v-model="activeName"
-        class="demo-tabs"
-        @tab-click="handleClick"
-        :default-active="0"
+          v-model="activeName"
+          class="demo-tabs"
+          @tab-click="handleClick"
+          :default-active="0"
       >
         <el-tab-pane name="first">
           <template #label>
             <span class="custom-tabs-label">
-              <el-icon><Monitor /></el-icon>
+              <el-icon><Monitor/></el-icon>
               <span>健康知识问答</span>
             </span>
           </template>
           <template class="bottom">
             <el-input
-              v-model="inputMessage"
-              :rows="4"
-              :resize="'none'"
-              type="textarea"
-              :autosize="false"
-              placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                v-model="inputMessage"
+                :rows="4"
+                :resize="'none'"
+                type="textarea"
+                :autosize="false"
+                placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
               <el-button
-                type="primary"
-                :icon="Microphone"
-                round
-                @click="startRecording"
+                  type="primary"
+                  :icon="Microphone"
+                  round
+                  @click="startRecording"
               />
               <el-button
-                type="primary"
-                :icon="Position"
-                @click="sendMessage"
-                round
+                  type="primary"
+                  :icon="Position"
+                  @click="sendMessage"
+                  round
               />
             </div>
           </template>
@@ -199,26 +200,27 @@
         <el-tab-pane name="second">
           <template #label>
             <span class="custom-tabs-label">
-              <el-icon><ChatLineSquare /></el-icon>
+              <el-icon><ChatLineSquare/></el-icon>
               <span>查看问答</span>
             </span>
           </template>
           <template class="bottom">
             <el-input
-              v-model="inputMessage"
-              :rows="4"
-              :resize="'none'"
-              :autosize="false"
-              type="textarea"
-              placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                v-model="inputMessage"
+                :rows="4"
+                :resize="'none'"
+                :autosize="false"
+                type="textarea"
+                placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
-              <el-button type="primary" :icon="Microphone" round />
+              <el-button type="primary" :icon="Microphone" round/>
               <el-button
-                type="primary"
-                :icon="Position"
-                @click="sendMessage"
-                round
+                  type="primary"
+                  :icon="Position"
+                  @click="sendMessage"
+                  round
               />
             </div>
           </template>
@@ -226,35 +228,36 @@
         <el-tab-pane name="third">
           <template #label>
             <span class="custom-tabs-label">
-              <el-icon><Camera /></el-icon>
+              <el-icon><Camera/></el-icon>
               <span>舌苔问诊</span>
             </span>
           </template>
           <template class="bottom">
             <el-input
-              v-model="inputMessage"
-              :rows="4"
-              type="textarea"
-              :resize="'none'"
-              :autosize="false"
-              placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                v-model="inputMessage"
+                :rows="4"
+                type="textarea"
+                :resize="'none'"
+                :autosize="false"
+                placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
               <el-upload
-                class="upload-demo"
-                :action="' /file/tongueImg'"
-                :limit="1"
-                :accept="'image/*'"
-                :show-file-list="false"
-                :http-request="uploadImage"
+                  class="upload-demo"
+                  :action="' /file/tongueImg'"
+                  :limit="1"
+                  :accept="'image/*'"
+                  :show-file-list="false"
+                  :http-request="uploadImage"
               >
-                <el-button type="primary" :icon="Camera" round />
+                <el-button type="primary" :icon="Camera" round/>
               </el-upload>
               <el-button
-                type="primary"
-                :icon="Position"
-                @click="sendMessage"
-                round
+                  type="primary"
+                  :icon="Position"
+                  @click="sendMessage"
+                  round
               />
             </div>
           </template>
@@ -262,26 +265,27 @@
         <el-tab-pane name="forth">
           <template #label>
             <span class="custom-tabs-label">
-              <el-icon><DataAnalysis /></el-icon>
+              <el-icon><DataAnalysis/></el-icon>
               <span>数据侦察</span>
             </span>
           </template>
           <template class="bottom">
             <el-input
-              v-model="inputMessage"
-              :rows="4"
-              type="textarea"
-              :resize="'none'"
-              :autosize="false"
-              placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                v-model="inputMessage"
+                :rows="4"
+                type="textarea"
+                :resize="'none'"
+                :autosize="false"
+                placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
-              <el-button type="primary" :icon="Microphone" round />
+              <el-button type="primary" :icon="Microphone" round/>
               <el-button
-                type="primary"
-                :icon="Position"
-                @click="sendMessage"
-                round
+                  type="primary"
+                  :icon="Position"
+                  @click="sendMessage"
+                  round
               />
             </div>
           </template>
@@ -300,32 +304,20 @@ import {
   DataAnalysis,
   ChatLineSquare,
 } from "@element-plus/icons-vue";
-import { Monitor, Camera } from "@element-plus/icons-vue";
-import type { TabsPaneContext } from "element-plus";
-import {
-  ref,
-  onMounted,
-  watch,
-  onUnmounted,
-  reactive,
-  nextTick,
-  defineProps,
-  watchEffect,
-  toRefs,
-  toRaw,
-  PropType,
-} from "vue";
+import {Monitor, Camera} from "@element-plus/icons-vue";
+import type {TabsPaneContext} from "element-plus";
+import { ref,  onMounted, watch, onUnmounted, reactive, nextTick,  defineProps, toRaw, PropType,} from "vue";
 import axios from "axios";
 // import { token }from '@/config/requestConfig.js'
 declare var webkitSpeechRecognition: any;
 const imageUrl = ref(
-  "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+    "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
 );
 
 const buttons = [
-  { text: "我最近头痛伴着流鼻涕,该吃什么药?" },
-  { text: "最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？" },
-  { text: "胃肠炎可以吃柚子吗？" },
+  {text: "我最近头痛伴着流鼻涕,该吃什么药?"},
+  {text: "最近中医馆配的酸梅汤很火，请问可以当饮料喝吗？"},
+  {text: "胃肠炎可以吃柚子吗？"},
 ] as const;
 
 const activeName = ref("first");
@@ -334,6 +326,7 @@ let isNewChat = ref(false);
 const handleClick = (tab: TabsPaneContext, event: Event) => {
   console.log(tab, event);
 };
+
 interface Message {
   messageId: string;
   chatId: string;
@@ -341,6 +334,7 @@ interface Message {
   createTime: string;
   content: string;
 }
+
 const chatId = ref("");
 let isFirstMessageInChat = ref(true); //跟踪是否是当前chatId下的第一次发送消息
 let messages = reactive<Message[]>([]);
@@ -350,27 +344,27 @@ const props = defineProps({
 });
 
 watch(
-  () => props.messageArray,
-  (newVal, oldVal) => {
-    if (newVal && newVal.length > 0) {
-      filterMessages();
-      chatId.value = props.selectedChatId as string;
-      showChatBox.value = true;
-    } else {
-      showChatBox.value = false;
+    () => props.messageArray,
+    (newVal, oldVal) => {
+      if (newVal && newVal.length > 0) {
+        filterMessages();
+        chatId.value = props.selectedChatId as string;
+        showChatBox.value = true;
+      } else {
+        showChatBox.value = false;
+      }
     }
-  }
 );
 
 watch(
-  () => props.selectedChatId,
-  (newVal, oldVal) => {
-    if (newVal !== oldVal && newVal) {
-      chatId.value = newVal; // 更新当前chatId
-      subscribeToChat(); // 重新订阅新的chatId
-      isFirstMessageInChat.value = true;
+    () => props.selectedChatId,
+    (newVal, oldVal) => {
+      if (newVal !== oldVal && newVal) {
+        chatId.value = newVal; // 更新当前chatId
+        subscribeToChat(); // 重新订阅新的chatId
+        isFirstMessageInChat.value = true;
+      }
     }
-  }
 );
 
 function filterMessages() {
@@ -391,6 +385,7 @@ function filterMessages() {
     });
   }
 }
+
 const inputMessage = ref("");
 
 const showChatBox = ref(false); // 控制是否展示对话框部分的状态
@@ -419,21 +414,34 @@ const subscribeToChat = () => {
     currentEventSource = null;
   }
   // 创建新的EventSource订阅
-  const eventSource = new EventSource(`/sse/${chatId.value}`);
+  const eventSource = new EventSource(`http://59.110.149.33:8080/api/sse/${chatId.value}`);
   currentEventSource = eventSource; // 更新当前订阅
-
   eventSource.addEventListener("message", function (event) {
     let data = JSON.parse(event.data);
-    if (data["data"] && data["data"]["delta"]) {
-      messageContent.value += data["data"]["delta"];
+    console.log(data.data.delta,'当前订阅');
+    
+    if (data.data && data.data.delta) {
+      console.log('2222订阅的问题', data.data.delta);
+      messageContent.value += data.data.delta;
     }
-    let historyCounter = data["data"]["historyCounter"];
-    localStorage.setItem("historyCounter", historyCounter.toString());
-    let flag = data["data"]["flag"];
-    if (flag) {
-      // 处理flag逻辑（如果有）
+    if (data.data.flag) {
+      let flag = data.data.flag;
+      if (flag) {
+        // 处理flag逻辑（如果有）
+      }
     }
   });
+
+  // TODO: 把错误文字显示到界面上
+  eventSource.addEventListener("error", function (event) {
+    let errorData = JSON.parse(event.data);
+    if (event.data) {
+      console.log(errorData.data.data);
+      messageContent.value = errorData.data.data;
+  } else {
+      messageContent.value = "发生了错误：" + event.type;
+  }
+});
 
   eventSource.addEventListener("end", function (event) {
     let endData = JSON.parse(event.data);
@@ -443,6 +451,7 @@ const subscribeToChat = () => {
       messageContent.value = ""; // 重置累积的消息内容
       scrollToBottom();
     }
+    // currentEventSource.close();
   });
   // 在组件销毁或页面离开时关闭连接
   onUnmounted(() => {
@@ -453,15 +462,15 @@ const subscribeToChat = () => {
 };
 
 const emit = defineEmits(["update-chat-name"]);
-const sendMessage = () => {
+const sendMessage = async () => {
   if (inputMessage.value.trim() !== "" && props.messageArray) {
     if (
-      props.selectedChatId !== undefined &&
-      chatId.value === props.selectedChatId
+        props.selectedChatId !== undefined &&
+        chatId.value === props.selectedChatId
     ) {
       if (
-        isFirstMessageInChat.value &&
-        (!props.messageArray || props.messageArray.length === 0)
+          isFirstMessageInChat.value &&
+          (!props.messageArray || props.messageArray.length === 0)
       ) {
         messages.splice(0, messages.length); // 清空当前消息数组
         isFirstMessageInChat.value = false;
@@ -473,26 +482,26 @@ const sendMessage = () => {
       const requestDataToSend = {
         messageId: generateUUID(),
         text: inputMessage.value,
-        messages: toRaw([...props.messageArray, ...messages]),
+        messages: toRaw([...messages]),
       };
-      subscribeToChat();
+      await subscribeToChat(); // 使用 await 确保先订阅完成
       fetchResponse(requestDataToSend);
       // 发送消息后触发事件，将第一条消息内容作为参数传递
       messages.push(
-        {
-          chatId: currentChatId,
-          content: inputMessage.value,
-          createTime: "",
-          messageId: generateUUID(),
-          roleId: 1,
-        },
-        {
-          chatId: currentChatId,
-          content: "",
-          createTime: "",
-          messageId: generateUUID(),
-          roleId: 2,
-        }
+          {
+            chatId: currentChatId,
+            content: inputMessage.value,
+            createTime: "",
+            messageId: generateUUID(),
+            roleId: 1,
+          },
+          {
+            chatId: currentChatId,
+            content: "",
+            createTime: "",
+            messageId: generateUUID(),
+            roleId: 2,
+          }
       ); // 将用户输入的消息添加到本地消息数组
       inputMessage.value = ""; // 清空输入框
       showChatBox.value = true; // 显示聊天框
@@ -502,40 +511,38 @@ const sendMessage = () => {
 const updateChatName = async (chatId, newChatName) => {
   try {
     const response = await axios.post(
-      `/chat/name`, 
-      {
-        chatId: chatId,
-        chatName: newChatName,
-      },
-      {
-        withCredentials: true,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          "Authorization": token
+        `/chat/name`,
+        {
+          chatId: chatId,
+          chatName: newChatName,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            "Authorization": token
+          }
         }
-      }
     );
     console.log('Chat name updated successfully:', response);
-    // 可以在这里调用获取所有对话的函数，以更新UI
-    getAllDialogues();
   } catch (error) {
     console.error('Failed to update chat name:', error);
   }
 };
 const token =
-  "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
+    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwNjY2MjMyfQ.CrvoJcs7M4JU7nF67VhRPNx6Pi4O1h_Hk971tuSmgZs";
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
   try {
     const response = await axios.post(
-      `/sse/chat/${chatId.value}`,
-      requestData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      }
+        `/sse/chat/${chatId.value}`,
+        requestData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        }
     );
   } catch (error) {
     console.error(error);
@@ -545,10 +552,11 @@ const fetchResponse = async (requestData) => {
 function generateUUID() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
     var r = (Math.random() * 16) | 0,
-      v = c == "x" ? r : (r & 0x3) | 0x8;
+        v = c == "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
+
 // 滚动到底部的方法
 const scrollToBottom = () => {
   const chatContainer = document.querySelector(".scroll");
@@ -562,31 +570,31 @@ onMounted(() => {
 });
 
 watch(
-  messages,
-  async () => {
-    console.log("messagesmessagesmessagesmessages变化了");
-    await nextTick(); // 等待DOM更新
-    scrollToBottom(); // 现在滚动到底部
-  },
-  {
-    immediate: true,
-    deep: true,
-  }
+    messages,
+    async () => {
+      console.log("messagesmessagesmessagesmessages变化了");
+      await nextTick(); // 等待DOM更新
+      scrollToBottom(); // 现在滚动到底部
+    },
+    {
+      immediate: true,
+      deep: true,
+    }
 );
 
 const uploadImage = (request) => {
   const formData = new FormData();
   formData.append("img", request.file);
   axios
-    .post(request.action, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
-    .then((response) => {
-      console.log("接口返回的数据:", response.data.data["url"]);
-      let imgUrl = response.data.data["url"];
-      inputMessage.value = imgUrl;
-    });
+      .post(request.action, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log("接口返回的数据:", response.data.data["url"]);
+        let imgUrl = response.data.data["url"];
+        inputMessage.value = imgUrl;
+      });
 };
 </script>

@@ -74,7 +74,7 @@ const props = defineProps({
 });
 
 const token =
-  "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
+  "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwNjY2MjMyfQ.CrvoJcs7M4JU7nF67VhRPNx6Pi4O1h_Hk971tuSmgZs";
 // 获取所有对话
 const getAllDialogues = async () => {
   try {
@@ -88,7 +88,6 @@ const getAllDialogues = async () => {
     // 返回是一个数组里面多个对象
     dialoguesArray.length = 0;
     response.data.data.chats.forEach((chat) => dialoguesArray.push(chat));
-    console.log("kk", dialoguesArray);
   } catch (error) {
     console.error("获取所有对话失败:", error);
   }
@@ -111,9 +110,9 @@ const getMessagesByChatId = async (chatId) => {
         Authorization: token,
       },
     });
-    let messageArry = response.data.data.chat.message;
+    let messageArray = response.data.data.chat.message;
     if (instance) {
-      instance.emit("messages-updated", messageArry);
+      instance.emit("messages-updated", messageArray);
     }
   } catch (error) {
     console.error("", error);
@@ -183,3 +182,4 @@ function generateUUID() {
 </script>
 
 <style src="@/assets/aside.css"></style>
+
