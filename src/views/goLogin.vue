@@ -31,7 +31,7 @@
 <script>
 import axios from "axios";
 import { useRouter } from "vue-router";
-const router = useRouter();
+// const router = useRouter();
 export default {
   data() {
     return {
@@ -45,9 +45,9 @@ export default {
       try {
         // 向后端发送登录请求
         const token =
-          "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
+          "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwNjY2MjMyfQ.CrvoJcs7M4JU7nF67VhRPNx6Pi4O1h_Hk971tuSmgZs";
         const response = await axios.post(
-          "/user/passwordLogin",
+          "http://59.110.149.33:8001/api/user/passwordLogin",
           {
             account: this.username,
             pwd: this.password,
@@ -63,12 +63,15 @@ export default {
         );
         if (response.data.code === "SUCCESS") {
           // 登录成功，跳转到聊天页面
+          localStorage.setItem('token', token);
+          this.$store.commit('setToken', token);
           console.log(response);
           this.$router.push("/chat");
         } else {
           // 登录失败，弹出提示框
           this.error = "登录失败，请重试";
           console.log(response.data.code);
+          alert(this.error);
         }
         // // 登录成功，跳转到聊天页面
         // console.log(response)

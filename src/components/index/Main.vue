@@ -141,7 +141,7 @@
                   style="width: 40px; height: 40px; border-radius: 50%"
               />
             </div>
-            <div
+            <!-- <div
                 class="bubble assistant-bubble last-message"
                 style="
                 background-color: #ffffff;
@@ -150,6 +150,28 @@
               "
             >
               {{ msg.content ? msg.content : messageContent }}
+            </div> -->
+            <div class="bubble bubb assistant-bubble last-message">
+              本次问询结果已经自动生成病历，您是否要继续补充个人信息以完善病历？如需要，请问您的姓名、年龄以及性别是？如果不需要，点击下方“保存”按钮即可保存或点击“删除”不进行保存。
+              <div class="medical-box">
+                <div class="medical-title">病例详情</div>
+                <div class="medical-content">
+                  <span>姓名：{{jingfang.name}}</span><span>年龄：{{jingfang.age}}</span><span>性别：{{jingfang.gender}}</span>
+                  <br />
+                  诊断时间：{{ jingfang.createTime }}
+                </div>
+                <div class="medical-content">
+                  既往病史：{{ jingfang.symptom }}
+                </div>
+                <div class="medical-content no-border">
+                  <div>诊断意见：{{ jingfang.recommendation }}</div>
+                  <div>诊断依据：{{ jingfang.recommendation }}</div>
+                </div>
+              </div>
+              <div class="medical-btn-group">
+                <span>删除</span>
+                <span>保存</span>
+              </div>
             </div>
           </div>
         </div>
@@ -179,6 +201,7 @@
                 type="textarea"
                 :autosize="false"
                 placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
               <el-button
@@ -211,6 +234,7 @@
                 :autosize="false"
                 type="textarea"
                 placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
               <el-button type="primary" :icon="Microphone" round/>
@@ -238,11 +262,12 @@
                 :resize="'none'"
                 :autosize="false"
                 placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
               <el-upload
                   class="upload-demo"
-                  :action="' /file/tongueImg'"
+                  :action="'/file/tongueImg'"
                   :limit="1"
                   :accept="'image/*'"
                   :show-file-list="false"
@@ -274,6 +299,7 @@
                 :resize="'none'"
                 :autosize="false"
                 placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
               <el-button type="primary" :icon="Microphone" round/>
@@ -292,7 +318,53 @@
 </template>
 
 <style src="@/assets/main.css"></style>
-
+<style scoped>
+.medical-box{
+  border:1px solid #000;
+  border-radius: 5px;
+  padding:10px 20px;
+  margin-top:20px;
+}
+.medical-title{
+  text-align: center;
+  font-size: 16px;
+  color: #000;
+  font-weight: bold;
+}
+.medical-content{
+  border-bottom:1px solid #333;
+  padding-bottom:20px;
+  margin-bottom:20px;
+}
+.medical-content span{
+  margin-right:40px;
+}
+.medical-content.no-border{
+  border:none;
+}
+.medical-btn-group{
+  display:flex;
+  margin-top:20px;
+  margin-bottom:20px;
+}
+.medical-btn-group span{
+  border:none;
+  border-radius:5px;
+  background-color:#7fa99d;
+  color:#fff;
+  font-size:18px;
+  line-height:30px;
+  display:inline-block;
+  padding:10px 50px;
+  margin: 0 auto;
+}
+.medical-btn-group span:nth-child(2){
+  background-color:#1980a4;
+}
+.bubb{
+  max-width:60%;
+}
+</style>
 <script setup lang="ts">
 import {
   Position,
@@ -316,7 +388,7 @@ import {
   PropType,
 } from "vue";
 import axios from "axios";
-// import { token }from '@/config/requestConfig.js'
+import { token }from '@/config/requestConfig.js'
 declare var webkitSpeechRecognition: any;
 const imageUrl = ref(
     "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
@@ -402,6 +474,8 @@ const recognition = new webkitSpeechRecognition();
 recognition.lang = "zh-CN";
 const recognitionActive = ref(false);
 
+const jingfang = ref({})
+
 function startRecording() {
   if (!recognitionActive.value) {
     recognition.start();
@@ -430,27 +504,32 @@ const subscribeToChat = () => {
     if (data["data"] && data["data"]["delta"]) {
       messageContent.value += data["data"]["delta"];
     }
-    // let historyCounter = data["data"]["historyCounter"];
-    // localStorage.setItem("historyCounter", historyCounter.toString());
     if (data["data"]["flag"]) {
       let flag = data["data"]["flag"];
       if (flag) {
         // 处理flag逻辑（如果有）
+          const currentChatId = props.selectedChatId;
+          messages.push(
+            {
+              chatId: currentChatId,
+              content: '333',
+              createTime: "",
+              messageId: generateUUID(),
+              roleId: 1,
+            })
       }
     }
   });
 
-  // TODO: 把错误文字显示到界面上
   eventSource.addEventListener("error", function (event) {
-    if (event.data) {
-      let data = JSON.parse(event.data);
-      if (data.data) {
-        messageContent.value += data.data;
-      }
-    }
+    // let data = JSON.parse(event.data);
+    // if (data.data) {
+    //   messageContent.value += data.data;
+    // }
   });
 
   eventSource.addEventListener("end", function (event) {
+    getMedicalHistory()
     let endData = JSON.parse(event.data);
     if (messageContent.value) {
       let length = messages.length - 1;
@@ -517,6 +596,32 @@ const sendMessage = () => {
     }
   }
 };
+
+const getMedicalHistory = async () => {
+  // let chatId = 'd827cbca-288b-430d-a813-e23ad25c87ed'
+  let chatId = '2ba78128-354d-4fe2-9a29-de9fb93ae89c'
+  try {
+    const response = await axios.get(
+        `/medicalHistory/jingfang/${chatId}`,
+        {
+          withCredentials: true,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            "Authorization": token
+          }
+        }
+    );
+    const {data,code} = response.data
+    if(code === 'SUCCESS'){
+      jingfang.value = data.jingfang || {}
+    }
+    console.log('根据chatId获取经方智谷诊断病历成功',response)
+  } catch (error) {
+    console.log('根据chatId获取经方智谷诊断病历成功',error)
+  }
+};
+
+
 const updateChatName = async (chatId, newChatName) => {
   try {
     const response = await axios.post(
@@ -540,8 +645,8 @@ const updateChatName = async (chatId, newChatName) => {
     console.error('Failed to update chat name:', error);
   }
 };
-const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
+// const token =
+//     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwNjY2MjMyfQ.CrvoJcs7M4JU7nF67VhRPNx6Pi4O1h_Hk971tuSmgZs";
 // 发送问题获取响应
 const fetchResponse = async (requestData) => {
   try {
