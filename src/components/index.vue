@@ -3,7 +3,7 @@ import {ref,onMounted} from 'vue'
 import Aside from './index/Aside.vue'
 import Main from './index/Main.vue'
 import { useRouter } from 'vue-router';
-
+import store from '@/store/index.js'
 const router = useRouter();
 function goPersonal(){
     router.push({path:'/personal'})
@@ -16,6 +16,7 @@ const mainRef = ref(null)
 const imageUrl = ref('https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png')
 onMounted(()=>{
     let headUrl = localStorage.getItem('headimg')
+    console.log(store.state.token, '这是我的token')
     if(headUrl){
         imageUrl.value = headUrl
     }

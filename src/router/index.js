@@ -1,5 +1,4 @@
-import{createRouter,createWebHashHistory} from "vue-router";
-
+import{ createRouter,createWebHashHistory } from "vue-router";
 
 const routes=[
     {
@@ -35,6 +34,7 @@ const routes=[
         path: '/setting',
         name: 'setting',
         component: () => import('../components/settings/setting.vue'),
+        meta: { requiresAuth: true },
         children: [
           {
             path: '/user',
@@ -61,12 +61,14 @@ const routes=[
     {
         path:'/chat',//路径
         name:'chat',//名字
-        component:()=>import('../components/index.vue')
+        component:()=>import('../components/index.vue'),
+        meta: { requiresAuth: true }
       },
       {
         path:'/personal',
         name:'/personal',
-        component:() => import('../components/settings/personal.vue')
+        component:() => import('../components/settings/personal.vue'),
+        meta: { requiresAuth: true }
       },
 ]
 
@@ -74,4 +76,18 @@ const router = createRouter({
     history:createWebHashHistory('/'),
     routes
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!localStorage.getItem('token')) {
+      next({ name: 'login' });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+
 export default router

@@ -12,10 +12,11 @@
     "@element-plus/icons-vue": "^2.3.1",
     "ant-design-vue": "^3.2.20",
     "axios": "^1.6.7",
-    "element-plus": "^2.6.0",
+    "element-plus": "^2.6.1",
     "jquery": "^3.7.1",
     "vue": "^3.3.11",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.3.0",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.20",
