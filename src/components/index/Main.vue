@@ -201,6 +201,7 @@
                 type="textarea"
                 :autosize="false"
                 placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
               <el-button
@@ -233,6 +234,7 @@
                 :autosize="false"
                 type="textarea"
                 placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
               <el-button type="primary" :icon="Microphone" round/>
@@ -260,6 +262,7 @@
                 :resize="'none'"
                 :autosize="false"
                 placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
               <el-upload
@@ -296,6 +299,7 @@
                 :resize="'none'"
                 :autosize="false"
                 placeholder="输入任何您想咨询的健康问题，我们即刻为您解答"
+                @keyup.enter="sendMessage"
             />
             <div class="button2">
               <el-button type="primary" :icon="Microphone" round/>
@@ -500,8 +504,6 @@ const subscribeToChat = () => {
     if (data["data"] && data["data"]["delta"]) {
       messageContent.value += data["data"]["delta"];
     }
-    // let historyCounter = data["data"]["historyCounter"];
-    // localStorage.setItem("historyCounter", historyCounter.toString());
     if (data["data"]["flag"]) {
       let flag = data["data"]["flag"];
       if (flag) {
@@ -519,7 +521,6 @@ const subscribeToChat = () => {
     }
   });
 
-  // TODO: 把错误文字显示到界面上
   eventSource.addEventListener("error", function (event) {
     // let data = JSON.parse(event.data);
     // if (data.data) {
