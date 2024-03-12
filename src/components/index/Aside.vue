@@ -48,11 +48,17 @@ import {
   getCurrentInstance,
   reactive,
   defineProps,
-  defineEmits,
+  defineEmits, computed,
 } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import axios from "axios";
-// import { token }from '@/config/requestConfig.js'
+let token = ref("")
+computed(
+    () => {
+      token = this.$store.state.token;
+    }
+);
+
 
 const input2 = ref("");
 const instance = getCurrentInstance();
@@ -73,8 +79,6 @@ const props = defineProps({
   newChatName: String,
 });
 
-const token =
-  "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
 // 获取所有对话
 const getAllDialogues = async () => {
   try {
@@ -82,7 +86,7 @@ const getAllDialogues = async () => {
       withCredentials: true,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        Authorization: token,
+        Authorization: localStorage.getItem("token"),
       },
     });
     // 返回是一个数组里面多个对象
@@ -107,7 +111,7 @@ const getMessagesByChatId = async (chatId) => {
       withCredentials: true,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        Authorization: token,
+        Authorization: localStorage.getItem("token"),
       },
     });
     let messageArray = response.data.data.chat.message;
@@ -135,7 +139,7 @@ const createNewChat = async () => {
         withCredentials: true,
         headers: {
           "Access-Control-Allow-Origin": "*",
-          Authorization: token,
+          Authorization: localStorage.getItem("token"),
         },
       }
     );
@@ -158,7 +162,7 @@ const deleteChat = async (chatId) => {
       withCredentials: true,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        Authorization: token,
+        Authorization: localStorage.getItem("token"),
       },
     });
     // 删除对话成功后直接更新对话列表

@@ -1,14 +1,20 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import {ref, onMounted, computed} from "vue";
 import axios from "axios";
-import { token } from "@/config/requestConfig.js";
 const imageUrl = ref("");
+
+let token = ref("")
+computed(
+    () => {
+      token = this.$store.state.token;
+    }
+);
 
 const getUserInfo = () => {
   axios
     .get("/user/info", {
       headers: {
-        Authorization: token,
+        Authorization: localStorage.getItem("token"),
       },
     })
     .then((res) => {

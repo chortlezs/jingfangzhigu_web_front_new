@@ -70,8 +70,6 @@ export default {
     async sendVerificationCode() {
       try {
         // 向后端发送登录请求
-        const token =
-          "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
         const response = await axios.post(
           " /user/sendSms",
           {
@@ -81,32 +79,30 @@ export default {
             withCredentials: true,
             headers: {
               "Access-Control-Allow-Origin": "*",
-              Authorization: token,
               "Content-Type": "application/x-www-form-urlencoded",
             },
           }
         );
-        if (response.data.code === "success") {
+        if (response.data.code === "SUCCESS") {
           // 登录成功，跳转到聊天页面
-          console.log(response);
+          // console.log(response);
         } else {
           // 登录失败，弹出提示框
-          this.error = "登录失败，请重试";
+          alert(response.data.message);
           console.log(response);
         }
       } catch (error) {
         if (error.response) {
           this.error = error.response.data.message;
         } else {
-          this.error = "登录失败，请重试";
+          this.error = "发送验证码失败！请重试";
         }
+        alert(this.error);
       }
     },
     async register() {
       try {
         // 向后端发送登录请求
-        const token =
-          "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
         const response = await axios.post(
           " /user/register",
           {
@@ -119,27 +115,25 @@ export default {
             withCredentials: true,
             headers: {
               "Access-Control-Allow-Origin": "*",
-              Authorization: token,
               "Content-Type": "application/x-www-form-urlencoded",
             },
           }
         );
-        if (response.data.code === "success") {
+        if (response.data.code === "SUCCESS") {
           // 注册成功，跳转到聊天页面
-          console.log("success");
           console.log(response);
-          this.$router.push("/chat");
+          this.$router.push("/goLogin")
         } else {
           // 注册失败，弹出提示框
-          this.error = "登录失败，请重试";
-          console.log("failed");
-          console.log(response);
+          this.error = response.data.message;
+          alert(this.error);
         }
       } catch (error) {
         if (error.response) {
           this.error = error.response.data.message;
         } else {
-          this.error = "登录失败，请重试";
+          this.error = "注册失败，请重试";
+          alert(this.error)
         }
       }
     },

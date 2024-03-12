@@ -44,10 +44,8 @@ export default {
     async login() {
       try {
         // 向后端发送登录请求
-        const token =
-          "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwNjY2MjMyfQ.CrvoJcs7M4JU7nF67VhRPNx6Pi4O1h_Hk971tuSmgZs";
         const response = await axios.post(
-          "http://59.110.149.33:8001/api/user/passwordLogin",
+          "/user/passwordLogin",
           {
             account: this.username,
             pwd: this.password,
@@ -56,15 +54,14 @@ export default {
             withCredentials: true,
             headers: {
               "Access-Control-Allow-Origin": "*",
-              Authorization: token,
               "Content-Type": "application/x-www-form-urlencoded",
             },
           }
         );
         if (response.data.code === "SUCCESS") {
           // 登录成功，跳转到聊天页面
-          localStorage.setItem('token', token);
-          this.$store.commit('setToken', token);
+          localStorage.setItem('token', response.data.data.token);
+          this.$store.commit('setToken', response.data.data.token);
           console.log(response);
           this.$router.push("/chat");
         } else {

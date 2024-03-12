@@ -8,7 +8,7 @@ import axios from "axios";
 import store from "./store";
 
 // test operation
-axios.defaults.baseURL = "http://59.110.149.33:8080/api";
+axios.defaults.baseURL = "http://59.110.149.33:8001/api";
 
 const app = createApp(App);
 app.use(Antd);

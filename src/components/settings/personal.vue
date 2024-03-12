@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import {ref, onMounted, computed} from "vue";
 import { useRouter } from "vue-router";
 import { UserOutlined } from "@ant-design/icons-vue";
 import { SettingOutlined } from "@ant-design/icons-vue";
@@ -8,7 +8,6 @@ import { h } from 'vue';
 import { ElNotification } from 'element-plus';
 import { Plus } from "@element-plus/icons-vue";
 import type { UploadProps } from "element-plus";
-import { token } from "@/config/requestConfig.js";
 import axios from "axios";
 const radio2 = ref("1");
 const input2 = ref("");
@@ -37,9 +36,13 @@ const options = [
   },
 ];
 
-const header = ref({
-  Authorization: token,
-});
+let token = ref("")
+computed(
+    () => {
+      token = this.$store.state.token;
+    }
+);
+
 
 const handleAvatarSuccess: UploadProps["onSuccess"] = (
   response,
@@ -96,7 +99,7 @@ const getUserInfo = () => {
   axios
     .get("/user/info", {
       headers: {
-        Authorization: token,
+        Authorization: localStorage.getItem("token"),
       },
     })
     .then((res) => {
@@ -156,7 +159,7 @@ const handleUserInfoUpload = () => {
     .post(`/user/info`, formObj, {
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: token,
+        Authorization: localStorage.getItem("token"),
       },
     })
     .then((res) => {
@@ -186,7 +189,7 @@ const handleFileUpload = (fileObj) => {
     .post(`/file/avatar`, formObj, {
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: token,
+        Authorization: localStorage.getItem("token"),
       },
     })
     .then((res) => {
