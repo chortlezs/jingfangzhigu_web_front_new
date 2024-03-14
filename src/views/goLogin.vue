@@ -79,6 +79,7 @@ export default {
         } else {
           this.error = "登录失败，请重试";
         }
+        alert(this.error);
       }
     },
   },

@@ -71,7 +71,7 @@ export default {
       try {
         // 向后端发送登录请求
         const response = await axios.post(
-          " /user/sendSms",
+          "/user/sendSms",
           {
             phone: this.username,
           },
@@ -88,14 +88,18 @@ export default {
           // console.log(response);
         } else {
           // 登录失败，弹出提示框
-          alert(response.data.message);
-          console.log(response);
+          this.error = "登录失败，请重试";
+          console.log(response.data.code);
+          alert(this.error);
         }
+        // // 登录成功，跳转到聊天页面
+        // console.log(response)
+        // this.$router.push('/chat');
       } catch (error) {
         if (error.response) {
           this.error = error.response.data.message;
         } else {
-          this.error = "发送验证码失败！请重试";
+          this.error = "登录失败，请重试";
         }
         alert(this.error);
       }
@@ -104,7 +108,7 @@ export default {
       try {
         // 向后端发送登录请求
         const response = await axios.post(
-          " /user/register",
+          "/user/register",
           {
             phone: this.username,
             code: this.check,
@@ -121,7 +125,7 @@ export default {
         );
         if (response.data.code === "SUCCESS") {
           // 注册成功，跳转到聊天页面
-          console.log(response);
+          alert(response.data.message);
           this.$router.push("/goLogin")
         } else {
           // 注册失败，弹出提示框
@@ -133,8 +137,8 @@ export default {
           this.error = error.response.data.message;
         } else {
           this.error = "注册失败，请重试";
-          alert(this.error)
         }
+        alert(this.error);
       }
     },
   },

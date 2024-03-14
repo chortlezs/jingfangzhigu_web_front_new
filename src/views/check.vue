@@ -18,7 +18,7 @@
           <input
             type="password"
             placeholder="请输入验证码..."
-            v-model="checknumber"
+            v-model="password"
             required
           />
           <br />
@@ -45,8 +45,6 @@ export default {
     async sendVerificationCode() {
       try {
         // 向后端发送登录请求
-        const token =
-          "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
         const response = await axios.post(
           "/user/sendSms",
           {
@@ -56,31 +54,23 @@ export default {
             withCredentials: true,
             headers: {
               "Access-Control-Allow-Origin": "*",
-              Authorization: token,
               "Content-Type": "application/x-www-form-urlencoded",
             },
           }
         );
-        if (response.data.code === "success") {
-          console.log(response);
-        } else {
-          // 登录失败，弹出提示框
-          this.error = "登录失败，请重试";
-          console.log(response);
-        }
+        alert(response.data.message);
       } catch (error) {
         if (error.response) {
           this.error = error.response.data.message;
         } else {
           this.error = "登录失败，请重试";
         }
+        alert(this.error);
       }
     },
     async goChat() {
       try {
         // 向后端发送登录请求
-        const token =
-          "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzEwMDYwOTE2fQ.Vw_EdKzprG3PCNKtGfU19XwvCyyY0WihSaf7NRuuYJc";
         const response = await axios.post(
           "/user/smsLogin",
           {
@@ -91,28 +81,25 @@ export default {
             withCredentials: true,
             headers: {
               "Access-Control-Allow-Origin": "*",
-              Authorization: token,
               "Content-Type": "application/x-www-form-urlencoded",
             },
           }
         );
         if (response.data.code === "SUCCESS") {
           // 注册成功，跳转到聊天页面
-          console.log("success");
-          console.log(response);
+          localStorage.setItem('token', response.data.data.token);
+          this.$store.commit('setToken', response.data.data.token);
           this.$router.push("/chat");
-        } else {
-          // 注册失败，弹出提示框
-          this.error = "登录失败，请重试";
-          console.log("failed");
-          console.log(response);
         }
+        this.error = response.data.message;
+        alert(this.error);
       } catch (error) {
         if (error.response) {
           this.error = error.response.data.message;
         } else {
           this.error = "登录失败，请重试";
         }
+        alert(this.error);
       }
     },
   },
