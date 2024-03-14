@@ -2,6 +2,11 @@ import{ createRouter,createWebHashHistory } from "vue-router";
 
 const routes=[
     {
+        path:"/DataScouting",
+        name:'DataScouting',//名字
+        component:()=>import('../views/DataScouting.vue')
+    },
+    {
         path:"/",
         redirect:"/welcome"
     },
