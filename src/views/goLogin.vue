@@ -29,107 +29,131 @@
 </template>
 
 <script>
-import axios from "axios";
-import { useRouter } from "vue-router";
-// const router = useRouter();
-export default {
-  data() {
-    return {
-      username: "",
-      password: "",
-      error: "",
-    };
-  },
-  methods: {
-    async login() {
-      try {
-        // 向后端发送登录请求
-        const response = await axios.post(
-          "/user/passwordLogin",
+  import axios from 'axios';
+  import { axiosPost } from '@/config/http';
+  import { useRouter } from 'vue-router';
+  // const router = useRouter();
+  export default {
+    data() {
+      return {
+        username: '',
+        password: '',
+        error: '',
+      };
+    },
+    methods: {
+      async login() {
+        const response = await axiosPost(
+          '/user/passwordLogin',
           {
             account: this.username,
             pwd: this.password,
           },
+          false,
           {
             withCredentials: true,
             headers: {
-              "Access-Control-Allow-Origin": "*",
-              "Content-Type": "application/x-www-form-urlencoded",
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/x-www-form-urlencoded',
             },
           }
         );
-        if (response.data.code === "SUCCESS") {
+        if (response.data.code === 'SUCCESS') {
           // 登录成功，跳转到聊天页面
           localStorage.setItem('token', response.data.data.token);
           this.$store.commit('setToken', response.data.data.token);
           console.log(response);
-          this.$router.push("/chat");
+          this.$router.push('/chat');
         } else {
           // 登录失败，弹出提示框
-          this.error = "登录失败，请重试";
-          console.log(response.data.code);
-          alert(this.error);
+          // this.error = '登录失败，请重试';
+          // console.log(response.data.code);
+          // alert(this.error);
         }
-        // // 登录成功，跳转到聊天页面
-        // console.log(response)
-        // this.$router.push('/chat');
-      } catch (error) {
-        if (error.response) {
-          this.error = error.response.data.message;
-        } else {
-          this.error = "登录失败，请重试";
-        }
-        alert(this.error);
-      }
+
+        // try {
+        //   // 向后端发送登录请求
+        //   const response = await axios.post(
+        //     '/user/passwordLogin',
+        //     {
+        //       account: this.username,
+        //       pwd: this.password,
+        //     },
+        //     {
+        //       withCredentials: true,
+        //       headers: {
+        //         'Access-Control-Allow-Origin': '*',
+        //         'Content-Type': 'application/x-www-form-urlencoded',
+        //       },
+        //     }
+        //   );
+        //   if (response.data.code === 'SUCCESS') {
+        //     localStorage.setItem('token', response.data.data.token);
+        //     this.$store.commit('setToken', response.data.data.token);
+        //     console.log(response);
+        //     this.$router.push('/chat');
+        //   } else {
+        //     this.error = '登录失败，请重试';
+        //     console.log(response.data.code);
+        //     alert(this.error);
+        //   }
+        // } catch (error) {
+        //   if (error.response) {
+        //     this.error = error.response.data.message;
+        //   } else {
+        //     this.error = '登录失败，请重试';
+        //   }
+        //   alert(this.error);
+        // }
+      },
     },
-  },
-};
+  };
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-image: url("/src/assets/login_pictures/chat_background.png");
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('/src/assets/login_pictures/chat_background.png');
 
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-}
-.content {
-  text-align: center;
-  padding: 50px;
-  border-radius: 12px;
-}
-h1 {
-  margin-left: 20px;
-  font-weight: bold;
-}
-input[type="text"],
-input[type="password"] {
-  padding: 10px;
-  margin: 10px;
-  width: 300px;
-  border-radius: 12px;
-  border: 2px solid #ccc;
-  margin-bottom: 10px;
-}
-button {
-  padding: 10px 20px;
-  background-color: #689afb;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-}
-button:hover {
-  background-color: #76bdb3;
-}
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+  .content {
+    text-align: center;
+    padding: 50px;
+    border-radius: 12px;
+  }
+  h1 {
+    margin-left: 20px;
+    font-weight: bold;
+  }
+  input[type='text'],
+  input[type='password'] {
+    padding: 10px;
+    margin: 10px;
+    width: 300px;
+    border-radius: 12px;
+    border: 2px solid #ccc;
+    margin-bottom: 10px;
+  }
+  button {
+    padding: 10px 20px;
+    background-color: #689afb;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+  }
+  button:hover {
+    background-color: #76bdb3;
+  }
 </style>

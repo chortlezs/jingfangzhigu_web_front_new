@@ -8,6 +8,7 @@ import { h } from 'vue';
 import { ElNotification } from 'element-plus';
 import { Plus } from "@element-plus/icons-vue";
 import type { UploadProps } from "element-plus";
+import { axiosPost,axiosGet } from "@/config/http";
 import axios from "axios";
 const radio2 = ref("1");
 const input2 = ref("");
@@ -96,19 +97,27 @@ const handleMenuClick = (key) => {
 };
 
 const getUserInfo = () => {
-  axios
-    .get("/user/info", {
-      headers: {
-        Authorization: localStorage.getItem("token"),
-      },
-    })
-    .then((res) => {
-      console.log(res);
-      if (res.data && res.data.code == "SUCCESS") {
-        userInfo.value = { ...res.data.data.userInfo };
-        userInfoBefore.value = { ...res.data.data.userInfo };
-      }
-    });
+
+      axiosGet("/user/info").then((res) => {
+        if (res.data && res.data.code == "SUCCESS") {
+          userInfo.value = { ...res.data.data.userInfo };
+          userInfoBefore.value = { ...res.data.data.userInfo };
+        }
+      });
+
+  // axios
+  //   .get("/user/info", {
+  //     headers: {
+  //       Authorization: localStorage.getItem("token"),
+  //     },
+  //   })
+  //   .then((res) => {
+  //     console.log(res);
+  //     if (res.data && res.data.code == "SUCCESS") {
+  //       userInfo.value = { ...res.data.data.userInfo };
+  //       userInfoBefore.value = { ...res.data.data.userInfo };
+  //     }
+  //   });
 };
 
 onMounted(() => {
@@ -128,7 +137,7 @@ const handleUserInfoUpload = () => {
   };
 
   // 验证 age、height 和 weight 字段
-  const numberRegex = /^\d+$/;
+  const numberRegex = /^\d*(\.\d+)?$/;
   const fieldsToCheck = ['age', 'height', 'weight'];
   fieldsToCheck.forEach((field) => {
     if (!numberRegex.test(userInfo.value[field])) {
@@ -155,14 +164,12 @@ const handleUserInfoUpload = () => {
   formObj.append("height", userInfo.value.height);
   formObj.append("weight", userInfo.value.weight);
   formObj.append("anamnesis", userInfo.value.anamnesis);
-  axios
-    .post(`/user/info`, formObj, {
+  axiosPost(`/user/info`,formObj,false,{
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: localStorage.getItem("token"),
       },
-    })
-    .then((res) => {
+    }).then((res) => {
       console.log(res);
       if (res.data && res.data.code == "SUCCESS") {
         userInfoBefore.value.avatar = userInfo.value.avatar;
@@ -173,13 +180,21 @@ const handleUserInfoUpload = () => {
         })
       }
     })
-    .catch(function (error) {
-      console.log(error.toJSON());
-      ElNotification({
-        message: h('i',{ style: 'color:red' },'更新用户信息失败'),
-        type: 'error',
-      })
-    });
+    // .catch(function (error) {
+    //   console.log(error.toJSON());
+    //   ElNotification({
+    //     message: h('i',{ style: 'color:red' },'更新用户信息失败'),
+    //     type: 'error',
+    //   })
+    // });
+  // axios
+  //   .post(`/user/info`, formObj, {
+  //     headers: {
+  //       "Content-Type": "multipart/form-data",
+  //       Authorization: localStorage.getItem("token"),
+  //     },
+  //   })
+    
 };
 
 const handleFileUpload = (fileObj) => {
