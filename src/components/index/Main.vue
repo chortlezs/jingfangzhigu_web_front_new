@@ -151,6 +151,13 @@
               ">
               <a-spin :indicator="indicator"  v-if="index === messages.length - 1 && isLoading"/>
               <div v-html="renderMessage(msg.content)" ></div>
+              <div v-if="isShowMedic" style="  box-shadow: 0 2px 4px rgba(0, 0, 1, 0.1); padding: 10px;">
+                <a-collapse v-model:activeKey="activeKey" ghost>
+                    <a-collapse-panel key="1" header="药物推荐">
+                      <p>{{ medicineText }}</p>
+                    </a-collapse-panel>
+                </a-collapse>
+              </div>
           </div>
             <!--            <div class="bubble bubb assistant-bubble last-message">-->
             <!--              本次问询结果已经自动生成病历，您是否要继续补充个人信息以完善病历？如需要，请问您的姓名、年龄以及性别是？如果不需要，点击下方“保存”按钮即可保存或点击“删除”不进行保存。-->
@@ -485,6 +492,7 @@ function filterMessages() {
 
 const inputMessage = ref("");
 const isLoading = ref();
+const isShowMedic = ref();
 const showChatBox = ref(false); // 控制是否展示对话框部分的状态
 // 语音转文字功能
 const recognition = new webkitSpeechRecognition();
@@ -506,6 +514,7 @@ function startRecording() {
 // 订阅请求
 let messageContent = ref("");
 let currentEventSource: EventSource | null = null;
+const medicineText = `111111`;
 const subscribeToChat = () => {
   // 如果已经有一个订阅，先关闭它
   if (currentEventSource) {
@@ -526,6 +535,7 @@ const subscribeToChat = () => {
     if (data["data"]["flag"]) {
       let flag = data["data"]["flag"];
       if (flag) {
+        
       }
     }
   });
@@ -545,6 +555,9 @@ const subscribeToChat = () => {
       messages[length].content = endData["data"]["totalMessage"];
       messageContent.value = ""; // 重置累积的消息内容
       scrollToBottom();
+    }
+    if(endData["data"]["finalDiagnosis"]) {
+      isShowMedic.value = true;
     }
     currentEventSource.close();
   });
