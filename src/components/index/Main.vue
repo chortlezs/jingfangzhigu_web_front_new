@@ -565,9 +565,16 @@ const subscribeToChat = () => {
     let endData = JSON.parse(event.data);
     if (messageContent.value) {
       let length = messages.length - 1;
-      messages[length].content = endData["data"]["totalMessage"];
-      messageContent.value = ""; // 重置累积的消息内容
-      scrollToBottom();
+      if(endData["data"]["totalMessage"])
+      {
+        messages[length].content = endData["data"]["totalMessage"];
+        messageContent.value = ""; // 重置累积的消息内容
+        scrollToBottom();
+      }
+      if (endData["data"]["finalDiagnosis"])
+        messages[length].content = endData["data"]["finalDiagnosis"]["recommendation"]
+        messageContent.value = ""; // 重置累积的消息内容
+        scrollToBottom();
     }
     // if(endData["data"]["finalDiagnosis"]) {
     //   let medicine = endData["data"]["finalDiagnosis"]["medicine"]
