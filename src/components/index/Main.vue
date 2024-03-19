@@ -427,11 +427,11 @@ const buttons = [
 ] as const;
 
 const renderMessage = (content) => {
-  if(messages.length > 11 ){
-    isShowMedic.value = true;
-  }
+  // if(messages.length > 11 ){
+  //   isShowMedic.value = true;
+  // }
   if (!content) {
-    isShowMedic.value = false;
+    // isShowMedic.value = false;
     return marked.parse(messageContent.value); // 如果content为空，则返回messageContent
   }
   return marked.parse(content);
@@ -463,7 +463,7 @@ watch(
   (newVal, oldVal) => {
     if (newVal && newVal.length > 0) {
       filterMessages();
-      isShowMedic.value = false;
+      // isShowMedic.value = false;
       chatId.value = props.selectedChatId as string;
       showChatBox.value = true;
     } else {
@@ -480,7 +480,7 @@ watch(
       chatId.value = newVal; // 更新当前chatId
       subscribeToChat(); // 重新订阅新的chatId
       isFirstMessageInChat.value = true;
-      isShowMedic.value = false;
+      // isShowMedic.value = false;
     }
     
   }
@@ -507,7 +507,7 @@ function filterMessages() {
 
 const inputMessage = ref("");
 const isLoading = ref();
-const isShowMedic = ref(false);
+// const isShowMedic = ref(false);
 const showChatBox = ref(false); // 控制是否展示对话框部分的状态
 // 语音转文字功能
 const recognition = new webkitSpeechRecognition();
@@ -601,7 +601,7 @@ const sendMessage = () => {
         isFirstMessageInChat.value &&
         (!props.messageArray || props.messageArray.length === 0)
       ) {
-        isShowMedic.value = false;
+        // isShowMedic.value = false;
         messages.splice(0, messages.length); // 清空当前消息数组
         isFirstMessageInChat.value = false;
         emit("update-chat-name", inputMessage.value, chatId.value);
