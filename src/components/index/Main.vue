@@ -46,27 +46,15 @@
               </el-col>
             </el-row>
           </el-row>
-          <el-row class="content2">
-            <p style="margin: 0 20px; font-size: 14px">你可以问我：</p>
-            <div class="content22" style="text-align: left">
-              <el-button
-                v-for="button in buttons"
-                :key="button.text"
-                type=""
-                text
-                bg
-                style="text-align: left"
-                >{{ button.text }}
-              </el-button>
-            </div>
-          </el-row>
+          
         </el-row>
       </div>
 
       <!-- 聊天框 -->
+      
       <div
         v-if="showChatBox"
-        v-for="(msg, index) in messages"
+        v-for="(msg, index) in messages"    
         :key="index"
         class="chat-container"
         ref="chatContainer"
@@ -78,6 +66,7 @@
           max-height: 66%;
         "
       >
+
         <!-- 对话框 -->
         <div
           v-if="msg.roleId === 1"
@@ -125,6 +114,7 @@
             margin-right: auto;
           "
         >
+        
           <!-- 助手消息 -->
           <div
             class="chat-box"
@@ -135,6 +125,7 @@
               align-items: center;
             "
           >
+          
             <div class="avatar">
               <img
                 src="@/assets/chat_pictures/icon.png"
@@ -187,7 +178,28 @@
     </div>
 
     <!-- 底部输入框 -->
+    <div class="text-container">
+      <!-- 移动“你可以问我”，在屏幕比例改变的时候会贴着输入框 -->
+    <el-row class="content2">
+            <p style="margin: 0 20px; font-size: 14px">你可以问我：</p>
+            <div
+              class="content22"
+              style="text-align: left"
+            >
+              <el-button
+                v-for="button in buttons"
+                :key="button.text"
+                type=""
+                text
+                bg
+                style="text-align: left"
+                class="left-align-text"
+                >{{ button.text }}
+              </el-button>
+            </div>
+      </el-row>
     <el-row class="foot">
+      
       <el-tabs
         v-model="activeName"
         class="demo-tabs"
@@ -322,33 +334,38 @@
         </el-tab-pane>
       </el-tabs>
     </el-row>
+  </div>
   </el-main>
+
 </template>
 
 <style src="@/assets/main.css"></style>
 <style scoped>
+  html {
+    font-size: 16px;
+  }
 .medical-box {
   border: 1px solid #000;
-  border-radius: 5px;
-  padding: 10px 20px;
-  margin-top: 20px;
+  border-radius: 0.3rem;
+  padding: 0.625rem 1.25rem;
+  margin-top: 1.25rem;
 }
 
 .medical-title {
   text-align: center;
-  font-size: 16px;
+  font-size: 1rem;
   color: #000;
   font-weight: bold;
 }
 
 .medical-content {
   border-bottom: 1px solid #333;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .medical-content span {
-  margin-right: 40px;
+  margin-right: 2.5rem;
 }
 
 .medical-content.no-border {
@@ -357,19 +374,19 @@
 
 .medical-btn-group {
   display: flex;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .medical-btn-group span {
   border: none;
-  border-radius: 5px;
+  border-radius: 0.3rem;
   background-color: #7fa99d;
   color: #fff;
-  font-size: 18px;
-  line-height: 30px;
+  font-size: 1.125rem;
+  line-height: 1.875rem;
   display: inline-block;
-  padding: 10px 50px;
+  padding: 0.625rem 3.125rem;
   margin: 0 auto;
 }
 
@@ -381,6 +398,8 @@
   max-width: 60%;
 }
 </style>
+
+
 <script setup lang="ts">
 import {
   Position,

@@ -52,7 +52,7 @@ const handleMenuClick = (key) => {
             </a-avatar>
             <span class="user-tag">患者用户</span>
           </div>
-          <p class="username">loopy，China,19</p>
+          <p class="username">loopy, China,19</p>
         </div>
         <div class="menu">
 		  <div class="menu-name">
@@ -92,7 +92,7 @@ body {
   background-image: url('/src/assets/login_pictures/chat_background.png');
   background-size: cover;
   display: flex;
-  justify-content: center;
+  justify-content: safe center;
   align-items: center;
 }
 
@@ -171,4 +171,5 @@ body {
   border-radius: 18px;
   background-color: #fff;
 }
+
 </style>

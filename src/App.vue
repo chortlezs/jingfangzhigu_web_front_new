@@ -3,6 +3,8 @@ import {ref, onMounted, computed} from "vue";
 import axios from "axios";
 const imageUrl = ref("");
 
+//获取用户信息
+
 let token = ref("")
 computed(
     () => {

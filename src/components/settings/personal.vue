@@ -400,14 +400,15 @@ body {
   background-image: url("/src/assets/login_pictures/chat_background.png");
   background-size: cover;
   display: flex;
-  justify-content: center;
+  justify-content: safe center;
   align-items: center;
 }
 
 .avatarright {
   width: 80px; /* 或者具体的像素值 */
   height: 80px; /* 确保宽度和高度相等 */
-  object-fit: cover; /* 保持图片比例，超出部分裁剪 */
+  object-fit: cover; 
+  /* 保持图片比例，超出部分裁剪 */
 }
 .center-container {
   width: 800px;
@@ -415,6 +416,9 @@ body {
   display: flex;
   align-items: center;
   /* 垂直居中 */
+  overflow: auto;
+  flex-direction: row;
+  justify-content: space-around;
 }
 
 .avatar {
@@ -486,6 +490,9 @@ body {
   padding: 20px;
   height: 500px;
   border-radius: 18px;
+  flex-basis: 100px;
+  flex-shrink: 0;
+  margin: auto;
 }
 
 .content {
@@ -529,7 +536,7 @@ body {
 
 .user-basic {
   align-items: center;
-  margin-right: 10px;
+  /* margin-right: 10px; */
   width: 45%;
 }
 
@@ -582,5 +589,42 @@ body {
   justify-content: center;
   margin-top: auto;
   margin-bottom: 30px;
+}
+@media(min-width: 600px){
+  .content{
+    flex-basis: 650px;
+  }
+}
+@media(max-width:600px){
+.sidebar{
+  width: 180px;
+}
+.menu{
+  width:180px;
+}
+.content{
+  width: 300px;
+  flex-basis: 300px;
+}
+.user-information{
+  display:inline-block ;
+  overflow: auto;
+  border-bottom: #689afb solid 1.5px ;
+  margin-bottom: 1.5px;
+  /* margin: auto; */
+}
+.user-body{
+  margin-left: 0;
+  width: 100%;
+}
+.user-basic{
+  width: 100%;
+}
+.center-container{
+width:100%
+}
+.list{
+  flex-basis: 100%;
+}
 }
 </style>

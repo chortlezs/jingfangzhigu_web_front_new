@@ -24,7 +24,7 @@ function goRegister(){
           <div><img src="/src/assets/login_pictures/logo.png" alt="" style="display: inline-block;vertical-align: middle">
           <div class="logo-text">进入使用</div>
           </div>
-          <div><buttond @click="goLogin">登录</buttond>
+          <div class="button-container"><buttond @click="goLogin">登录</buttond>
             <buttonz @click="goRegister">注册</buttonz></div>
         </div>
       </div>
@@ -146,5 +146,43 @@ function goRegister(){
         buttonz:hover {
           background: #76BDB3;
         }
+
+        @media(max-width:800px){
+            h1{
+              font-size:7vh;
+              position: absolute;
+              top: 5vh;
+              left: 5vh;
+            }
+            h2{
+              font-size: 2vh;
+              position: absolute;
+              top: 17vh;
+              left: 3vh;
+            }
+            .right-section{
+              position: absolute;
+              top:45%;
+              left: 50%;
+               transform: translate(-50%, -50%); /*居中 */
+            }
+            .logo-text{
+              font-size:4vh;
+            }
+            buttond{
+              width:100px;
+            }
+            buttonz{
+              width:100px;
+            }
+
+
+        }
+        /* 保持按钮在一排不移动 */
+        .button-container{
+              display: flex;
+              justify-content: space-between;
+
+            }
     </style>
     

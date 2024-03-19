@@ -59,4 +59,12 @@ margin-top: 10px;
     border-radius: 4px;
     background-color: transparent;
 }
-
+/* 页面调整的时候隐藏sidebar */
+@media (max-width:600px){       
+    .aside{
+        display: none !important;
+    }
+}
+.aside{
+    display: block;
+}

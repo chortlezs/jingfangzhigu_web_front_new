@@ -31,6 +31,7 @@ const toggleHealth = () => {
       <img v-if="healthStatus" src="@/assets/setting_pictures/open.png" alt="开启" class="toggle-icon" @click="toggleHealth" />
       <img v-else src="@/assets/setting_pictures/off.png" alt="关闭" class="toggle-icon_off" @click="toggleHealth" />
     </li>
+    
   </ul>
 </div>
 </template>
@@ -68,10 +69,12 @@ const toggleHealth = () => {
 	position: relative;
   left: 436px;
   width: 71px;
+  overflow: hidden;
 }
 .toggle-icon_off {
 	position: relative;
   left: 460px;
 	width: 71px;
 }
+
 </style>

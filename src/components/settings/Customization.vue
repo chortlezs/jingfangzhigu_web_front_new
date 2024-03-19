@@ -72,4 +72,5 @@ const toggleHealth = () => {
     left: 470px;
     width: 71px;
 }
+
 </style>

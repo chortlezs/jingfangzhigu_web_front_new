@@ -4,7 +4,7 @@
             <img class='logoimg' src="@/assets/chat_pictures/logo.png"/>
         <div class="search">
           <el-dropdown>
-            <el-avatar :src="imageUrl" class='avator' />
+            <el-avatar :src="imageUrl" class='avator' />  
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="goPersonal">个人中心</el-dropdown-item>
@@ -60,6 +60,7 @@
             <tbody>
               <tr>
                 <td>
+                  
                   <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
                   1
                 </td>
@@ -84,7 +85,7 @@
                     <tr class="link-container">
                     <a href="">查看详情</a>
                     <a href="">下载</a>
-                    <a href="">删除</a>
+                    <a href="">删除</a>   <!--为什么跳转？-->
                     </tr>
                 </td>
               </tr>
@@ -128,7 +129,7 @@ onMounted(()=>{
 })
 
 </script>
-<style>
+<style scoped>
 .body-bottom {
   position: fixed; /* 固定定位，相对于视口 */
   bottom: 0; /* 底部对齐 */

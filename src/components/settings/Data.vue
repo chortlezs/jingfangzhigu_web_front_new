@@ -77,7 +77,10 @@ const openDeleteConversationPopup = () => {
   margin-bottom: 20px;
   color: #585858;
 }
-
+/* 前三个的button图片太高撑大li， */
+.list-item:nth-of-type(1){
+padding-top: 38.4px;
+}
 .custom-button {
   width: 65px;
   height: 29px;

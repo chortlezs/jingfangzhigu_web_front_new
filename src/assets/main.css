@@ -1,18 +1,24 @@
+html{
+    font-size: 16px;
+}
 .main .el-row {
-margin-bottom: 20px;
-justify-content: center;
+margin-bottom: 1.25rem;
+/* justify-content: center; */
+display: flex;
 }
 .el-row:last-child {
 margin-bottom: 0;
 }
 .el-row:first-child {
-margin-top: 10px;
+margin-top: 0.625rem;
 }
 .main-header1{
     padding: 0;
     display: flex;
     flex-direction: column;
     text-align:center;
+    width: 100%;
+    height: 100%;
 }
 .main-header1 h1{
     color:#7499F4;
@@ -25,35 +31,63 @@ margin-top: 10px;
 .content .el-row{
     width: 100%;
     display: flex;
-    margin-bottom: 20px;
-    justify-content: center; /* 将内容水平居中 */
+    margin-bottom: 1.25rem;
+    /* justify-content: center;  */
+    justify-content: space-evenly;
 }
 
-/*.grid-content {
+/* .grid-content {
 border-radius: 4px;
 min-height: 36px;
-}.content {
+}
+.content {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 20px;
     padding: 20px;
-}右侧属性，内容区1*/
+} */
+.custom-row{
+    width: 100%;
+}
+/* 右侧属性，内容区1 */
+.content{
+    gap:.5rem
+}
+.content{ 
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: flex-start; /* 垂直居中 */
+    width: 100%;
+    height: 100%;
+}
 
+@media (max-width:800px){
+    .aside{
+        display: none;
+    }
+    .rectangle{
+        margin-left: -40px;
+    }
+}
 .rectangle {
     width: 100%;
-    height: 100px;
+    height: 6.25rem;
     border: 2px solid #7499F4;
     background-color: rgba(255, 255, 255, 1);
-    border-radius: 10px;
+    border-radius: 0.625rem;
     text-align: center;
     display: flex;
     flex-direction: column;
-    padding-top: 10px;
+    padding-top: 0.625rem;
     cursor: pointer;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 135px;
+    
+} 
 
-}/*右侧属性，长方形1*/
+
+/*右侧属性，长方形1
 .rectangle *{
     flex: 1;
     margin: 0;
@@ -78,13 +112,15 @@ min-height: 36px;
 .el-row .content2{
     width: 100%;
     justify-content: flex-start;
-    margin-top: 10px;
+    margin-top: 0.625rem;
     display: flex;
-    flex-wrap: nowrap
+    flex-wrap: nowrap;
+    overflow: hidden;
 }
+
 .content2 p{
-    margin: 0px 0px 0 20px;
-    font-size: 14px;
+    margin: 0px 0px 0 1.25rem;
+    font-size: 0.875rem;
 }
 
 .content22 {
@@ -92,21 +128,36 @@ min-height: 36px;
     flex:1;
     white-space: nowrap; /* 防止文本换行 */
     overflow: hidden; /* 隐藏溢出的文本 */
+    text-align: left;
+    text-overflow: ellipsis; /* 使用省略号代替溢出的文本 */
 }
-.content22 el-button {
+.content22 .el-button {
+    display: inline-block;
     flex-grow: 1;
     white-space: nowrap; /* 防止文本换行 */
     overflow: hidden; /* 隐藏溢出的文本 */
     text-overflow: ellipsis; /* 使用省略号代替溢出的文本 */
-    text-align: left !important; /* 使用 !important 覆盖按钮元素上的样式 */
+    /* text-align: left !important; /* 使用 !important 覆盖按钮元素上的样式 */
+} 
+.content22 .el-button.left-align-text {
+    justify-content: flex-start;
 }
 .content22 .el-button.is-text {
     color: black;
-    width: 33%;
+    /* width: 33%; */
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
+.bottom .el-textarea__inner{
+    display: flex;
+    flex-direction: column;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing:border-box;
+    width: 100%;
+    
+}
 .foot .el-row{
     flex: 1;
     margin-left: 0;
@@ -127,10 +178,11 @@ min-height: 36px;
     display: flex;
     flex-direction: column;
     background-color: rgba(255, 255, 255, 1.0);
-    margin: 0px 20px 10px 20px;
-    border-radius: 10px;
+    margin: 0px 1.25rem 0.625rem 1.25rem;
+    border-radius: 0.625rem;
     margin-top: auto; 
-    padding: 20px;
+    padding: 1.25rem;
+    overflow: scroll;       /*增加滚动条避免溢出*/
 }/*右侧属性，整块输入框3*/
 .foot .el-row {
     width: 100%;
@@ -142,12 +194,15 @@ min-height: 36px;
 }
 .demo-tabs .custom-tabs-label span {
   vertical-align: middle;
-  margin-left: 4px;
+  margin-left: 0.25rem;
 }
 .bottom{
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    box-sizing:border-box;
 }/*右侧属性，3.2*/
 
 .bottom .el-textarea{
@@ -155,6 +210,7 @@ min-height: 36px;
 }
 .bottom .el-textarea__inner{
     box-shadow: none;
+    
 }
 .el-input-group{
     height: 100px;
@@ -164,23 +220,17 @@ min-height: 36px;
     background-color:#388aff;
 }
 
-.bottom .button2{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end
-}
 .bottom button{
-    margin: 10px 10px 0 10px;
+    margin: 0.625rem 0.625rem 0 0.625rem;
 }
 
 /* 这些是当时功能方面的属性 */
 .bubble {
     display: inline-block;
     background-color: white;
-    padding: 10px 15px;
-    margin: 5px;
-    border-radius: 10px;
+    padding: 0.625rem 0.625rem;
+    margin: 0.3rem;
+    border-radius: 0.625rem;
     max-width: 80%;
     text-align: left;
     vertical-align: top; /* 顶部对齐，确保头像和聊天气泡顶部对齐 */
@@ -195,14 +245,18 @@ min-height: 36px;
     display: flex;
     align-items: center; /* 垂直居中对齐 */
     justify-content: flex-end;
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
     width: 100%;
 }
 .message-container1 {
     display: flex;
     align-items: center; /* 垂直居中对齐 */
     justify-content: flex-start;
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
     width: 100%;
 }
-
+.bottom .button2{
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+}
