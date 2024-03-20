@@ -50,7 +50,10 @@
                 {{FirItem+index+1}}
               </td>
               <td style="position: relative; display: inline-block;">
-                <img v-if="history.imgUrl" :src="history.imgUrl" @error="handleImageError" />
+                <img v-if="history.imgUrl" :src="history.imgUrl" @error="handleImageError"  style=" width: 100px;
+  height: 120px;
+  object-fit: contain;
+  vertical-align: middle;"/>
                 <img v-else src="@/assets/DataScouting_pictures/RegularCaseChart.webp" />
                 <button v-if="!history.imgUrl"  style="position: absolute; bottom: 10px; right: 0;  color: #ffffff; 
   background-color: #007bff; 
@@ -206,17 +209,20 @@ methods: {
         console.error("An error occurred while making the request:", error);
       }
     },
-  async fetchData() {
+    async fetchData() {
     try {
-        const response = await axios.get(
-          "/medicalHistory/list",
-          {
-            headers: {
-              Authorization: localStorage.getItem("token"),
-             },
-            withCredentials: true,
-          }
-        );
+      const response = await axios.get(
+  "/medicalHistory/name/list/"+this.name,
+  {
+    params: {
+      name: this.name
+    },
+    headers: {
+      Authorization: localStorage.getItem("token"),
+    },
+    withCredentials: true,
+  }
+);
         console.log(response.data);
         localStorage.setItem('diagnosis', JSON.stringify(response.data.data.diagnosis))
         localStorage.setItem('showList', JSON.stringify(response.data.data.diagnosis))

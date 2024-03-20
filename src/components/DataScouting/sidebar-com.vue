@@ -4,8 +4,7 @@
           <img  :src="iconPath" alt="icon" />
       </div>
       <div class="sidebar-item selected"  @click="selectItem($event,'dzbl')">电子病历</div>
-      <div class="sidebar-item" @click="selectItem($event,'szjl')">舌诊记录</div>
-      <div class="sidebar-item" @click="selectItem($event,'mzjl')">面诊记录</div>
+      <div class="sidebar-item" @click="selectItem($event,'szjl')">面诊记录</div>
   </div>
 </template>
 
