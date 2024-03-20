@@ -31,8 +31,8 @@ export default {
           "/medicalHistory/nameList",
           {
             headers: {
-              // Authorization: localStorage.getItem("token"),
-              Authorization:"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MTExODUwMTl9.U7PoS1VoIWliypSEjtSkdq6op0_tngr5AGkcEGqubmk"
+              Authorization: localStorage.getItem("token"),
+              // Authorization:"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYWVmNjQ1MS0yZjBlLTQ4Y2YtYjI2Ny1iM2EzMWI4Mjg4MzkiLCJleHAiOjE3MTExODUwMTl9.U7PoS1VoIWliypSEjtSkdq6op0_tngr5AGkcEGqubmk"
             },
             withCredentials: true,
           }

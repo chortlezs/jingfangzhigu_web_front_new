@@ -49,8 +49,14 @@
                 <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
                 {{FirItem+index+1}}
               </td>
-              <td><img v-if="history.imgUrl" :src="history.imgUrl" @error="handleImageError" />
-  <img v-else src="@/assets/DataScouting_pictures/RegularCaseChart.webp" /></td>
+              <td style="position: relative; display: inline-block;">
+                <img v-if="history.imgUrl" :src="history.imgUrl" @error="handleImageError" />
+                <img v-else src="@/assets/DataScouting_pictures/RegularCaseChart.webp" />
+                <button v-if="!history.imgUrl"  style="position: absolute; bottom: 10px; right: 0;  color: #ffffff; 
+  background-color: #007bff; 
+  font-weight: bold; 
+  font-size: 12px;  border: none;border-radius: 5px;">经方智谷</button>
+              </td>
               <td>{{ history.createTime.slice(0, 10) }}</td>
               <td>
                   <tr class="link-container">
@@ -77,9 +83,9 @@
       <button class="upload" >上传病历</button>
       <button class="followup" style="text-align: top">我要复诊</button>
     </div>
-    <medicalHistoriesModal @notify="handleNotify" :index="selectedItem" v-if="isModalVisible&&kind==='dzbl'"></medicalHistoriesModal>
+    <medicalHistoriesModal @notify="handleNotify" :index="selectedItem" v-if="isModalVisible&&kind==='dzbl'&&horj==='h'"></medicalHistoriesModal>
     <faceDiagnosisModal @notify="handleNotify" :index="selectedItem"  v-if="isModalVisible&&kind==='szjl'"></faceDiagnosisModal>
-    
+    <jingfangModal @notify="handleNotify" :index="selectedItem" v-if="isModalVisible&&kind==='dzbl'&&horj==='d'"></jingfangModal>
 
   </el-container>
 </template>
@@ -89,6 +95,7 @@ import {ref,onMounted} from 'vue'
 import { useRouter } from 'vue-router';
 import medicalHistoriesModal from '@/components/DataScouting/medicalHistoriesModal.vue'
 import faceDiagnosisModal from '@/components/DataScouting/faceDiagnosisModal.vue'
+import jingfangModal from '@/components/DataScouting/jingfangModal.vue'
 import Banner from '@/components/DataScouting/carousel.vue'
 import SideBar from '@/components/DataScouting/sidebar-com.vue'
 let messageArray = ref([]);
@@ -131,6 +138,7 @@ data() {
     faceDiagnosis:[],
     jingfang:[],
     showList:[],
+    horj:'h',
   };
 },
 mounted() {
@@ -139,6 +147,7 @@ mounted() {
 components: {
     faceDiagnosisModal,
     medicalHistoriesModal, 
+    jingfangModal,
     Banner,
     SideBar
   },
@@ -166,6 +175,11 @@ methods: {
   toPhoto(index){
     this.isModalVisible = true;
     this.selectedItem = index;
+    if(this.kind==='dzbl'){
+      this.horj=this.showList[index].type
+      console.log(this.showList[index])
+      console.log(this.showList[index].type)
+    }
   },
   handleChangeName(value) {
       // 父组件接收到子组件传递的数值
@@ -204,15 +218,13 @@ methods: {
           }
         );
         console.log(response.data);
-        localStorage.setItem('medicalHistories', JSON.stringify(response.data.data.medicalHistories))
-        this.medicalHistories = JSON.parse(localStorage.getItem('medicalHistories'));
-        localStorage.setItem('jingfang', JSON.stringify(response.data.data.jingfang))
-        this.jingfang = JSON.parse(localStorage.getItem('jingfang'));
-        this.showList = [...this.jingfang, ...this.medicalHistories];
-        localStorage.setItem('showList', JSON.stringify(this.showList))
+        localStorage.setItem('diagnosis', JSON.stringify(response.data.data.diagnosis))
+        localStorage.setItem('showList', JSON.stringify(response.data.data.diagnosis))
+        this.showList = JSON.parse(localStorage.getItem('diagnosis'));
         this.total=this.showList.length
       } catch (error) {
         console.error("An error occurred while making the request:", error);
+        this.showList = []
       }
     },
   async handleFileChange(event)  {
@@ -479,4 +491,4 @@ cursor: pointer;
   display: flex;
   flex-direction: column;
 }
-</style>./components/medicalHistoriesModal.vue
+</style>

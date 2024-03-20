@@ -10,9 +10,9 @@
 </template>
 
 <script>
-import dzblIcon from '@/views/images/dzbl.webp';
-import szjlIcon from '@/views/images/szjl.webp';
-import mzjlIcon from '@/views/images/mzjl.webp';
+import dzblIcon from '@/assets/DataScouting_pictures/dzbl.webp';
+import szjlIcon from '@/assets/DataScouting_pictures/szjl.webp';
+import mzjlIcon from '@/assets/DataScouting_pictures/mzjl.webp';
 export default {
   data(){
     return{
