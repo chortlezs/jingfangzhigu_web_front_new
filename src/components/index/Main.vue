@@ -128,11 +128,10 @@
           
             <div class="avatar">
               <img
-                src="@/assets/chat_pictures/icon.png"
+                src="@/assets/chat_pictures/zsLogo.png"
                 style="width: 40px; height: 40px; border-radius: 50%"
               />
             </div>
-            
             <div
               class="bubble assistant-bubble last-message"
               style="
@@ -142,13 +141,6 @@
               ">
               <a-spin :indicator="indicator"  v-if="index === messages.length - 1 && isLoading"/>
               <div v-html="renderMessage(msg.content)" ></div>
-              <div v-if="isShowMedic" style="  box-shadow: 0 2px 4px rgba(0, 0, 1, 0.1); padding: 10px;">
-                <a-collapse v-model:activeKey="activeKey" ghost>
-                    <a-collapse-panel key="1" header="药物推荐">
-                      <p>{{ medicineText }}</p>
-                    </a-collapse-panel>
-                </a-collapse>
-              </div>
           </div>
             <!--            <div class="bubble bubb assistant-bubble last-message">-->
             <!--              本次问询结果已经自动生成病历，您是否要继续补充个人信息以完善病历？如需要，请问您的姓名、年龄以及性别是？如果不需要，点击下方“保存”按钮即可保存或点击“删除”不进行保存。-->
@@ -174,6 +166,13 @@
             <!--            </div>-->
           </div>
         </div>
+        <!-- <div v-if="index === messages.length - 1 && isShowMedic " class="medicRecommed">
+            <a-collapse v-model:activeKey="activeKey" ghost>
+              <a-collapse-panel key="1" header="药物推荐">
+                <p>{{ medicineText }}</p >
+              </a-collapse-panel>
+            </a-collapse>
+        </div> -->
       </div>
     </div>
 
@@ -344,6 +343,14 @@
   html {
     font-size: 16px;
   }
+.medicRecommed{
+  background-color: #fffbfb;
+  box-shadow: 0 2px 4px rgba(0, 0, 1, 0.1); 
+  position: relative;
+  top: -15px;
+  left: -555px;
+}
+
 .medical-box {
   border: 1px solid #000;
   border-radius: 0.3rem;
@@ -439,8 +446,12 @@ const buttons = [
 ] as const;
 
 const renderMessage = (content) => {
+  // if(messages.length > 11 ){
+  //   isShowMedic.value = true;
+  // }
   if (!content) {
-    return  marked.parse(messageContent.value); // 如果content为空，则返回messageContent
+    // isShowMedic.value = false;
+    return marked.parse(messageContent.value); // 如果content为空，则返回messageContent
   }
   return marked.parse(content);
 };
@@ -471,11 +482,13 @@ watch(
   (newVal, oldVal) => {
     if (newVal && newVal.length > 0) {
       filterMessages();
+      // isShowMedic.value = false;
       chatId.value = props.selectedChatId as string;
       showChatBox.value = true;
     } else {
       showChatBox.value = false;
     }
+    
   }
 );
 
@@ -486,7 +499,9 @@ watch(
       chatId.value = newVal; // 更新当前chatId
       subscribeToChat(); // 重新订阅新的chatId
       isFirstMessageInChat.value = true;
+      // isShowMedic.value = false;
     }
+    
   }
 );
 
@@ -511,7 +526,7 @@ function filterMessages() {
 
 const inputMessage = ref("");
 const isLoading = ref();
-const isShowMedic = ref();
+// const isShowMedic = ref(false);
 const showChatBox = ref(false); // 控制是否展示对话框部分的状态
 // 语音转文字功能
 const recognition = new webkitSpeechRecognition();
@@ -533,7 +548,7 @@ function startRecording() {
 // 订阅请求
 let messageContent = ref("");
 let currentEventSource: EventSource | null = null;
-const medicineText = `111111`;
+const medicineText = ref("");
 const subscribeToChat = () => {
   // 如果已经有一个订阅，先关闭它
   if (currentEventSource) {
@@ -553,9 +568,7 @@ const subscribeToChat = () => {
     }
     if (data["data"]["flag"]) {
       let flag = data["data"]["flag"];
-      if (flag) {
-        
-      }
+      if (flag) {}
     }
   });
 
@@ -571,13 +584,28 @@ const subscribeToChat = () => {
     let endData = JSON.parse(event.data);
     if (messageContent.value) {
       let length = messages.length - 1;
-      messages[length].content = endData["data"]["totalMessage"];
-      messageContent.value = ""; // 重置累积的消息内容
-      scrollToBottom();
+      if(endData["data"]["totalMessage"])
+      {
+        messages[length].content = endData["data"]["totalMessage"];
+        messageContent.value = ""; // 重置累积的消息内容
+        scrollToBottom();
+      }
+      if (endData["data"]["finalDiagnosis"])
+        messages[length].content = endData["data"]["finalDiagnosis"]["recommendation"]
+        messageContent.value = ""; // 重置累积的消息内容
+        scrollToBottom();
     }
-    if(endData["data"]["finalDiagnosis"]) {
-      isShowMedic.value = true;
-    }
+    // if(endData["data"]["finalDiagnosis"]) {
+    //   let medicine = endData["data"]["finalDiagnosis"]["medicine"]
+    //   console.log(medicine,'medicine');
+      
+    //   // isShowMedic.value = true;
+    //   // medicineText.value = JSON.parse(medicine["medicine"])
+    //   const nameOfDrug1 = medicine.NameOfDrug1;
+    //   medicineText.value =  medicine.NameOfDrug1;
+    //   console.log('1111',nameOfDrug1);
+      
+    // }
     currentEventSource.close();
   });
   // 在组件销毁或页面离开时关闭连接
@@ -599,10 +627,12 @@ const sendMessage = () => {
         isFirstMessageInChat.value &&
         (!props.messageArray || props.messageArray.length === 0)
       ) {
+        // isShowMedic.value = false;
         messages.splice(0, messages.length); // 清空当前消息数组
         isFirstMessageInChat.value = false;
         emit("update-chat-name", inputMessage.value, chatId.value);
         updateChatName(chatId.value, inputMessage.value);
+        
       }
       const currentChatId = props.selectedChatId;
       chatId.value = currentChatId;
