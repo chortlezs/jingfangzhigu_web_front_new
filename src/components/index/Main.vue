@@ -323,25 +323,6 @@
 
     <!-- 底部输入框 -->
     <div class="text-container">
-      <!-- 移动“你可以问我”，在屏幕比例改变的时候会贴着输入框 -->
-    <el-row class="content2">
-            <p style="margin: 0 20px; font-size: 14px">你可以问我：</p>
-            <div
-              class="content22"
-              style="text-align: left"
-            >
-              <el-button
-                v-for="button in buttons"
-                :key="button.text"
-                type=""
-                text
-                bg
-                style="text-align: left"
-                class="left-align-text"
-                >{{ button.text }}
-              </el-button>
-            </div>
-      </el-row>
     <el-row class="foot">
       
       <el-tabs
