@@ -4,15 +4,14 @@
           <img  :src="iconPath" alt="icon" />
       </div>
       <div class="sidebar-item selected"  @click="selectItem($event,'dzbl')">电子病历</div>
-      <div class="sidebar-item" @click="selectItem($event,'szjl')">舌诊记录</div>
-      <div class="sidebar-item" @click="selectItem($event,'mzjl')">面诊记录</div>
+      <div class="sidebar-item" @click="selectItem($event,'szjl')">面诊记录</div>
   </div>
 </template>
 
 <script>
-import dzblIcon from '@/views/images/dzbl.webp';
-import szjlIcon from '@/views/images/szjl.webp';
-import mzjlIcon from '@/views/images/mzjl.webp';
+import dzblIcon from '@/assets/DataScouting_pictures/dzbl.webp';
+import szjlIcon from '@/assets/DataScouting_pictures/szjl.webp';
+import mzjlIcon from '@/assets/DataScouting_pictures/mzjl.webp';
 export default {
   data(){
     return{
