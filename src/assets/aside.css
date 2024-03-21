@@ -58,13 +58,52 @@ margin-top: 10px;
     text-overflow: ellipsis; /* 使用省略号代替溢出部分 */
     border-radius: 4px;
     background-color: transparent;
+   
 }
 /* 页面调整的时候隐藏sidebar */
-@media (max-width:600px){       
+@media (max-width:700px){       
     .aside{
-        display: none !important;
+        display: none;
     }
+
+    .aside {  
+    position: fixed;
+    /* 侧边栏固定在屏幕上 */  
+    top: 0;  
+    height: 100vh; /* 侧边栏高度与视口高度一致 */  
+    background-image: url('./chat_pictures/chat_background.png') !important; /* 侧边栏背景色 */ 
+    z-index: 10; /* 确保侧边栏在顶层 */  
+    left: 0;
+    box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.3);
+    }  
+
+    .toggle-button {  
+    display: flex;
+    position: absolute; /* 绝对定位 */  
+    top: 50%;
+    left:0; /* 位于右侧 */  
+    transform: translateY(-50%); /* 垂直居中 */  
+    /* padding: 5px; 调整按钮大小   */
+    background-color: transparent; /* 透明背景 */  
+    border: none; /* 无边框 */  
+    outline: none; /* 无轮廓 */  
+    cursor: pointer; /* 鼠标悬停时变为手形 */  
+    height: 50px;
+    }  
+    .toggle-button2 {  
+    display: flex;
+    position: absolute; /* 绝对定位 */  
+    top: 50%;
+    left: 150px; /* 位于右侧 */  
+    transform: translateY(-50%); /* 垂直居中 */  
+    /* padding: 5px; 调整按钮大小   */
+    background-color: transparent; /* 透明背景 */  
+    border: none; /* 无边框 */  
+    outline: none; /* 无轮廓 */  
+    cursor: pointer; /* 鼠标悬停时变为手形 */  
+    height: 50px;
+    z-index: 100;
+    }  
+
 }
-.aside{
-    display: block;
-}
+

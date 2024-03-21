@@ -1,5 +1,9 @@
 <template>
-  <el-aside class="aside">
+  
+  <el-aside  
+    v-if="isSidebarVisible" 
+    class="aside"
+    >  
     <el-row class="newchat">
       <el-button class="newchat" type="primary" plain @click="createNewChat"
         >新建对话</el-button
@@ -39,8 +43,40 @@
         </el-sub-menu>
       </el-menu>
     </el-row>
+     <!-- 控制侧边栏显示与隐藏的按钮 -->  
   </el-aside>
+
+  <el-button  
+    v-if="!isSidebarVisible"  
+    class="toggle-button"  
+    type="text"  
+    @click="isSidebarVisible = true; isclicked=true"  
+  > 
+    <img 
+    v-if="!isclicked"
+    class="el-icon-arrow-left"
+    src="@/assets/chat_pictures/left.png"
+    >
+    </img> 
+  </el-button> 
+  <el-button  
+    v-if="isSidebarVisible"  
+    class="toggle-button2"  
+    type="text"  
+    @click="isSidebarVisible = true"  
+  > 
+    <img 
+    class="el-icon-arrow-right"
+    src="@/assets/chat_pictures/right.png"
+    @click="isSidebarVisible=false; isclicked=false"
+    >
+    </img> 
+  </el-button> 
+
 </template>
+
+
+
 
 <script lang="ts" setup>
 import {
@@ -48,16 +84,32 @@ import {
   getCurrentInstance,
   reactive,
   defineProps,
-  defineEmits, computed,
+  defineEmits, computed, onMounted, onUnmounted
 } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import axios from "axios";
-let token = ref("")
-computed(
-    () => {
-      token = this.$store.state.token;
-    }
-);
+import { method } from "lodash";
+let token = ref("");
+
+// 隐藏侧边栏
+const isSidebarVisible = ref(true); // 初始状态，全屏时默认为true  
+const asideElement = ref(null); // 用于引用aside DOM元素  
+const isclicked=ref(false);
+
+// 监听窗口尺寸变化  
+const handleResize = () => {  
+  const width = window.innerWidth;  
+  isSidebarVisible.value = width >= 700; // 如果窗口宽度大于或等于700px，则显示侧边栏  
+  // toggleSidebar();
+};  
+
+onMounted(() => {  
+  window.addEventListener('resize', handleResize);  
+  handleResize(); // 组件挂载后立即检查一次窗口尺寸  
+});  
+onUnmounted(() => {  
+  window.removeEventListener('resize', handleResize);  
+});  
 
 
 const input2 = ref("");

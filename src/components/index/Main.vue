@@ -432,7 +432,7 @@ import {
 } from "vue";
 import axios from "axios";
 import { axiosPost, axiosGet } from "@/config/http";
-import marked from "marked/marked.min.js";
+// import marked from "marked/marked.min.js";
 
 declare var webkitSpeechRecognition: any;
 computed(() => {
