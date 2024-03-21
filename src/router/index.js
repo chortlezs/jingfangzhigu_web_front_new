@@ -38,7 +38,7 @@ const routes=[
     {
         path: '/setting',
         name: 'setting',
-        component: () => import('../components/settings/setting.vue'),
+        component: () => import('../views/setting.vue'),
         meta: { requiresAuth: true },
         children: [
           {
@@ -66,7 +66,7 @@ const routes=[
     {
         path:'/chat',//路径
         name:'chat',//名字
-        component:()=>import('../components/index.vue'),
+        component:()=>import('../views/chat.vue'),
         meta: { requiresAuth: true }
       },
       {
