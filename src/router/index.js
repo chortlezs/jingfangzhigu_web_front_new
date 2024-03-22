@@ -72,7 +72,7 @@ const routes=[
       {
         path:'/personal',
         name:'/personal',
-        component:() => import('../components/settings/personal.vue'),
+        component:() => import('../views/personal.vue'),
         meta: { requiresAuth: true }
       },
 ]
